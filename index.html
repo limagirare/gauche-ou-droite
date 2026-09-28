@@ -1,665 +1,163 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gauche ou Droite ? — Le Jeu Officiel</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --elysee-navy: #0a1128;
-            --elysee-dark: #050814;
-            --elysee-gold: #d4af37;
-            --gauche-red: #e63946;
-            --droite-blue: #1d3557;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(212, 175, 55, 0.3);
-            --text-light: #f8f9fa;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
-
-        body {
-            background: radial-gradient(circle at top, #101f42 0%, var(--elysee-navy) 60%, var(--elysee-dark) 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .cockade {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: conic-gradient(var(--gauche-red) 0 120deg, #fff 120deg 240deg, var(--droite-blue) 240deg 360deg);
-            margin: 0 auto 8px auto; border: 2px solid var(--elysee-gold);
-        }
-
-        h1 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--elysee-gold); letter-spacing: 2px; }
-
-        .app-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px; }
-
-        /* Mode Selector */
-        .mode-switch {
-            display: flex; justify-content: center; gap: 15px; background: var(--glass-bg);
-            padding: 10px; border-radius: 10px; border: 1px solid var(--glass-border);
-        }
-
-        .btn-mode {
-            background: transparent; border: 2px solid var(--elysee-gold); color: #fff;
-            padding: 10px 20px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: all 0.3s;
-        }
-
-        .btn-mode.active-gauche { background: var(--gauche-red); border-color: var(--gauche-red); }
-        .btn-mode.active-droite { background: var(--droite-blue); border-color: #457b9d; }
-
-        /* Game Board Area */
-        .game-panel {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);
-            display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;
-        }
-
-        .phase-indicator {
-            background: var(--elysee-gold); color: var(--elysee-dark);
-            padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;
-        }
-
-        .card-box {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-            border: 2px solid var(--elysee-gold); border-radius: 10px;
-            padding: 20px; width: 100%; max-width: 450px; min-height: 100px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        .card-title { font-size: 1.3rem; font-weight: 700; margin-top: 5px; }
-
-        /* Hémicycle : la barre reste toujours dans les 180° */
-        .compass-box {
-            position: relative; width: min(520px, 90vw); height: 250px;
-            overflow: hidden; margin: 10px 0 0;
-        }
-        .hemicycle {
-            position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
-            width: min(500px, 86vw); aspect-ratio: 2 / 1;
-            border-radius: 500px 500px 0 0;
-            background: linear-gradient(90deg, rgba(230,57,70,.85), rgba(155,89,182,.8) 50%, rgba(29,53,87,.9));
-            border: 4px solid var(--elysee-gold); border-bottom: 0;
-            box-shadow: inset 0 0 35px rgba(0,0,0,.35);
-        }
-        .hemicycle::after {
-            content: ""; position:absolute; left:50%; bottom:0; transform:translateX(-50%);
-            width: 3px; height: 100%; background:rgba(255,255,255,.12);
-        }
-        .compass-needle {
-            position: absolute; left: 50%; bottom: 8px; width: 6px; height: 210px;
-            transform-origin: bottom center; transform: translateX(-50%) rotate(0deg);
-            background:#fff; z-index:5; border-radius:6px; box-shadow:0 0 10px #fff;
-            transition: transform .45s cubic-bezier(.2,.8,.2,1);
-        }
-        .angle-marker { position:absolute; bottom:3px; font-size:.72rem; font-weight:800; z-index:6; }
-        .angle-left { left:2%; color:var(--gauche-red); }
-        .angle-center { left:50%; transform:translateX(-50%); color:#fff; }
-        .angle-right { right:2%; color:#457b9d; }
-
-        .setup-panel {
-            background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:12px;
-            padding:16px; display:grid; gap:12px; width:100%;
-        }
-        .player-row {
-            display:grid; grid-template-columns:1fr 150px; gap:10px; align-items:center;
-            padding:10px; border:1px solid rgba(212,175,55,.18); border-radius:8px;
-        }
-        .player-row input, .player-row select {
-            width:100%; padding:9px; border-radius:6px; border:1px solid var(--glass-border);
-            background:#111a32; color:#fff;
-        }
-        .anonymous-box {
-            padding:12px; border:1px dashed var(--elysee-gold); border-radius:8px;
-            color:#e7e7e7; font-size:.86rem;
-        }
-        .final-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
-        .final-card { padding:16px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,.05); }
-        .final-card h3 { margin-bottom:7px; }
-        @media(max-width:600px){ .player-row{grid-template-columns:1fr;} .final-grid{grid-template-columns:1fr;} }
-
-        /* Voting Controls */
-        .vote-options { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
-        .btn-vote {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--elysee-gold); color: #fff;
-            padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
-        }
-        .btn-vote:hover, .btn-vote.selected { background: var(--elysee-gold); color: var(--elysee-dark); font-weight: 700; }
-
-        .btn-action {
-            background: linear-gradient(135deg, var(--elysee-gold), #b8860b); color: var(--elysee-dark);
-            border: none; padding: 12px 25px; font-weight: 800; border-radius: 6px; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px; transition: transform 0.1s;
-        }
-        .btn-action:active { transform: scale(0.98); }
-
-        /* Hand / Cards Selection in Mode Droite */
-        .hand-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
-        .hand-card {
-            background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border);
-            border-radius: 8px; padding: 10px; width: 140px; cursor: pointer; font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-        .hand-card:hover { border-color: var(--elysee-gold); transform: translateY(-4px); }
-
-        .score-board {
-            font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--elysee-gold);
-            border-top: 1px solid var(--glass-border); padding-top: 10px; width: 100%;
-        }
-
-        .mj-setup { width:100%; padding:14px; border:1px solid var(--glass-border); border-radius:10px; background:rgba(255,255,255,.04); }
-        .mj-round-row { display:grid; grid-template-columns:80px 1fr 150px; gap:8px; align-items:center; margin:8px 0; }
-        .mj-round-row input, .mj-round-row select { padding:9px; border-radius:6px; border:1px solid var(--glass-border); background:#10182e; color:white; width:100%; }
-        .hand-card.selected { border-color:var(--elysee-gold); background:rgba(212,175,55,.18); transform:translateY(-3px); }
-        @media(max-width:600px){ .mj-round-row{grid-template-columns:1fr;} }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gauche ou Droite ? — Le Jeu</title>
+<style>
+:root{--navy:#0a1128;--dark:#050814;--gold:#d4af37;--red:#e63946;--blue:#1d3557;--white:#f8f9fa;--muted:#a0aec0;--glass:rgba(255,255,255,.06);--border:rgba(212,175,55,.3)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{min-height:100vh;background:radial-gradient(circle at top,#172957 0%,var(--navy) 55%,var(--dark) 100%);color:var(--white);padding:18px;display:flex;justify-content:center}
+button,input,textarea{font:inherit}.app{width:100%;max-width:1000px}.header{text-align:center;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:18px}.cockade{width:42px;height:42px;border-radius:50%;margin:auto auto 8px;background:conic-gradient(var(--red) 0 120deg,#fff 120deg 240deg,var(--blue) 240deg 360deg);border:2px solid var(--gold)}
+h1{color:var(--gold);letter-spacing:2px}.subtitle{color:var(--muted);margin-top:5px}.panel{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:0 12px 35px rgba(0,0,0,.3);margin-bottom:18px}.hidden{display:none!important}.center{text-align:center}.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.choice{border:2px solid var(--border);background:rgba(255,255,255,.04);border-radius:12px;padding:20px;cursor:pointer;transition:.2s}.choice:hover{transform:translateY(-2px);border-color:var(--gold)}.choice.active{border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,55,.15)}.choice h3{margin-bottom:8px}.left h3{color:var(--red)}.right h3{color:#6ba6d6}
+.player-count{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0}.count-btn,.btn{border:1px solid var(--gold);background:rgba(255,255,255,.07);color:#fff;border-radius:7px;padding:10px 14px;cursor:pointer}.count-btn.active,.count-btn:hover{background:var(--gold);color:var(--dark);font-weight:bold}.btn-main{background:linear-gradient(135deg,var(--gold),#b8860b);color:var(--dark);border:0;font-weight:800;padding:13px 24px;border-radius:8px;cursor:pointer}.btn-main:disabled{opacity:.4;cursor:not-allowed}.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{background:var(--gold);color:var(--dark);font-weight:bold;border-radius:20px;padding:6px 12px}.card{border:2px solid var(--gold);border-radius:12px;padding:22px;text-align:center;margin:18px auto;max-width:700px;background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.02))}.card small{color:var(--gold)}.card h2{margin-top:10px;font-size:1.35rem}
+.hemi-wrap{max-width:760px;margin:20px auto}.labels{display:flex;justify-content:space-between;width:300px;margin:0 auto 4px;font-weight:800;font-size:.78rem}.labels span:first-child{color:var(--red)}.labels span:last-child{color:#6ba6d6}.compass-box{position:relative;width:300px;height:150px;overflow:hidden;margin:8px auto 12px}.compass-dial{width:300px;height:300px;border-radius:50%;background:conic-gradient(from 270deg,var(--red) 0deg,#9b59b6 90deg,var(--blue) 180deg,var(--blue) 360deg);position:absolute;top:0;left:0;border:3px solid var(--gold);transition:none;box-shadow:0 0 25px rgba(0,0,0,.35)}.compass-dial::after{content:"";position:absolute;left:50%;top:50%;width:80%;height:80%;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.16);border-radius:50%}.compass-needle{position:absolute;top:0;left:50%;transform:translateX(-50%) rotate(0deg);transform-origin:50% 100%;width:6px;height:150px;background:#fff;z-index:5;box-shadow:0 0 8px #fff;border-radius:5px;transition:transform .28s ease-out}.compass-center{position:absolute;left:50%;bottom:-8px;width:18px;height:18px;background:var(--gold);border:3px solid #fff;border-radius:50%;transform:translateX(-50%);z-index:6;box-shadow:0 0 10px rgba(212,175,55,.7)}.baseline{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.25);z-index:4}.slider-box{max-width:760px;margin:0 auto}.slider{width:100%;accent-color:var(--gold);cursor:pointer}.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:.7rem;margin-top:5px}.value{text-align:center;color:var(--gold);font-weight:800;margin:10px}
+.secret-box{border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0}.input,.textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--border);color:white;border-radius:8px;padding:11px}.textarea{min-height:90px;resize:vertical}.choice-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.choice-small{flex:1;min-width:180px}.choice-small.selected{border-color:var(--gold);background:rgba(212,175,55,.12)}
+.players{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}.player-pill{padding:6px 10px;border:1px solid var(--border);border-radius:20px;color:var(--muted)}.player-pill.current{color:var(--gold);border-color:var(--gold)}
+.submissions{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:15px 0}.submission{border:1px solid var(--border);border-radius:10px;padding:14px;background:rgba(255,255,255,.04)}.submission button{width:100%;margin-top:8px}.winner{border-color:var(--gold);background:rgba(212,175,55,.12)}
+.score-table{width:100%;border-collapse:collapse;margin-top:12px}.score-table th,.score-table td{padding:9px;border-bottom:1px solid rgba(255,255,255,.1);text-align:center}.score-table th{color:var(--gold)}.notice{padding:12px;border-radius:8px;background:rgba(212,175,55,.08);border:1px solid var(--border);margin:12px 0}.danger{color:#ff8d96}.success{color:#9be7b0}.muted{color:var(--muted)}
+@media(max-width:700px){.setup-grid{grid-template-columns:1fr}.panel{padding:15px}.compass-box{width:250px;height:125px}.compass-dial{width:250px;height:250px}.compass-needle{height:125px}.labels{width:250px}}
+</style>
 </head>
 <body>
+<div class="app">
+<header class="header"><div class="cockade"></div><h1>GAUCHE OU DROITE ?</h1><p class="subtitle">Le jeu d'arbitrage politique</p></header>
 
-    <header>
-        <div class="cockade"></div>
-        <h1>Gauche ou Droite ?</h1>
-        <p style="font-size:0.85rem; color:#a0aec0;">Le Jeu d'Arbitrage Politique</p>
-    </header>
+<section id="setup" class="panel">
+<h2 class="center">Préparer la partie</h2>
+<p class="center muted" style="margin-top:7px">Choisissez un mode puis le nombre de joueurs.</p>
+<div class="setup-grid" style="margin-top:18px">
+<div id="modeLeft" class="choice left active" onclick="selectMode('gauche')"><h3>🔴 Mode Gauche</h3><p>Un MJ choisit secrètement une proposition et son orientation. Les autres joueurs placent la barre. On calcule leur moyenne.</p></div>
+<div id="modeRight" class="choice right" onclick="selectMode('droite')"><h3>🔵 Mode Droite</h3><p>Le MJ impose une orientation. Chaque joueur choisit une phrase parmi celles qui lui sont proposées. Le MJ choisit ensuite le gagnant.</p></div>
+</div>
+<h3 class="center" style="margin-top:20px">Nombre de joueurs</h3>
+<div id="countButtons" class="player-count"></div>
+<div class="center"><button class="btn-main" onclick="startGame()">Lancer la partie</button></div>
+</section>
 
-    <div class="app-container">
+<section id="game" class="hidden">
+<div class="panel">
+<div class="topbar"><span id="roundBadge" class="badge">Manche 1 / 10</span><span id="modeBadge" class="badge">Mode Gauche</span></div>
+<div id="playersBar" class="players"></div>
+<div id="phase" class="notice center"></div>
+<div class="card"><small id="cardLabel">PROPOSITION</small><h2 id="cardText">...</h2></div>
+<div id="gameContent"></div>
+<div class="center" style="margin-top:18px"><button id="actionBtn" class="btn-main" onclick="mainAction()">Continuer</button></div>
+</div>
+</section>
 
-        <!-- Selection du Mode -->
-        <div class="mode-switch">
-            <button id="mode-gauche-btn" class="btn-mode active-gauche" onclick="switchGameMode('gauche')">Mode de Gauche (Coopératif)</button>
-            <button id="mode-droite-btn" class="btn-mode" onclick="switchGameMode('droite')">Mode de Droite (Patronal)</button>
-        </div>
+<section id="end" class="panel hidden"></section>
+</div>
 
-        <!-- Configuration de la partie -->
-        <div id="setup-panel" class="setup-panel">
-            <div>
-                <strong>Configuration de la partie</strong>
-                <p id="setup-description" style="font-size:.82rem;color:#a0aec0;margin-top:4px;">
-                    Tous les joueurs jouent dans le même mode. Ils jouent chacun leur tour.
-                </p>
-            </div>
-
-            <label>Nombre de joueurs
-                <select id="player-count" onchange="renderPlayerSetup()" style="margin-left:8px;padding:7px;border-radius:6px;">
-                    <option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-                </select>
-            </label>
-            <div id="player-setup-list"></div>
-
-            <div id="left-mj-setup" class="mj-setup">
-                <h3 style="color:var(--gauche-red);margin-bottom:8px;">🎙️ MJ tournant</h3>
-                <p style="font-size:.82rem;color:#a0aec0;margin-bottom:10px;">
-                    Le MJ change à chaque manche. Il choisira sa phrase et son orientation <strong>au moment de jouer</strong>. Le MJ de la manche ne participe pas au placement des joueurs.
-                </p>
-            </div>
-
-            <div id="right-rules" class="mj-setup" style="display:none;">
-                <h3 style="color:#457b9d;margin-bottom:8px;">👔 Règles du mode de Droite</h3>
-                <p style="font-size:.82rem;color:#a0aec0;">
-                    Le Boss impose une orientation. Chaque joueur reçoit plusieurs phrases et en choisit une. Le Boss voit les propositions anonymisées et désigne le gagnant de chaque manche.
-                </p>
-            </div>
-
-            <button class="btn-action" onclick="startGame()">Commencer la partie</button>
-        </div>
-
-        <!-- Plateau de Jeu Interactif -->
-        <div class="game-panel">
-            <div id="phase-badge" class="phase-indicator">Configuration des joueurs</div>
-
-            <!-- Carte courante -->
-            <div class="card-box">
-                <span id="card-num" style="font-size:0.75rem; color:var(--elysee-gold);">PROPOSITION</span>
-                <div id="card-text" class="card-title">Cliquez sur Démarrer la Partie</div>
-            </div>
-
-            <!-- Boussole interactive -->
-            <div style="display:flex; justify-shadow:space-between; width:220px; font-size:0.75rem; font-weight:700;">
-                <span style="color:var(--gauche-red);">GAUCHE</span>
-                <span style="color:#457b9d;">DROITE</span>
-            </div>
-            <div class="compass-box">
-                <div class="hemicycle"></div>
-                <div class="compass-needle" id="compass-needle"></div>
-                <span class="angle-marker angle-left">GAUCHE</span>
-                <span class="angle-marker angle-center">NEUTRE</span>
-                <span class="angle-marker angle-right">DROITE</span>
-            </div>
-
-            <!-- Contrôles de Vote / Sélection -->
-            <div id="interactive-area" style="width:100%;">
-                <!-- Injecté dynamiquement par le JS -->
-            </div>
-            <div id="anonymous-status" class="anonymous-box" style="display:none;"></div>
-            <div id="score-summary" class="score-board" style="display:none;"></div>
-
-            <button id="main-action-btn" class="btn-action" onclick="handleMainAction()" style="display:none;">Lancer une Partie</button>
-
-            <!-- Tableau des scores -->
-            <div class="score-board">
-                Tour : <span id="round-val">0</span>/<span id="total-turns-val">0</span>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
+<script>
 const CARDS = [
-            "Les gilets jaunes", "Cyril Hanouna", "Collectionner les souvenirs du IIIème Reich", "Collectionner les Funkopop",
-            "Une IPA locale", "Léna Situations", "Le Tiers-État", "Être antivax", "Les mégabassines", "Aya Nakamura",
-            "Le camping", "Les accords de Paris", "Les cheveux bleus", "Vercingétorix", "Valeurs actuelles", "Aurore Bergé",
-            "Le Sénat", "Versailles", "L'ascenseur social", "Les sans-culottes", "Les cheveux blancs", "Les cigarettes Gauloises",
-            "Télérama", "L'Académie française", "Le glamping", "L'accord du participe passé", "Les tiers-lieux", "Être anti-taxes", "Les pédiluves",
-            "L'Impôt de Solidarité sur la Fortune (ISF)", "La semaine de 4 jours", "La retraite à 60 ans", "La retraite à 65 ans",
-            "La Flat Tax sur les revenus du capital", "Le Revenu Universel d'Existence", "Le salaire minimum à 1600 € net",
-            "La suppression de la taxe professionnelle", "La taxation des superprofits", "La privatisation de Radio France et France Télévisions",
-            "L'intéressement obligatoire en entreprise", "L'héritage taxé à 90 % au-delà de 10 millions d'euros", "La suppression des cotisations patronales",
-            "La conditionnalité du RSA à du bénévolat ou de la formation", "La baisse de la TVA sur les produits de première nécessité",
-            "Le plafonnage des hauts salaires dans les grandes entreprises", "L'assouplissement du Code du travail", "L'interdiction du travail le dimanche",
-            "La suppression du statut de la fonction publique", "Les exonérations de charges sur les heures supplémentaires",
-            "Le protectionnisme aux frontières de l'Europe", "Le droit de grève encadré par le service minimum garanti", "Le financement public de l'apprentissage",
-            "L'impôt sur le revenu payé dès le premier euro", "La nationalisation des autoroutes", "La suppression des pièces de 1 et 2 centimes",
-            "La fin de la publicité à la télévision publique", "La semaine de 32 heures", "Le micro-entreprenariat", "La taxe sur les transactions financières (Taxe Tobin)",
-            "L'encadrement des loyers dans les métropoles", "La suppression des niches fiscales immobilières (Pinel, etc.)", "La baisse des impôts sur les sociétés à 15 %",
-            "Le chèque énergie", "La priorité nationale pour les aides sociales", "L'augmentation des droits de succession", "Les tickets restaurant utilisables le dimanche",
-            "Le travail dominical payé double", "L'obligation de résidence pour payer ses impôts en France", "La suppression de la taxe foncière",
-            "Le vote obligatoire", "La VIe République", "L'usage frequent du référendum (RIC)", "La comptabilisation du vote blanc dans les suffrages exprimés",
-            "Le mode de scrutin proportionnel aux législatives", "Le septennat non renouvelable", "La suppression du Conseil Économique, Social et Environnemental (CESE)",
-            "Le statut du conjoint du Chef de l'État", "La réduction du nombre de députés et de sénateurs", "La décentralisation renforcée vers les régions",
-            "Le cumul des mandats locaux et nationaux", "La suppression du 49.3", "Le Conseil Constitutionnel tiré au sort", "Le non-cumul des mandats dans le temps (max 2 mandats)",
-            "Le vote à 16 ans", "La fin de la monarchie républicaine", "Le drapeau européen sous l'Arc de Triomphe", "L'hymne national chanté à l'école tous les matins",
-            "Le Conseil de la Magistrature indépendant du gouvernement", "La publication obligatoire du patrimoine des élus", "L'immunité parlementaire",
-            "Les cabinets de conseil privés (ex: McKinsey) au gouvernement", "Le tirage au sort des citoyens pour des conventions nationales",
-            "La suppression de la Cour de Justice de la République", "La reconnaissance du vote par correspondance", "Le scrutin uninominal à deux tours",
-            "L'ENA (École Nationale d'Administration) sous son ancien nom", "Le Sénat tiré au sort", "L'interdiction du pantouflage (passage du public vers le privé)",
-            "La parité stricte dans les gouvernements", "Les conseils de quartier citoyens", "La suppression des départements", "Le découpage des cantons",
-            "Le budget participatif des communes", "L'utilisation de la langue régionale à l'Assemblée",
-            "Le relancement massif du nucléaire (EPR)", "Les éoliennes maritimes (offshore)", "L'interdiction des vols intérieurs courts quand le train existe",
-            "La taxe carbone aux frontières de l'Europe", "La légalisation ou sortie du glyphosate", "Les zones à faibles émissions (ZFE) dans les villes",
-            "Le développement du TGV à bas coût", "La gratuité des transports en commun urbains", "La fin de la vente des voitures thermiques en 2035",
-            "La fermeture des centrales à charbon", "Les aides à l'isolation thermique (MaPrimeRénov')", "L'agriculture biologique subventionnée par l'État",
-            "L'interdiction de la chasse le dimanche", "L'élevage intensif en cage", "Les méthaniseurs agricoles", "Le reboisement des forêts domaniales",
-            "La tarification progressive de l'eau", "Le retour aux consignes de bouteilles en verre", "Les corridors écologiques", "Le chèque vélo électrique",
-            "La réduction de la vitesse sur autoroute à 110 km/h", "La réintroduction du loup et de l'ours dans les montagnes", "L'interdiction des plastiques à usage unique",
-            "Le moratoire sur la construction de nouveaux entrepôts Amazon", "Le développement du fret ferroviaire", "Les fermes solaires sur terres agricoles (agrivoltaïsme)",
-            "L'interdiction de la taille des haies pendant la nidification", "La végétalisation des cours d'école", "La taxe sur le kérosène des avions",
-            "Le passe rail illimité", "Les circuits courts à la cantine", "Le prêt à taux zéro pour le véhicule électrique", "La fin de l'artificialisation nette des sols (ZAN)",
-            "L'interdiction des publicités pour les SUV", "L'autonomie énergétique des territoires de l'Outre-mer",
-            "Les peines planchers pour les récidivistes", "La police de sécurité du quotidien (police de proximité)", "L'armement obligatoire de toutes les polices municipales",
-            "La suppression de l'Aide Médicale d'État (AME)", "La régularisation des travailleurs sans-papiers dans les métiers en tension",
-            "Les peines de prison exécutées dès le premier mois", "Le rétablissement du Service National Obligatoire", "Les caméras piétons sur tous les policiers",
-            "La reconnaissance faciale dans l'espace public", "La création de nouvelles places de prison", "Le traitement automatique des amendes pour usage de stupéfiants",
-            "Le droit du sol automatisé à la majorité", "La suppression du droit du sol", "La double nationalité conservée", "Le traitement des demandes d'asile hors du territoire européen",
-            "Les travaux d'intérêt général (TIG) systématiques pour les mineurs", "L'expulsion systématique des étrangers condamnés", "La dépénalisation du cannabis",
-            "La légalisation et l'encadrement du cannabis par l'État", "La vidéosurveillance intelligente gérée par IA", "La majorité pénale abaissée à 16 ans",
-            "L'interdiction des contrôles au faciès avec récépissé", "La réforme du système des gardes à vue", "La fermeture des Centres de Rétention Administrative (CRA)",
-            "Le rétablissement des peines d'indignité nationale", "La suppression des allocations familiales aux parents de mineurs délinquants", "Le renforcement de la justice des mineurs",
-            "La présence de juges non professionnels dans les tribunaux", "Le bracelet électronique comme alternative principale à la prison", "Le contrôle renforcé des frontières nationales",
-            "Le statut de réfugié climatique", "La création de brigades de gendarmerie rurales", "La fin de la prescription pour les crimes sexuels sur mineurs",
-            "La formation continue obligatoire pour les forces de l'ordre", "Les peines d'inégibilité à vie pour corruption",
-            "Le port de l'uniforme à l'école publique", "L'interdiction du téléphone portable jusqu'au lycée", "Le Pass Culture accordé aux jeunes",
-            "Le remboursement à 100 % des soins dentaires et optiques (100% Santé)", "La fin du numerus clausus dans les études de médecine",
-            "L'obligation pour les jeunes médecins de s'installer dans les déserts médicaux", "L'aide active à mourir (Euthanasie / Suicide assisté)", "La PMA pour toutes les femmes",
-            "La GPA (Gestation Pour Autrui) éthique et encadrée", "L'inscription de l'IVG dans la Constitution", "L'apprentissage du code informatique dès le primaire",
-            "La suppression de la plateforme Parcoursup", "La revalorisation de la grille indiciaire des enseignants", "L'interdiction des signes religieux ostensibles à l'université",
-            "La semaine de 4 jours à l'école primaire", "La gratuité des fournitures scolaires pour tous", "La sélection à l'entrée de l'Université (Master / Licence)",
-            "L'interdiction de l'écriture inclusive dans les textes officiels", "Le financement public de l'enseignement privé sous contrat",
-            "Le remboursement des médecines douces par la Sécurité Sociale", "L'encadrement des écrans pour les moins de 3 ans", "L'inscription du droit au logement dans la Constitution",
-            "La création d'un statut de l'artiste-auteur protégé", "L'accès libre aux musées nationaux pour les résidents européens", "L'apprentissage obligatoire de deux langues vivantes dès le collège",
-            "Le droit au répit pour les aidants familiaux", "La prévention du harcèlement scolaire avec exclusion des harceleurs", "La légalisation de la prostitution",
-            "L'abolition complète de la prostitution (pénalisation des clients)", "La gratuité des protections périodiques", "Les congés paternité égaux aux congés maternité",
-            "La création d'une ordonnance de protection immédiate pour violences conjugales", "L'enseignement de l'empathie à l'école maternelle et primaire",
-            "La généralisation des mutuelles d'entreprise", "Les assises de la santé mentale", "La médecine du travail obligatoire", "Le droit à la déconnexion après les heures de travail",
-            "Le financement de la restauration des monuments historiques", "Le soutien à l'audiovisuel public français", "L'interdiction des corridas",
-            "La création d'une armée européenne commune", "La sortie de la France du commandement intégré de l'OTAN", "L'augmentation du budget de la Défense à 2% puis 3% du PIB",
-            "L'élargissement de l'Union Européenne à de nouveaux pays", "Le Frexit (sortie de la France de l'Union Européenne)", "L'abandon de la monnaie unique Euro au profit du Franc",
-            "La suppression de la règle des 3% de déficit public européen", "Le siège unique du Parlement européen à Strasbourg", "Le développement de la Francophonie économique",
-            "La suspension des accords de libre-échange (ex: CETA, MERCOSUR)", "Le maintien du réseau diplomatique français mondial", "La coopération militaire renforcée avec l'Afrique",
-            "La création d'un corps européen de garde-côtes et garde-frontières", "L'aide publique au développement portée à 0,7 % du RNB", "Le statut de neutralité diplomatique pour la France",
-            "Le porte-avions de nouvelle génération (PANG)", "Le droit de veto de la France au Conseil de Sécurité de l'ONU", "La souveraineté numérique européenne face aux GAFAM",
-            "La taxe européenne sur les géants du numérique", "Le passeport européen unique", "La relocalisation des industries stratégiques (puces, médicaments)",
-            "L'embargo sur les ventes d'armes aux régimes autoritaires", "L'Agence Européenne de la Cybersécurité", "Les coopérations spatiales européennes (Ariane 6)",
-            "Le traité de non-prolifération nucléaire", "La carte d'identité numérique sur smartphone (France Identité)", "La souveraineté des données publiques hébergées sur un cloud souverain",
-            "Le vote par Internet aux élections nationales", "L'encadrement éthique du développement des intelligences artificielles", "Le droit à l'oubli numérique renforcé",
-            "La taxe sur le streaming vidéo et musical au profit de la création", "L'interdiction des réseaux sociaux aux moins de 15 ans", "La couverture intégrale du territoire en fibre optique et 5G",
-            "Le développement du Chèque Numérique pour les commerçants", "L'open-data des décisions de justice", "La modération obligatoire des plateformes sociales sous peine d'amendes",
-            "La régulation des cryptomonnaies", "La lutte contre les « fake news » et la désinformation", "La numérisation complète des démarches administratives",
-            "Les guichets physiques maintenus dans les zones rurales (France Services)", "La taxe sur les robots remplaçant des emplois humains", "La recherche publique sur le quantique",
-            "L'interdiction du ciblage publicitaire basé sur les données personnelles", "L'indépendance de la CNIL renforcée", "Le passeport vaccinal ou sanitaire sur application mobile",
-            "Les licences de logiciels libres privilégiées dans la commande publique", "La vidéoprotection dans les transports en commun", "L'encadrement des influenceurs sur les réseaux sociaux",
-            "La création d'une devise numérique de banque centrale (Euro numérique)", "La fin de l'impression automatique des tickets de caisse",
-            "Les repas végétariens quotidiens à la cantine", "La chasse à courre", "Le Tour de France cycliste", "Les résidences secondaires taxées en zone tendue",
-            "La tarification des musées gratuits le premier dimanche du mois", "Le foie gras artisanal", "Le barbecue du dimanche", "Le travail en open-space",
-            "Les trottinettes électriques en libre-service", "Les jets privés", "Les résidences fermées avec gardien (gated communities)", "Le café en terrasse à 2,50 €",
-            "Le vouvoiement systématique au travail", "Le vin bio", "La téléréalité", "Le football professionnel et ses transferts millionnaires",
-            "Les plateformes de livraison de repas à domicile (Deliveroo, UberEats)", "Les feux d'artifice du 14 juillet", "Les friches industrielles réhabilitées",
-            "Le bivouac sauvage en parc national", "La langue française protegée contre les anglicismes", "Les foires d'art contemporain", "Les fast-foods près des établissements scolaires",
-            "Les piscines privées en période de sécheresse", "Les cours de récréation non genrées", "La musique rap subventionnée par le Centre National de la Musique",
-            "Les feux de cheminée individuels en région parisienne", "Les animaux de compagnie en refuge", "Le ramassage collaboratif de déchets (cleanwalk)",
-            "Le commerce équitable nord-sud", "Les résidences séniors avec services", "Les péages d'autoroute", "Le chèque vacances", "La presse écrite papier subventionnée",
-            "La fête de la musique du 21 juin", "L'exposition universelle"
-        ];
+"Les gilets jaunes","Cyril Hanouna","Collectionner les souvenirs du IIIème Reich","Collectionner les Funkopop","Une IPA locale","Léna Situations","Le Tiers-État","Être antivax","Les mégabassines","Aya Nakamura",
+"Le camping","Les accords de Paris","Les cheveux bleus","Vercingétorix","Valeurs actuelles","Aurore Bergé","Le Sénat","Versailles","L'ascenseur social","Les sans-culottes","Les cheveux blancs","Les cigarettes Gauloises","Télérama","L'Académie française","Le glamping","L'accord du participe passé","Les tiers-lieux","Être anti-taxes","Les pédiluves","L'Impôt de Solidarité sur la Fortune (ISF)",
+"La semaine de 4 jours","La retraite à 60 ans","La retraite à 65 ans","La Flat Tax sur les revenus du capital","Le Revenu Universel d'Existence","Le salaire minimum à 1600 € net","La suppression de la taxe professionnelle","La taxation des superprofits","La privatisation de Radio France et France Télévisions","L'intéressement obligatoire en entreprise","L'héritage taxé à 90 % au-delà de 10 millions d'euros","La suppression des cotisations patronales","La conditionnalité du RSA à du bénévolat ou de la formation","La baisse de la TVA sur les produits de première nécessité","Le plafonnage des hauts salaires dans les grandes entreprises","L'assouplissement du Code du travail","L'interdiction du travail le dimanche","La suppression du statut de la fonction publique","Les exonérations de charges sur les heures supplémentaires","Le protectionnisme aux frontières de l'Europe","Le droit de grève encadré par le service minimum garanti","Le financement public de l'apprentissage","L'impôt sur le revenu payé dès le premier euro","La nationalisation des autoroutes","La suppression des pièces de 1 et 2 centimes","La fin de la publicité à la télévision publique","La semaine de 32 heures","Le micro-entreprenariat","La taxe sur les transactions financières (Taxe Tobin)","L'encadrement des loyers dans les métropoles","La suppression des niches fiscales immobilières (Pinel, etc.)","La baisse des impôts sur les sociétés à 15 %","Le chèque énergie","La priorité nationale pour les aides sociales","L'augmentation des droits de succession","Les tickets restaurant utilisables le dimanche","Le travail dominical payé double","L'obligation de résidence pour payer ses impôts en France","La suppression de la taxe foncière",
+"Le vote obligatoire","La VIe République","L'usage frequent du référendum (RIC)","La comptabilisation du vote blanc dans les suffrages exprimés","Le mode de scrutin proportionnel aux législatives","Le septennat non renouvelable","La suppression du Conseil Économique, Social et Environnemental (CESE)","Le statut du conjoint du Chef de l'État","La réduction du nombre de députés et de sénateurs","La décentralisation renforcée vers les régions","Le cumul des mandats locaux et nationaux","La suppression du 49.3","Le Conseil Constitutionnel tiré au sort","Le non-cumul des mandats dans le temps (max 2 mandats)","Le vote à 16 ans","La fin de la monarchie républicaine","Le drapeau européen sous l'Arc de Triomphe","L'hymne national chanté à l'école tous les matins","Le Conseil de la Magistrature indépendant du gouvernement","La publication obligatoire du patrimoine des élus","L'immunité parlementaire","Les cabinets de conseil privés (ex: McKinsey) au gouvernement","Le tirage au sort des citoyens pour des conventions nationales","La suppression de la Cour de Justice de la République","La reconnaissance du vote par correspondance","Le scrutin uninominal à deux tours","L'ENA (École Nationale d'Administration) sous son ancien nom","Le Sénat tiré au sort","L'interdiction du pantouflage (passage du public vers le privé)","La parité stricte dans les gouvernements","Les conseils de quartier citoyens","La suppression des départements","Le découpage des cantons","Le budget participatif des communes","L'utilisation de la langue régionale à l'Assemblée",
+"Le relancement massif du nucléaire (EPR)","Les éoliennes maritimes (offshore)","L'interdiction des vols intérieurs courts quand le train existe","La taxe carbone aux frontières de l'Europe","La légalisation ou sortie du glyphosate","Les zones à faibles émissions (ZFE) dans les villes","Le développement du TGV à bas coût","La gratuité des transports en commun urbains","La fin de la vente des voitures thermiques en 2035","La fermeture des centrales à charbon","Les aides à l'isolation thermique (MaPrimeRénov')","L'agriculture biologique subventionnée par l'État","L'interdiction de la chasse le dimanche","L'élevage intensif en cage","Les méthaniseurs agricoles","Le reboisement des forêts domaniales","La tarification progressive de l'eau","Le retour aux consignes de bouteilles en verre","Les corridors écologiques","Le chèque vélo électrique","La réduction de la vitesse sur autoroute à 110 km/h","La réintroduction du loup et de l'ours dans les montagnes","L'interdiction des plastiques à usage unique","Le moratoire sur la construction de nouveaux entrepôts Amazon","Le développement du fret ferroviaire","Les fermes solaires sur terres agricoles (agrivoltaïsme)","L'interdiction de la taille des haies pendant la nidification","La végétalisation des cours d'école","La taxe sur le kérosène des avions","Le passe rail illimité","Les circuits courts à la cantine","Le prêt à taux zéro pour le véhicule électrique","La fin de l'artificialisation nette des sols (ZAN)","L'interdiction des publicités pour les SUV","L'autonomie énergétique des territoires de l'Outre-mer",
+"Les peines planchers pour les récidivistes","La police de sécurité du quotidien (police de proximité)","L'armement obligatoire de toutes les polices municipales","La suppression de l'Aide Médicale d'État (AME)","La régularisation des travailleurs sans-papiers dans les métiers en tension","Les peines de prison exécutées dès le premier mois","Le rétablissement du Service National Obligatoire","Les caméras piétons sur tous les policiers","La reconnaissance faciale dans l'espace public","La création de nouvelles places de prison","Le traitement automatique des amendes pour usage de stupéfiants","Le droit du sol automatisé à la majorité","La suppression du droit du sol","La double nationalité conservée","Le traitement des demandes d'asile hors du territoire européen","Les travaux d'intérêt général (TIG) systématiques pour les mineurs","L'expulsion systématique des étrangers condamnés","La dépénalisation du cannabis","La légalisation et l'encadrement du cannabis par l'État","La vidéosurveillance intelligente gérée par IA","La majorité pénale abaissée à 16 ans","L'interdiction des contrôles au faciès avec récépissé","La réforme du système des gardes à vue","La fermeture des Centres de Rétention Administrative (CRA)","Le rétablissement des peines d'indignité nationale","La suppression des allocations familiales aux parents de mineurs délinquants","Le renforcement de la justice des mineurs","La présence de juges non professionnels dans les tribunaux","Le bracelet électronique comme alternative principale à la prison","Le contrôle renforcé des frontières nationales","Le statut de réfugié climatique","La création de brigades de gendarmerie rurales","La fin de la prescription pour les crimes sexuels sur mineurs","La formation continue obligatoire pour les forces de l'ordre","Les peines d'inégibilité à vie pour corruption",
+"Le port de l'uniforme à l'école publique","L'interdiction du téléphone portable jusqu'au lycée","Le Pass Culture accordé aux jeunes","Le remboursement à 100 % des soins dentaires et optiques (100% Santé)","La fin du numerus clausus dans les études de médecine","L'obligation pour les jeunes médecins de s'installer dans les déserts médicaux","L'aide active à mourir (Euthanasie / Suicide assisté)","La PMA pour toutes les femmes","La GPA (Gestation Pour Autrui) éthique et encadrée","L'inscription de l'IVG dans la Constitution","L'apprentissage du code informatique dès le primaire","La suppression de la plateforme Parcoursup","La revalorisation de la grille indiciaire des enseignants","L'interdiction des signes religieux ostensibles à l'université","La semaine de 4 jours à l'école primaire","La gratuité des fournitures scolaires pour tous","La sélection à l'entrée de l'Université (Master / Licence)","L'interdiction de l'écriture inclusive dans les textes officiels","Le financement public de l'enseignement privé sous contrat","Le remboursement des médecines douces par la Sécurité Sociale","L'encadrement des écrans pour les moins de 3 ans","L'inscription du droit au logement dans la Constitution","La création d'un statut de l'artiste-auteur protégé","L'accès libre aux musées nationaux pour les résidents européens","L'apprentissage obligatoire de deux langues vivantes dès le collège","Le droit au répit pour les aidants familiaux","La prévention du harcèlement scolaire avec exclusion des harceleurs","La légalisation de la prostitution","L'abolition complète de la prostitution (pénalisation des clients)","La gratuité des protections périodiques","Les congés paternité égaux aux congés maternité","La création d'une ordonnance de protection immédiate pour violences conjugales","L'enseignement de l'empathie à l'école maternelle et primaire","La généralisation des mutuelles d'entreprise","Les assises de la santé mentale","La médecine du travail obligatoire","Le droit à la déconnexion après les heures de travail",
+"Le financement de la restauration des monuments historiques","Le soutien à l'audiovisuel public français","L'interdiction des corridas","La création d'une armée européenne commune","La sortie de la France du commandement intégré de l'OTAN","L'augmentation du budget de la Défense à 2% puis 3% du PIB","L'élargissement de l'Union Européenne à de nouveaux pays","Le Frexit (sortie de la France de l'Union Européenne)","L'abandon de la monnaie unique Euro au profit du Franc","La suppression de la règle des 3% de déficit public européen","Le siège unique du Parlement européen à Strasbourg","Le développement de la Francophonie économique","La suspension des accords de libre-échange (ex: CETA, MERCOSUR)","Le maintien du réseau diplomatique français mondial","La coopération militaire renforcée avec l'Afrique","La création d'un corps européen de garde-côtes et garde-frontières","L'aide publique au développement portée à 0,7 % du RNB","Le statut de neutralité diplomatique pour la France","Le porte-avions de nouvelle génération (PANG)","Le droit de veto de la France au Conseil de Sécurité de l'ONU","La souveraineté numérique européenne face aux GAFAM","La taxe européenne sur les géants du numérique","Le passeport européen unique","La relocalisation des industries stratégiques (puces, médicaments)","L'embargo sur les ventes d'armes aux régimes autoritaires","L'Agence Européenne de la Cybersécurité","Les coopérations spatiales européennes (Ariane 6)","Le traité de non-prolifération nucléaire","La carte d'identité numérique sur smartphone (France Identité)","La souveraineté des données publiques hébergées sur un cloud souverain","Le vote par Internet aux élections nationales","L'encadrement éthique du développement des intelligences artificielles","Le droit à l'oubli numérique renforcé","La taxe sur le streaming vidéo et musical au profit de la création","L'interdiction des réseaux sociaux aux moins de 15 ans","La couverture intégrale du territoire en fibre optique et 5G","Le développement du Chèque Numérique pour les commerçants","L'open-data des décisions de justice","La modération obligatoire des plateformes sociales sous peine d'amendes","La régulation des cryptomonnaies","La lutte contre les « fake news » et la désinformation","La numérisation complète des démarches administratives","Les guichets physiques maintenus dans les zones rurales (France Services)","La taxe sur les robots remplaçant des emplois humains","La recherche publique sur le quantique","L'interdiction du ciblage publicitaire basé sur les données personnelles","L'indépendance de la CNIL renforcée","Le passeport vaccinal ou sanitaire sur application mobile","Les licences de logiciels libres privilégiées dans la commande publique","La vidéoprotection dans les transports en commun","L'encadrement des influenceurs sur les réseaux sociaux","La création d'une devise numérique de banque centrale (Euro numérique)","La fin de l'impression automatique des tickets de caisse",
+"Les repas végétariens quotidiens à la cantine","La chasse à courre","Le Tour de France cycliste","Les résidences secondaires taxées en zone tendue","La tarification des musées gratuits le premier dimanche du mois","Le foie gras artisanal","Le barbecue du dimanche","Le travail en open-space","Les trottinettes électriques en libre-service","Les jets privés","Les résidences fermées avec gardien (gated communities)","Le café en terrasse à 2,50 €","Le vouvoiement systématique au travail","Le vin bio","La téléréalité","Le football professionnel et ses transferts millionnaires","Les plateformes de livraison de repas à domicile (Deliveroo, UberEats)","Les feux d'artifice du 14 juillet","Les friches industrielles réhabilitées","Le bivouac sauvage en parc national","La langue française protegée contre les anglicismes","Les foires d'art contemporain","Les fast-foods près des établissements scolaires","Les piscines privées en période de sécheresse","Les cours de récréation non genrées","La musique rap subventionnée par le Centre National de la Musique","Les feux de cheminée individuels en région parisienne","Les animaux de compagnie en refuge","Le ramassage collaboratif de déchets (cleanwalk)","Le commerce équitable nord-sud","Les résidences séniors avec services","Les péages d'autoroute","Le chèque vacances","La presse écrite papier subventionnée","La fête de la musique du 21 juin","L'exposition universelle"
+];
 
-        // --- ÉTAT DU JEU ---
-        let currentMode = 'gauche';
-        let currentStep = 0;
-        let targetAngle = 0;
-        let currentPlayerIndex = 0;
-        let currentRound = 0;
-        let players = [];
-        let results = [];
-        let currentCardIndex = -1;
-        let leftRounds = [];
-        let currentMJIndex = 0;
-        let rightRound = null;
-        let rightChoices = [];
-        let selectedChoice = null;
-        let rightSubmissions = [];
-        const TOTAL_ROUNDS = 3;
+const POSITIONS=[
+{label:'100% GAUCHE',value:-100},{label:'75% GAUCHE',value:-75},{label:'50% GAUCHE',value:-50},{label:'25% GAUCHE',value:-25},{label:'NEUTRE',value:0},{label:'25% DROITE',value:25},{label:'50% DROITE',value:50},{label:'75% DROITE',value:75},{label:'100% DROITE',value:100}
+];
+let state={mode:'gauche',playerCount:4,round:0,mj:0,phase:'setup',card:'',cardIndex:-1,target:0,custom:false,playerTurn:0,answers:[],rightOptions:[],rightChoices:[],scores:[],wins:[],selected:null};
 
-        const POSITIONS = [
-            { label: "100% GAUCHE", angle: -90 },
-            { label: "50% GAUCHE", angle: -45 },
-            { label: "10% GAUCHE", angle: -15 },
-            { label: "NEUTRE", angle: 0 },
-            { label: "10% DROITE", angle: 15 },
-            { label: "50% DROITE", angle: 45 },
-            { label: "100% DROITE", angle: 90 }
-        ];
-
-        function switchGameMode(mode) {
-            currentMode = mode;
-            document.getElementById('mode-gauche-btn').className = mode === 'gauche' ? 'btn-mode active-gauche' : 'btn-mode';
-            document.getElementById('mode-droite-btn').className = mode === 'droite' ? 'btn-mode active-droite' : 'btn-mode';
-            document.getElementById('left-mj-setup').style.display = mode === 'gauche' ? 'block' : 'none';
-            document.getElementById('right-rules').style.display = mode === 'droite' ? 'block' : 'none';
-            document.getElementById('setup-description').innerText = mode === 'gauche'
-                ? "Tous les joueurs jouent en mode Gauche, chacun leur tour. Le MJ prépare les propositions et leurs orientations."
-                : "Tous les joueurs jouent en mode Droite, chacun leur tour. Le Boss donne l'orientation et arbitre les manches.";
-            resetGame();
-        }
-
-        function resetGame() {
-            currentStep = 0;
-            currentPlayerIndex = 0;
-            currentRound = 0;
-            players = [];
-            results = [];
-            leftRounds = [];
-            rightRound = null;
-            rightSubmissions = [];
-            selectedChoice = null;
-            document.getElementById('setup-panel').style.display = 'grid';
-            document.getElementById('main-action-btn').style.display = 'none';
-            document.getElementById('interactive-area').innerHTML = '';
-            document.getElementById('anonymous-status').style.display = 'none';
-            document.getElementById('score-summary').style.display = 'none';
-            document.getElementById('card-text').innerText = "Configurez la partie";
-            document.getElementById('card-num').innerText = "PRÉPARATION";
-            document.getElementById('phase-badge').innerText = "Configuration de la partie";
-            document.getElementById('round-val').innerText = '0';
-            document.getElementById('total-turns-val').innerText = '0';
-            setNeedle(0);
-            renderPlayerSetup();
-        }
-
-        function renderPlayerSetup() {
-            const n = Number(document.getElementById('player-count').value);
-            const list = document.getElementById('player-setup-list');
-            const old = [...list.querySelectorAll('.player-row')].map(row => row.querySelector('input').value);
-            list.innerHTML = '';
-            for (let i = 0; i < n; i++) {
-                const row = document.createElement('div');
-                row.className = 'player-row';
-                row.innerHTML = `<input value="${escapeHtml(old[i] || `Joueur ${i+1}`)}" aria-label="Nom du joueur">`;
-                list.appendChild(row);
-            }
-        }
-
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-        }
-
-        function startGame() {
-            players = [...document.querySelectorAll('.player-row')].map((row, i) => ({
-                name: row.querySelector('input').value.trim() || `Joueur ${i+1}`
-            }));
-            currentRound = 0;
-            currentPlayerIndex = 0;
-            currentMJIndex = 0;
-            results = [];
-            leftRounds = [];
-            document.getElementById('setup-panel').style.display = 'none';
-            document.getElementById('main-action-btn').style.display = 'inline-block';
-            document.getElementById('total-turns-val').innerText = players.length * TOTAL_ROUNDS;
-            startRound();
-        }
-
-        function startRound() {
-            if (currentRound >= TOTAL_ROUNDS) { finishGame(); return; }
-            currentPlayerIndex = 0;
-            rightSubmissions = [];
-            selectedChoice = null;
-            if (currentMode === 'gauche') {
-                currentMJIndex = currentRound % players.length;
-                currentStep = 1;
-                document.getElementById('card-text').innerText = `Le MJ ${players[currentMJIndex].name} doit préparer la proposition`;
-                document.getElementById('card-num').innerText = `MANCHE ${currentRound+1} • MJ : ${players[currentMJIndex].name}`;
-                setNeedle(0);
-                playMJTurn();
-            } else {
-                rightRound = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
-                document.getElementById('card-text').innerText = 'Orientation secrète donnée par le Boss';
-                document.getElementById('card-num').innerText = `MANCHE ${currentRound+1}`;
-                setNeedle(rightRound.angle);
-                currentStep = 1;
-                playRightTurn();
-            }
-        }
-
-        function playMJTurn() {
-            const mj = players[currentMJIndex];
-            document.getElementById('phase-badge').innerText = `MODE GAUCHE • ${mj.name} est MJ`;
-            document.getElementById('anonymous-status').style.display = 'block';
-            document.getElementById('anonymous-status').innerText = 'Le MJ prépare sa proposition. Les autres joueurs ne regardent pas.';
-            document.getElementById('interactive-area').innerHTML = `
-                <p style="font-size:.9rem;margin-bottom:8px;"><strong>${escapeHtml(mj.name)}</strong>, écris ta phrase personnalisée :</p>
-                <input id="mj-custom-phrase" type="text" placeholder="Ex : La semaine de 4 jours" style="width:min(600px,95%);padding:12px;border-radius:6px;border:1px solid var(--glass-border);background:#10182f;color:white;">
-                <p style="font-size:.85rem;margin:12px 0 6px;">Puis indique son orientation :</p>
-                <select id="mj-custom-angle" style="padding:10px;border-radius:6px;">${POSITIONS.map(p => `<option value="${p.angle}">${p.label}</option>`).join('')}</select>`;
-            document.getElementById('main-action-btn').innerText = 'Valider la proposition du MJ';
-            document.getElementById('main-action-btn').onclick = submitMJTurn;
-        }
-
-        function submitMJTurn() {
-            const phrase = document.getElementById('mj-custom-phrase').value.trim();
-            if (!phrase) { alert('Le MJ doit écrire une proposition.'); return; }
-            const angle = Number(document.getElementById('mj-custom-angle').value);
-            leftRounds[currentRound] = { phrase, angle, mjIndex: currentMJIndex };
-            document.getElementById('card-text').innerText = phrase;
-            currentPlayerIndex = 0;
-            playLeftTurn();
-        }
-
-        function nextPlayer() {
-            currentPlayerIndex++;
-            if (currentMode === 'gauche' && currentPlayerIndex === currentMJIndex) currentPlayerIndex++;
-            if (currentPlayerIndex >= players.length) {
-                if (currentMode === 'gauche') finishLeftRound();
-                else finishRightRound();
-            } else {
-                if (currentMode === 'gauche') playLeftTurn();
-                else playRightTurn();
-            }
-        }
-
-        function setNeedle(angle) {
-            const clamped = Math.max(-90, Math.min(90, Number(angle) || 0));
-            targetAngle = clamped;
-            const needle = document.getElementById('compass-needle');
-            if (needle) needle.style.transform = `translateX(-50%) rotate(${clamped}deg)`;
-        }
-
-        function playLeftTurn() {
-            const player = players[currentPlayerIndex];
-            const r = leftRounds[currentRound];
-            document.getElementById('round-val').innerText = `${currentRound+1} • joueur ${currentPlayerIndex+1}/${players.length}`;
-            document.getElementById('phase-badge').innerText = `MODE GAUCHE • ${player.name} joue seul`;
-            document.getElementById('anonymous-status').style.display = 'block';
-            document.getElementById('anonymous-status').innerText = `${player.name}, à toi. Le MJ et les autres joueurs ne regardent pas.`;
-            setNeedle(0);
-            document.getElementById('interactive-area').innerHTML = `
-                <p style="font-size:.9rem;margin-bottom:8px;">Quelle orientation donnes-tu à cette proposition ?</p>
-                <input id="position-slider" type="range" min="-90" max="90" value="0" step="1" style="width:min(520px,90%);accent-color:var(--elysee-gold);">
-                <p id="angle-readout" style="font-size:.78rem;color:#a0aec0;">Position : neutre</p>`;
-            const slider = document.getElementById('position-slider');
-            slider.oninput = function() { setNeedle(this.value); document.getElementById('angle-readout').innerText = `Position : ${describeAngle(Number(this.value))}`; };
-            document.getElementById('main-action-btn').innerText = 'Valider ma position';
-            document.getElementById('main-action-btn').onclick = submitLeftPlayer;
-        }
-
-        function submitLeftPlayer() {
-            const answer = Number(document.getElementById('position-slider').value);
-            results.push({ mode:'gauche', round:currentRound, playerIndex:currentPlayerIndex, answer, secret:leftRounds[currentRound].angle });
-            document.getElementById('interactive-area').innerHTML = `<p style="color:var(--elysee-gold);font-weight:700;">Réponse enregistrée anonymement.</p>`;
-            document.getElementById('main-action-btn').innerText = 'Joueur suivant';
-            document.getElementById('main-action-btn').onclick = nextPlayer;
-        }
-
-        function finishLeftRound() {
-            const roundResults = results.filter(r => r.mode === 'gauche' && r.round === currentRound);
-            const average = roundResults.reduce((s,r)=>s+r.answer,0) / roundResults.length;
-            const target = leftRounds[currentRound].angle;
-            const distance = Math.abs(average - target);
-            const score = distance <= 10 ? 3 : distance <= 30 ? 2 : distance <= 60 ? 1 : 0;
-            roundResults.forEach(r => r.roundScore = score);
-            setNeedle(average);
-            document.getElementById('phase-badge').innerText = `MODE GAUCHE • Moyenne : ${describeAngle(average)}`;
-            document.getElementById('card-text').innerText = leftRounds[currentRound].phrase;
-            document.getElementById('interactive-area').innerHTML = `<div class="final-card"><h3>Moyenne des joueurs</h3><div style="font-size:1.8rem;font-weight:800;">${average.toFixed(1)}°</div><p>Orientation du MJ : <strong>${describeAngle(target)}</strong></p><p>MJ : <strong>${escapeHtml(players[leftRounds[currentRound].mjIndex].name)}</strong></p><p style="margin-top:6px;">Écart : <strong>${distance.toFixed(1)}°</strong> • Manche : <strong>${score}/3</strong></p></div>`;
-            document.getElementById('main-action-btn').innerText = currentRound === TOTAL_ROUNDS-1 ? 'Voir le résultat final' : 'Manche suivante';
-            document.getElementById('main-action-btn').onclick = () => { currentRound++; startRound(); };
-        }
-
-        function playRightTurn() {
-            const player = players[currentPlayerIndex];
-            document.getElementById('round-val').innerText = `${currentRound+1} • joueur ${currentPlayerIndex+1}/${players.length}`;
-            document.getElementById('phase-badge').innerText = `MODE DROITE • ${player.name} joue seul`;
-            document.getElementById('anonymous-status').style.display = 'block';
-            document.getElementById('anonymous-status').innerText = `${player.name}, choisis ta phrase. Les autres attendent.`;
-            setNeedle(rightRound.angle);
-            rightChoices = shuffle([0,1,2,3,4]).map(i => CARDS[(currentCardIndexForRight() + i * 17 + currentPlayerIndex * 3) % CARDS.length]);
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="font-size:.9rem;margin-bottom:8px;">Le Boss impose : <strong>${rightRound.label}</strong>. Choisis une phrase parmi les suivantes.</p><div class="hand-container" id="hand-box"></div>`;
-            const box = document.getElementById('hand-box');
-            rightChoices.forEach((text, i) => {
-                const el = document.createElement('div');
-                el.className = 'hand-card';
-                el.innerText = text;
-                el.onclick = () => {
-                    selectedChoice = text;
-                    document.querySelectorAll('.hand-card').forEach(c => c.classList.remove('selected'));
-                    el.classList.add('selected');
-                };
-                box.appendChild(el);
-            });
-            document.getElementById('main-action-btn').innerText = 'Valider ma phrase';
-            document.getElementById('main-action-btn').onclick = submitRightPlayer;
-        }
-
-        function currentCardIndexForRight() {
-            return Math.floor(Math.random() * CARDS.length);
-        }
-
-        function submitRightPlayer() {
-            if (!selectedChoice) { alert('Choisis une phrase avant de valider.'); return; }
-            rightSubmissions.push({ anonymousId:`Joueur ${rightSubmissions.length+1}`, playerIndex:currentPlayerIndex, phrase:selectedChoice, winner:false });
-            selectedChoice = null;
-            document.getElementById('interactive-area').innerHTML = `<p style="color:var(--elysee-gold);font-weight:700;">Phrase enregistrée anonymement.</p>`;
-            document.getElementById('anonymous-status').innerText = 'Réponse enregistrée. Joueur suivant.';
-            document.getElementById('main-action-btn').innerText = currentPlayerIndex === players.length-1 ? 'Afficher les phrases au Boss' : 'Joueur suivant';
-            document.getElementById('main-action-btn').onclick = nextPlayer;
-        }
-
-        function finishRightRound() {
-            document.getElementById('phase-badge').innerText = 'MODE DROITE • LE BOSS DOIT CHOISIR';
-            document.getElementById('anonymous-status').innerText = 'Le Boss ne voit que les réponses anonymisées, jamais les noms.';
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="margin-bottom:10px;">Orientation imposée : <strong>${rightRound.label}</strong></p><div id="boss-submissions" class="hand-container"></div><p style="margin-top:10px;font-size:.8rem;color:#a0aec0;">Le Boss clique sur le participant qui gagne la manche.</p>`;
-            const box = document.getElementById('boss-submissions');
-            rightSubmissions.forEach((sub, i) => {
-                const el = document.createElement('div');
-                el.className = 'hand-card';
-                el.innerHTML = `<strong>${sub.anonymousId}</strong><br><span>${escapeHtml(sub.phrase)}</span>`;
-                el.onclick = () => bossSelectWinner(i);
-                box.appendChild(el);
-            });
-            document.getElementById('main-action-btn').style.display = 'none';
-        }
-
-        function bossSelectWinner(index) {
-            rightSubmissions.forEach(s => s.winner = false);
-            rightSubmissions[index].winner = true;
-            results.push(...rightSubmissions.map(s => ({ mode:'droite', round:currentRound, playerIndex:s.playerIndex, score:s.winner ? 3 : 0, phrase:s.phrase })));
-            document.getElementById('phase-badge').innerText = `${rightSubmissions[index].anonymousId} gagne la manche`;
-            document.getElementById('interactive-area').innerHTML = `<div class="final-card"><h3>Décision du Boss enregistrée</h3><p>${rightSubmissions[index].anonymousId} remporte la manche.</p></div>`;
-            document.getElementById('main-action-btn').style.display = 'inline-block';
-            document.getElementById('main-action-btn').innerText = currentRound === TOTAL_ROUNDS-1 ? 'Voir le résultat final' : 'Manche suivante';
-            document.getElementById('main-action-btn').onclick = () => { currentRound++; startRound(); };
-        }
-
-        function describeAngle(a) {
-            if (a <= -68) return '100% gauche';
-            if (a <= -30) return '50% gauche';
-            if (a < -5) return '10% gauche';
-            if (a <= 5) return 'neutre';
-            if (a < 30) return '10% droite';
-            if (a < 68) return '50% droite';
-            return '100% droite';
-        }
-
-        function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
-
-        function finishGame() {
-            currentStep = 4;
-            document.getElementById('main-action-btn').style.display = 'none';
-            document.getElementById('phase-badge').innerText = 'FIN DE PARTIE';
-            const area = document.getElementById('interactive-area');
-            if (currentMode === 'gauche') {
-                const scores = results.filter(r=>r.mode==='gauche').map(r=>r.roundScore).filter(v=>v !== undefined);
-                const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
-                area.innerHTML = `<div class="final-card"><h3 style="color:var(--gauche-red)">Mode de Gauche</h3><div style="font-size:2rem;font-weight:800">${avg.toFixed(2)} / 3</div><p>Moyenne des manches obtenues grâce à la moyenne des orientations des joueurs.</p><button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button></div>`;
-                document.getElementById('score-summary').style.display='block';
-                document.getElementById('score-summary').innerText=`Résultat moyen du mode Gauche : ${avg.toFixed(2)} / 3`;
-            } else {
-                const scores = results.filter(r=>r.mode==='droite').map(r=>r.score);
-                const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
-                area.innerHTML = `<div class="final-card"><h3 style="color:#457b9d">Mode de Droite</h3><div style="font-size:2rem;font-weight:800">${avg.toFixed(2)} / 3</div><p>Le Boss a choisi anonymement les gagnants des manches.</p><button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button></div>`;
-                document.getElementById('score-summary').style.display='block';
-                document.getElementById('score-summary').innerText=`Résultat moyen du mode Droite : ${avg.toFixed(2)} / 3`;
-            }
-        }
-
-        // Initialisation
-        renderPlayerSetup();
-
-    </script>
+const $=id=>document.getElementById(id);
+function init(){
+ for(let n=2;n<=8;n++){let b=document.createElement('button');b.className='count-btn'+(n===4?' active':'');b.textContent=n;b.onclick=()=>{state.playerCount=n;document.querySelectorAll('.count-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')};$('countButtons').appendChild(b)}
+}
+function selectMode(mode){state.mode=mode;$('modeLeft').classList.toggle('active',mode==='gauche');$('modeRight').classList.toggle('active',mode==='droite')}
+function startGame(){
+ state.round=0;state.mj=0;state.scores=Array(state.playerCount).fill(0);state.wins=Array(state.playerCount).fill(0);state.answers=[];state.rightChoices=[];
+ $('setup').classList.add('hidden');$('end').classList.add('hidden');$('game').classList.remove('hidden');nextRound();
+}
+function nextRound(){
+ if(state.round>=10){finishGame();return}
+ state.round++;state.mj=(state.round-1)%state.playerCount;state.answers=[];state.rightChoices=[];state.selected=null;state.playerTurn=0;
+ state.cardIndex=Math.floor(Math.random()*CARDS.length);state.card=CARDS[state.cardIndex];state.custom=false;
+ $('roundBadge').textContent=`Manche ${state.round} / 10`;$('modeBadge').textContent=state.mode==='gauche'?'Mode Gauche':'Mode Droite';
+ renderPlayers();
+ if(state.mode==='gauche') setupLeftMJ(); else setupRightBoss();
+}
+function renderPlayers(){
+ $('playersBar').innerHTML=Array.from({length:state.playerCount},(_,i)=>`<span class="player-pill ${i===state.mj?'current':''}">${i===state.mj?'🎙️ ':''}Joueur ${i+1}${i===state.mj?' · MJ':''}</span>`).join('');
+}
+function setupLeftMJ(){
+ $('phase').innerHTML=`<b>Joueur ${state.mj+1}, tu es le MJ pour cette manche.</b><br>Les autres joueurs ne doivent pas voir tes choix.`;
+ $('cardText').textContent=state.card;$('cardLabel').textContent='CARTE PROPOSÉE';
+ $('gameContent').innerHTML=`<div class="secret-box"><h3>Choisis secrètement la proposition</h3><p class="muted" style="margin:7px 0 12px">Les autres joueurs ne sauront jamais si tu as gardé la carte ou créé une phrase personnalisée.</p><div class="choice-row"><button id="useCard" class="choice choice-small selected" onclick="chooseSource(false)"><b>🎴 Utiliser la carte proposée</b><br><span class="muted">« ${escapeHtml(state.card)} »</span></button><button id="useCustom" class="choice choice-small" onclick="chooseSource(true)"><b>✍️ Personnaliser la phrase</b><br><span class="muted">Écris ta propre proposition.</span></button></div><div id="customArea" class="hidden" style="margin-top:10px"><textarea id="customText" class="textarea" maxlength="220" placeholder="Écris ici la proposition personnalisée..."></textarea></div></div><div class="secret-box"><h3>Choisis secrètement l'orientation</h3>${hemiHTML()}<div class="slider-box"><div class="value" id="sliderValue">NEUTRE</div><input id="positionSlider" class="slider" type="range" min="-100" max="100" value="0" step="1" oninput="updateSlider(this.value)"><div class="ticks"><span>100% GAUCHE</span><span>NEUTRE</span><span>100% DROITE</span></div></div></div>`;
+ state.phase='leftMJ';$('actionBtn').textContent='Valider le choix du MJ';$('actionBtn').disabled=false;state.selected=0;updateSlider(0);
+}
+function chooseSource(custom){state.custom=custom;$('useCard').classList.toggle('selected',!custom);$('useCustom').classList.toggle('selected',custom);$('customArea').classList.toggle('hidden',!custom);if(!custom){state.card=CARDS[state.cardIndex];$('cardText').textContent=state.card;$('cardLabel').textContent='PROPOSITION'}}
+function positionButtons(name){return `<div class="choice-row">${POSITIONS.map(p=>`<button class="btn choice-small" onclick="selectPosition(${p.value},this)" data-name="${name}" data-value="${p.value}">${p.label}</button>`).join('')}</div><div id="positionSelected" class="muted center">Aucune orientation sélectionnée</div>`}
+function selectPosition(v,el){state.selected=v;document.querySelectorAll(`[data-name="${el.dataset.name}"]`).forEach(b=>b.classList.remove('selected'));el.classList.add('selected');$('positionSelected').textContent=`Orientation choisie : ${positionLabel(v)}`}
+function validateLeftMJ(){
+ if(state.selected===null){alert('Le MJ doit choisir une orientation.');return}
+ if(state.custom){let t=$('customText').value.trim();if(!t){alert('Écris une phrase personnalisée ou choisis la carte proposée.');return}state.card=t;$('cardText').textContent='Proposition personnalisée';}
+ state.target=state.selected;state.answers=[];state.playerTurn=0;renderPlayersTurn();
+}
+function renderPlayersTurn(){
+ if(state.playerTurn>=state.playerCount-1){showLeftResult();return}
+ let actual=state.playerTurn>=state.mj?state.playerTurn+1:state.playerTurn;
+ // Mapping skips MJ while keeping player numbers in order
+ let others=[];for(let i=0;i<state.playerCount;i++)if(i!==state.mj)others.push(i);actual=others[state.playerTurn];
+ renderPlayers();$('playersBar').querySelectorAll('.player-pill').forEach((p,i)=>{p.classList.toggle('current',i===actual)});
+ $('phase').innerHTML=`<b>Tour de Joueur ${actual+1}</b><br>Le joueur MJ et les réponses précédentes ne sont pas affichés.`;
+ $('cardText').textContent=state.card;$('cardLabel').textContent='PROPOSITION';
+ $('gameContent').innerHTML=`<div class="notice center">Joueur ${actual+1}, place la barre où tu penses que se situe la proposition.</div>${hemiHTML()}<div class="slider-box"><div class="value" id="sliderValue">NEUTRE</div><input id="positionSlider" class="slider" type="range" min="-100" max="100" value="0" step="1" oninput="updateSlider(this.value)"><div class="ticks"><span>100% GAUCHE</span><span>NEUTRE</span><span>100% DROITE</span></div></div>`;
+ $('actionBtn').textContent='Valider ma position';$('actionBtn').disabled=false;state.selected=0;updateSlider(0);state.phase='leftPlayers';
+}
+function hemiHTML(){return `<div class="hemi-wrap"><div class="labels"><span>GAUCHE</span><span>DROITE</span></div><div class="compass-box"><div id="compassDial" class="compass-dial"></div><div class="baseline"></div><div id="compassNeedle" class="compass-needle"></div><div class="compass-center"></div></div></div>`}
+function updateSlider(v){v=Number(v);state.selected=v;$('sliderValue').textContent=positionLabel(v);let deg=v*0.9;let n=$('compassNeedle');if(n)n.style.transform=`translateX(-50%) rotate(${deg}deg)`}
+function validateLeftPlayer(){let others=[];for(let i=0;i<state.playerCount;i++)if(i!==state.mj)others.push(i);let p=others[state.playerTurn];state.answers.push({player:p,value:Number(state.selected)});state.playerTurn++;renderPlayersTurn()}
+function showLeftResult(){
+ let avg=state.answers.reduce((s,a)=>s+a.value,0)/state.answers.length;let diff=Math.abs(avg-state.target);let pts=diff<=10?3:diff<=25?2:diff<=45?1:0;state.scores[state.mj]+=pts;
+ $('phase').innerHTML=`<b>Résultat de la manche</b>`;$('cardText').textContent=state.card;
+ $('gameContent').innerHTML=`${hemiHTML()}<div class="notice center"><b>Moyenne des joueurs : ${formatValue(avg)}</b><br>Orientation du MJ : <b>${positionLabel(state.target)}</b><br>Écart : ${Math.round(diff)} points<br><span class="success">+${pts} point${pts>1?'s':''} au MJ</span></div><p class="muted center">Les joueurs ne voient pas qui a donné quelle réponse.</p>`;
+ drawNeedle(avg);$('actionBtn').textContent=state.round<10?'Manche suivante':'Voir les résultats finaux';state.phase='leftResult';
+}
+function drawNeedle(v){setTimeout(()=>{let n=$('compassNeedle');if(n)n.style.transform=`translateX(-50%) rotate(${Number(v)*.9}deg)`},20)}
+function setupRightBoss(){
+ state.target=POSITIONS[Math.floor(Math.random()*POSITIONS.length)].value;
+ $('phase').innerHTML=`<b>Joueur ${state.mj+1}, tu es le Boss.</b><br>Choisis secrètement l'orientation imposée.`;
+ $('cardLabel').textContent='ORIENTATION';$('cardText').textContent='Le Boss prépare la manche';
+ $('gameContent').innerHTML=`<div class="secret-box"><h3>Orientation du Boss</h3>${hemiHTML()}<div class="slider-box"><div class="value" id="sliderValue">NEUTRE</div><input id="positionSlider" class="slider" type="range" min="-100" max="100" value="0" step="1" oninput="updateSlider(this.value)"><div class="ticks"><span>100% GAUCHE</span><span>NEUTRE</span><span>100% DROITE</span></div></div></div>`;
+ $('actionBtn').textContent='Valider et passer aux joueurs';state.phase='rightBoss';state.selected=state.target;updateSlider(state.target);
+}
+function validateRightBoss(){if(state.selected===null){alert('Le Boss doit choisir une orientation.');return}state.target=state.selected;state.playerTurn=0;renderRightPlayer()}
+function renderRightPlayer(){
+ let others=[];for(let i=0;i<state.playerCount;i++)if(i!==state.mj)others.push(i);if(state.playerTurn>=others.length){showBossChoice();return}
+ let p=others[state.playerTurn];renderPlayers();$('playersBar').querySelectorAll('.player-pill').forEach((x,i)=>x.classList.toggle('current',i===p));
+ $('phase').innerHTML=`<b>Tour de Joueur ${p+1}</b><br>Choisis une phrase sans révéler ton choix au Boss pour l'instant.`;$('cardLabel').textContent='ORIENTATION DU BOSS';$('cardText').textContent=positionLabel(state.target);
+ let opts=[];while(opts.length<3){let c=CARDS[Math.floor(Math.random()*CARDS.length)];if(!opts.includes(c))opts.push(c)}state.rightOptions=opts;state.selected=null;
+ $('gameContent').innerHTML=`<div class="notice center">Le Boss a imposé une orientation. Choisis la phrase qui correspond le mieux.</div><div class="submissions">${opts.map((o,i)=>`<button class="choice" data-opt="${i}" onclick="chooseRight(${i})"><b>Phrase ${i+1}</b><br>${escapeHtml(o)}</button>`).join('')}</div>`;
+ $('actionBtn').textContent='Valider ma phrase';state.phase='rightPlayer';
+}
+function chooseRight(i){state.selected=i;document.querySelectorAll('[data-opt]').forEach(x=>x.classList.remove('selected'));document.querySelector(`[data-opt="${i}"]`).classList.add('selected')}
+function validateRightPlayer(){if(state.selected===null){alert('Choisis une phrase.');return}let others=[];for(let i=0;i<state.playerCount;i++)if(i!==state.mj)others.push(i);let p=others[state.playerTurn];state.rightChoices.push({player:p,text:state.rightOptions[state.selected]});state.playerTurn++;renderRightPlayer()}
+function showBossChoice(){
+ $('phase').innerHTML=`<b>Le Boss choisit le gagnant</b><br>Les propositions sont anonymes.`;$('cardLabel').textContent='PROPOSITIONS ANONYMES';$('cardText').textContent=positionLabel(state.target);
+ $('gameContent').innerHTML=`<div class="submissions">${state.rightChoices.map((c,i)=>`<div class="submission" id="sub${i}"><b>Réponse ${i+1}</b><p style="margin-top:8px">${escapeHtml(c.text)}</p><button class="btn" onclick="selectWinner(${i})">Choisir cette réponse</button></div>`).join('')}</div><div id="winnerNotice" class="notice center">Le Boss doit sélectionner une réponse.</div>`;
+ $('actionBtn').textContent='Valider le gagnant';state.phase='rightBossChoice';state.selected=null;
+}
+function selectWinner(i){state.selected=i;document.querySelectorAll('.submission').forEach(x=>x.classList.remove('winner'));$('sub'+i).classList.add('winner');$('winnerNotice').textContent='Réponse sélectionnée. Le Boss peut valider.'}
+function validateWinner(){if(state.selected===null){alert('Le Boss doit choisir un gagnant.');return}let winner=state.rightChoices[state.selected].player;state.wins[winner]++;state.scores[winner]++;$('phase').innerHTML=`<b>Gagnant de la manche</b>`;$('gameContent').innerHTML=`<div class="notice center"><span class="success">La réponse sélectionnée gagne la manche.</span><br>Identité du joueur : cachée pendant la décision.</div>`;$('actionBtn').textContent=state.round<10?'Manche suivante':'Voir les résultats finaux';state.phase='rightResult'}
+function mainAction(){
+ if(state.phase==='leftMJ')validateLeftMJ();else if(state.phase==='leftPlayers')validateLeftPlayer();else if(state.phase==='leftResult'||state.phase==='rightResult'){nextRound()}else if(state.phase==='rightBoss')validateRightBoss();else if(state.phase==='rightPlayer')validateRightPlayer();else if(state.phase==='rightBossChoice')validateWinner();
+}
+function finishGame(){
+ $('game').classList.add('hidden');$('end').classList.remove('hidden');let avg=state.scores.reduce((a,b)=>a+b,0)/state.playerCount;let rows=state.scores.map((s,i)=>`<tr><td>Joueur ${i+1}</td><td>${s}</td><td>${state.wins[i]}</td></tr>`).join('');
+ $('end').innerHTML=`<div class="center"><h2>🏁 Partie terminée</h2><p class="muted" style="margin-top:8px">10 manches jouées.</p></div><div class="notice"><b>Mode :</b> ${state.mode==='gauche'?'Gauche':'Droite'}<br><b>Nombre de joueurs :</b> ${state.playerCount}<br><b>Moyenne générale des points :</b> ${avg.toFixed(2)}</div><table class="score-table"><thead><tr><th>Joueur</th><th>Points</th><th>Victoires</th></tr></thead><tbody>${rows}</tbody></table><div class="center" style="margin-top:18px"><button class="btn-main" onclick="location.reload()">Nouvelle partie</button></div>`;
+}
+function positionLabel(v){v=Number(v);let closest=POSITIONS.reduce((a,b)=>Math.abs(b.value-v)<Math.abs(a.value-v)?b:a);if(Math.abs(v)<13)return 'NEUTRE';return v<0?`${Math.round(Math.abs(v))}% GAUCHE`:`${Math.round(v)}% DROITE`}
+function formatValue(v){if(Math.abs(v)<0.5)return 'NEUTRE';return v<0?`${Math.abs(v).toFixed(1)}% GAUCHE`:`${v.toFixed(1)}% DROITE`}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+init();
+</script>
 </body>
 </html>
