@@ -1,0 +1,12 @@
+{
+  "name": "gauche-droite-server",
+  "version": "1.0.0",
+  "description": "Serveur WebSocket pour le jeu Gauche ou Droite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
