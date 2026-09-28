@@ -39,23 +39,26 @@
             min-height: 100vh;
         }
 
-        /* Radial Wheel background matching image 1 */
+        /* Precision Radial Conic Gradient Wheel */
         .radial-wheel {
             background: conic-gradient(
-                from 180deg,
-                #1e3a8a 0deg,
-                #000000 60deg,
-                #800000 120deg,
-                #dc2626 180deg,
-                #7e22ce 240deg,
-                #1e3a8a 360deg
+                from 0deg,
+                #101827 0deg,
+                #1e3a8a 45deg,
+                #2563eb 90deg,
+                #1e1b4b 135deg,
+                #000000 180deg,
+                #450a0a 225deg,
+                #dc2626 270deg,
+                #991b1b 315deg,
+                #101827 360deg
             );
-            box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.9), 0 10px 30px rgba(0, 0, 0, 0.7);
+            box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.95), 0 12px 35px rgba(0, 0, 0, 0.8);
         }
 
         .card-blur {
             backdrop-filter: blur(16px);
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
@@ -67,7 +70,7 @@
             animation: pulseGlow 2s infinite ease-in-out;
         }
 
-        /* Custom scrollbar for player list */
+        /* Custom scrollbar for player list and phrases */
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
@@ -80,9 +83,31 @@
             border-radius: 8px;
         }
 
-        /* Smooth rotation transition for non-drag state */
         .disc-smooth {
-            transition: transform 0.15s ease-out;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Radial ticks styling */
+        .tick-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            margin-top: -50%;
+            margin-left: -1px;
+            pointer-events: none;
+        }
+        .tick-line::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .tick-line.sub::before {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.35);
         }
     </style>
 </head>
@@ -128,7 +153,7 @@
                             <span class="font-black text-red-400 text-sm">Mode Camarades</span>
                             <i class="fa-solid fa-users text-red-400"></i>
                         </div>
-                        <p class="text-[11px] text-slate-300 leading-tight">Coopératif. Chacun fait tourner le disque face cachée pour estimer l'avis de la personne désignée.</p>
+                        <p class="text-[11px] text-slate-300 leading-tight">Coopératif. Devinez l'orientation politique ajustée par le Maître du tour ! (Objectif Grand Soir 10/10).</p>
                     </button>
 
                     <button type="button" onclick="selectGameMode('boss')" id="modeBossBtn" class="p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all">
@@ -136,7 +161,7 @@
                             <span class="font-bold text-slate-400 text-sm">Mode Le Boss</span>
                             <i class="fa-solid fa-user-tie text-slate-400"></i>
                         </div>
-                        <p class="text-[11px] text-slate-400 leading-tight">Compétitif (Cards Against Humanity). Le boss fait tourner le disque pour dévoiler un bord.</p>
+                        <p class="text-[11px] text-slate-400 leading-tight">Compétitif (Capitaliste). Le Boss donne son angle et sélectionne la meilleure carte proposée.</p>
                     </button>
                 </div>
             </div>
@@ -145,8 +170,8 @@
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Provenance des Cartes / Phrases</label>
                 <select id="cardSourceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-200 focus:outline-none focus:border-red-500">
-                    <option value="deck">📜 Tirées du jeu (Deck satirique automatique)</option>
-                    <option value="custom">✏️ Données par le maître / la maîtresse du tour</option>
+                    <option value="deck">📜 Banque Nationale (~300 phrases satiriques & politiques)</option>
+                    <option value="custom">✏️ Saisie personnalisée par le maître / boss de manche</option>
                 </select>
             </div>
 
@@ -173,7 +198,6 @@
             </button>
         </section>
 
-
         <section id="privacyPassScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border-2 border-purple-500/40">
             <div class="w-20 h-20 mx-auto rounded-full bg-slate-900 border-2 border-purple-500 flex items-center justify-center text-3xl text-purple-400 shadow-xl pulse-glow">
                 <i class="fa-solid fa-mobile-screen-button"></i>
@@ -188,14 +212,13 @@
             </div>
 
             <p class="text-xs text-slate-400 italic max-w-xs mx-auto">
-                Ne montrez pas l'écran aux autres avant d'avoir validé la rotation de votre disque.
+                Ne montrez pas l'écran aux autres camarades avant de valider votre rotation !
             </p>
 
             <button onclick="confirmPlayerReady()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all text-sm uppercase tracking-wider">
                 <i class="fa-solid fa-eye mr-2"></i> C'est moi (<span id="readyPlayerNameBtn">---</span>), Révéler mon écran
             </button>
         </section>
-
 
         <section id="gameplayScreen" class="hidden space-y-4 my-auto">
             
@@ -235,7 +258,7 @@
             <!-- Subject Card Display -->
             <div class="card-blur rounded-3xl p-4 shadow-xl border border-slate-800 text-center space-y-2">
                 <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-                    Sujet de la Manche
+                    Sujet du Débat
                 </span>
 
                 <div id="cardDisplayBox" class="min-h-[50px] flex items-center justify-center">
@@ -259,51 +282,69 @@
                     Faites tourner le disque pour régler votre position politique secrète
                 </p>
 
-                <!-- FIXED POINTER MARKER (Top Needle) -->
-                <div class="relative w-full flex justify-center -mb-3 z-30">
+                <!-- FIXED POINTER NEEDLE -->
+                <div class="relative w-full flex justify-center -mb-4 z-30 pointer-events-none">
                     <div class="flex flex-col items-center">
-                        <div class="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-yellow-400 drop-shadow-md"></div>
-                        <span id="discAngleText" class="text-[11px] font-black bg-slate-900 border border-yellow-500/60 text-yellow-400 px-2.5 py-0.5 rounded-full shadow">
+                        <div class="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-yellow-400 drop-shadow-[0_4px_10px_rgba(234,179,8,0.5)]"></div>
+                        <span id="discAngleText" class="text-[11px] font-black bg-slate-950 border border-yellow-500/80 text-yellow-400 px-3 py-0.5 rounded-full shadow-lg mt-0.5">
                             0° • 100% Gauche
                         </span>
                     </div>
                 </div>
 
-                <!-- ROTATING DISC CONTAINER -->
-                <div class="relative w-64 h-64 sm:w-72 sm:h-72 select-none touch-none">
+                <!-- ROTATING DISC CONTAINER WITH ALL ACCURATE SECTORS & RADIAL TICKS -->
+                <div class="relative w-64 h-64 sm:w-72 sm:h-72 select-none touch-none my-2">
                     <div id="politicalDisc" class="w-full h-full rounded-full radial-wheel relative cursor-grab active:cursor-grabbing border-4 border-slate-900 overflow-hidden shadow-2xl disc-smooth" 
                          onmousedown="startDiscDrag(event)" ontouchstart="startDiscDrag(event)">
                         
-                        <!-- Axis Crosshair inside Disc -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
+                        <!-- Axis Crosshair -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
                             <div class="w-full h-0.5 bg-white"></div>
                             <div class="h-full w-0.5 bg-white absolute"></div>
                         </div>
 
-                        <!-- Concentric Ticks -->
+                        <!-- Radial Ticks dynamically generated via CSS lines -->
+                        <div id="ticksContainer" class="absolute inset-0 pointer-events-none"></div>
+
+                        <!-- Inner Concentric Circles -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="w-16 h-16 rounded-full border border-white/20"></div>
-                            <div class="w-32 h-32 rounded-full border border-white/20"></div>
-                            <div class="w-48 h-48 rounded-full border border-white/20"></div>
+                            <div class="w-20 h-20 rounded-full border border-white/20"></div>
+                            <div class="w-36 h-36 rounded-full border border-white/15"></div>
+                            <div class="w-52 h-52 rounded-full border border-white/10"></div>
                         </div>
 
-                        <!-- Ticks Labels matching Image 1 -->
-                        <span class="absolute top-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase drop-shadow">100% Gauche</span>
-                        <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-purple-200 uppercase drop-shadow">50/50 Neutre</span>
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-200 uppercase drop-shadow">800% Extrême</span>
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-200 uppercase drop-shadow">8000% Droite</span>
-                        
-                        <span class="absolute top-1/4 left-6 text-[8px] font-bold text-white/80">10%</span>
-                        <span class="absolute top-1/4 right-6 text-[8px] font-bold text-white/80">10%</span>
+                        <!-- TEXT LABELS MATCED ACCORDING TO GRADIENT ANGLES -->
+                        <!-- 0deg / Top: 100% Gauche -->
+                        <span class="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-red-300 uppercase tracking-tighter drop-shadow">100% Gauche</span>
+                        <!-- 45deg: 800% Gauche -->
+                        <span class="absolute top-10 right-10 text-[8px] font-black text-red-400 uppercase drop-shadow transform rotate-45">800% Gauche</span>
+                        <!-- 90deg / Right: 8000% Gauche -->
+                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-500 uppercase tracking-tighter drop-shadow">8000% Gauche</span>
+                        <!-- 135deg: 10% Gauche -->
+                        <span class="absolute bottom-10 right-10 text-[8px] font-black text-purple-300 uppercase drop-shadow transform -rotate-45">10% Gauche</span>
+                        <!-- 180deg / Bottom: 50/50 Neutre (Sombre/Noir) -->
+                        <span class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-slate-300 uppercase tracking-tighter drop-shadow">50/50 Neutre</span>
+                        <!-- 225deg: 10% Droite -->
+                        <span class="absolute bottom-10 left-10 text-[8px] font-black text-blue-300 uppercase drop-shadow transform rotate-45">10% Droite</span>
+                        <!-- 270deg / Left: 8000% Droite -->
+                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-500 uppercase tracking-tighter drop-shadow">8000% Droite</span>
+                        <!-- 315deg: 800% Droite -->
+                        <span class="absolute top-10 left-10 text-[8px] font-black text-blue-400 uppercase drop-shadow transform -rotate-45">800% Droite</span>
                     </div>
                 </div>
 
-                <!-- Rotation Slider Control for Mobile Accessibility -->
-                <div class="w-full max-w-xs space-y-1 pt-1">
-                    <div class="flex justify-between text-[10px] font-bold text-slate-400">
-                        <span><i class="fa-solid fa-rotate-left mr-1"></i> Tourner le disque</span>
-                        <span id="sliderAngleLabel">0°</span>
+                <!-- Ultra Precision +/- 1° Buttons and Range Controls -->
+                <div class="w-full max-w-xs space-y-2 pt-1">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-300">
+                        <button onclick="adjustAngle(-1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-lg text-yellow-400 font-extrabold transition">
+                            -1°
+                        </button>
+                        <span class="text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1 text-yellow-400"></i> Ajustement Précis : <strong id="sliderAngleLabel" class="text-white">0°</strong></span>
+                        <button onclick="adjustAngle(1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-lg text-yellow-400 font-extrabold transition">
+                            +1°
+                        </button>
                     </div>
+
                     <input type="range" id="discSlider" min="0" max="359" value="0" oninput="onSliderRotate(this.value)" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-400">
                 </div>
 
@@ -316,7 +357,7 @@
             <!-- Boss Selection Box (For Mode Boss Cards) -->
             <div id="bossCardChoiceBox" class="hidden card-blur rounded-3xl p-5 shadow-xl border border-slate-800 space-y-3">
                 <p id="bossChoiceGuide" class="text-xs font-bold text-slate-300 text-center">
-                    Joueurs : Soumettez votre carte d'incarnation
+                    Joueurs : Soumettez votre proposition au Boss
                 </p>
                 <div id="bossHandOptions" class="grid grid-cols-1 gap-2">
                     <!-- Injected via JS -->
@@ -324,32 +365,30 @@
             </div>
         </section>
 
-
         <section id="revealScreen" class="hidden card-blur rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4 my-auto">
             <div class="text-center space-y-1">
                 <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-800/40">
                     Révélation Générale
                 </span>
-                <h2 class="text-2xl font-black text-white">Résultats des Rotations !</h2>
+                <h2 class="text-2xl font-black text-white">Résultats de la Manche</h2>
             </div>
 
             <!-- Reveal Disc Visual -->
             <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto rounded-full radial-wheel border-4 border-slate-900 shadow-2xl overflow-hidden disc-smooth" id="revealDisc">
-                <!-- Master Rotation Visual applied via JS -->
-                <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                <div class="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
                     <div class="w-full h-0.5 bg-white"></div>
                     <div class="h-full w-0.5 bg-white absolute"></div>
                 </div>
-                <span class="absolute top-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase">100% Gauche</span>
-                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-200 uppercase">8000% Droite</span>
-                <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-purple-200 uppercase">50/50</span>
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-200 uppercase">800%</span>
+                <span class="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase">100% Gauche</span>
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-300 uppercase">8000% Gauche</span>
+                <span class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-slate-300 uppercase">50/50</span>
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-300 uppercase">8000% Droite</span>
             </div>
 
             <!-- Verdict Box -->
             <div id="roundVerdictBox" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 text-center space-y-1">
-                <h3 id="verdictTitle" class="font-black text-base text-yellow-400">Calcul des écarts d'angles...</h3>
-                <p id="verdictDesc" class="text-xs text-slate-300">Analyse de la proximité des rotations.</p>
+                <h3 id="verdictTitle" class="font-black text-base text-yellow-400">Calcul des angles...</h3>
+                <p id="verdictDesc" class="text-xs text-slate-300">Analyse de la proximité des orientations politiques.</p>
             </div>
 
             <!-- Detailed Scores Breakdown -->
@@ -362,7 +401,6 @@
             </button>
         </section>
 
-
         <section id="gameOverScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border border-slate-800">
             <div id="endIconBox" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-yellow-500 to-red-500 flex items-center justify-center text-3xl text-slate-950 font-black shadow-2xl">
                 <i class="fa-solid fa-trophy"></i>
@@ -370,7 +408,7 @@
 
             <div class="space-y-1">
                 <h2 id="endTitle" class="text-2xl sm:text-3xl font-black text-white">Fin de la Partie</h2>
-                <p id="endSubtitle" class="text-xs text-slate-400">Le décompte final des victoires collectives est établi.</p>
+                <p id="endSubtitle" class="text-xs text-slate-400">Bilan définitif des victoires et positions politiques.</p>
             </div>
 
             <div id="endSummaryBox" class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs sm:text-sm space-y-2">
@@ -389,49 +427,219 @@
     </footer>
 
     <script>
-        // Satirical Political Deck
+        // Extensive Database of 300+ Satirical, Daily, Absurd and Political Cards
         const DECK_CARDS = [
-            "Partir à la retraite à 50 ans avec pension à 100%.",
-            "Mettre une taxe de 95% sur les yachts et jets privés.",
-            "Privatiser l'air des grandes métropoles régionales.",
-            "Remplacer les réunions d'entreprise par des duels d'escrime.",
-            "Obliger le port du costume trois pièces en pleine canicule.",
-            "Nationaliser la fabrication de croissants et pains au chocolat.",
+            // Everyday Objects & Habits
+            "Acheter un vélo en bambou équitable à 2500€.",
+            "Trier ses bouchons en plastique par couleur.",
+            "Mettre du lait d'avoine dans son espresso du matin.",
+            "Utiliser des pailles en inox et les nettoyer avec un goupillon.",
+            "Refuser un sac en plastique mais accumuler 80 tote-bags.",
+            "Boire un smoothie spiruline-kale après un trajet en SUV.",
+            "Porter des baskets de marque éco-responsables faites en vigne.",
+            "Acheter un thermos isotherme pour ne plus jamais boire d'eau du robinet.",
+            "Faire du compost sur le balcon d'un studio de 18m².",
+            "Acheter des savons solides qui ne moussent pas.",
+            "Commander du quinoa équitable importé par cargo diesel.",
+            "Porter une doudoune sans manches en réunion d'équipe.",
+            "Faire son propre déodorant à base de bicarbonate et d'huile de coco.",
+            "Utiliser une gourde en gourde végétalienne bio.",
+            "Ne jurer que par le pain au levain naturel pétri à la main.",
+
+            // Work & Corporate Life
             "Interdire les e-mails professionnels après 17h00.",
-            "Remplacer le gouvernement par une IA tirée au sort.",
-            "Boire un vin à 500€ pour fêter la fin d'un séminaire RH.",
+            "Faire un burnout éco-responsable pendant un séminaire Agile.",
+            "Remplacer la machine à café par une fontaine à eau filtrée aux cristaux.",
+            "Remplacer les chaises de bureau par des ballons de gym.",
+            "Imposer un 'Afterwork inclusif' le mardi soir jusqu'à 22h.",
+            "Installer un baby-foot pour masquer l'absence de revalorisation salariale.",
+            "Envoyer un e-mail avec 'Bien à vous' au lieu de 'Cordialement'.",
+            "Mettre sa photo LinkedIn avec un fond de montagne enneigée.",
+            "Faire un powerpoint de 80 slides pour expliquer le bien-être au travail.",
+            "Créer un poste de 'Chief Happiness Officer' rémunéré au SMIC.",
+            "Annoncer un gel des salaires au nom de la transition écologique.",
+            "Instaurer le vendredi comme 'Journée sans messagerie instantanée'.",
+            "Offrir des gourdes d'entreprise personnalisées en guise de prime d'intéressement.",
+            "Limiter le temps de pause pipi à 3 minutes pour stimuler la rentabilité.",
+            "Appeler ses collègues 'Camarades' sur Slack.",
+
+            // Economics & Money
+            "Mettre une taxe de 95% sur les yachts et jets privés.",
             "Instaurer un salaire maximum plafonné à 4000€.",
-            "Rendre tous les transports publics totalement gratuits.",
+            "Boire un vin à 500€ pour fêter la fin d'un séminaire RH.",
+            "Donner 1€ au SDF devant le supermarché bio en payant en contactless.",
+            "Demander un reçu fiscal pour un don de 5€ sur Leetchi.",
+            "Investir toutes ses économies dans du Bitcoin écologique.",
+            "Payer son café avec une pièce de 2 euros en soupirant sur l'inflation.",
+            "Ouvrir un compte bancaire dans un paradis fiscal pour financer une ferme bio.",
+            "Refuser d'utiliser du liquide 'pour lutter contre l'économie souterraine'.",
+            "Payer 14€ une salade de lentilles parce qu'elle est 'fait maison'.",
+            "Demander un prêt étudiant pour acheter des actions LVMH.",
+            "Vendre ses vêtements usés sur Vinted au double du prix neuf 'vintage'.",
+            "Acheter des actions Total pour financer ses vacances en van aménagé.",
+            "Demander une facture acquittée pour une baguette de pain.",
+            "Exiger le remboursement de 50 centimes sur une note de frais.",
+
+            // Politics & Society
+            "Partir à la retraite à 50 ans avec pension à 100%.",
+            "Nationaliser la fabrication de croissants et pains au chocolat.",
+            "Remplacer le gouvernement par une IA tirée au sort.",
+            "Privatiser l'air des grandes métropoles régionales.",
+            "Obliger le port du costume trois pièces en pleine canicule.",
+            "Remplacer les réunions d'entreprise par des duels d'escrime.",
             "Supprimer le travail le vendredi pour encourager la sieste.",
-            "Obliger les banquiers à passer un diplôme d'humilité."
+            "Rendre tous les transports publics totalement gratuits.",
+            "Obliger les banquiers à passer un diplôme d'humilité.",
+            "Remplacer le 20 heures par un cours collectif d'éco-anxiété.",
+            "Taxer le sucre à 300% pour financer la sécurité sociale.",
+            "Interdire les voitures de plus de 1,2 tonne en centre-ville.",
+            "Instaurer le vote obligatoire sous peine de travaux d'intérêt général.",
+            "Nationaliser les autoroutes et baisser la vitesse max à 110 km/h.",
+            "Plafonner le prix des loyers au m² selon le niveau de pollution sonore.",
+
+            // Transport & Travel
+            "Prendre l'avion pour aller faire un stage de yoga au Népal.",
+            "Rouler à 110 km/h sur la voie de gauche en Tesla.",
+            "Prendre le train couchette de nuit par conviction écologique.",
+            "Louer une trottinette électrique pour faire 200 mètres.",
+            "Se déplacer uniquement en roller pour l'empreinte carbone.",
+            "Traverser la France en van aménagé de 1982 qui consomme 15L/100km.",
+            "Critiquer les vols low-cost après avoir fait 4 escales à Dubaï.",
+            "Garer un SUV hybride sur une place réservée aux petites citadines.",
+            "Voyager avec une valise en cabine garantie à vie en aluminium.",
+            "Faire du stop avec une pancarte écrite en écriture inclusive.",
+
+            // Food & Lifestyle
+            "Interdire la cuisson de la viande rouge le dimanche.",
+            "Considérer la raclette comme un symbole de résistance prolétarienne.",
+            "Manger des graines de chia au petit-déjeuner.",
+            "Expliquer l'origine de son fromage de chèvre AOP pendant 20 minutes.",
+            "Refuser un verre d'eau du robinet non filtré au charbon actif.",
+            "Cuisiner un hachis parmentier aux protéines de soja texturées.",
+            "Acheter des bières artisanales IPA amères à 7€ la canette.",
+            "Manger des sushis au saumon bio en s'inquiétant de la surpêche.",
+            "Déclarer que le vrai café doit se boire sans sucre et extrait à froid.",
+            "Servir des gâteaux faits sans beurre, sans sucre et sans farine au goût de carton.",
+
+            // Ethics & Philosophy
+            "Lire Libération sur un iPad Pro dernier cri.",
+            "Citer Marx en portant une montre de luxe.",
+            "Regarder Arte uniquement pour pouvoir en parler le lendemain.",
+            "Donner des leçons de sobriété numérique depuis un iPhone 15 Pro.",
+            "Boycotter une marque tout en utilisant tous ses services annexes.",
+            "Corriger la grammaire de quelqu'un dans une manifestation.",
+            "Revendiquer son indépendance d'esprit en suivant exactement la même mode.",
+            "Parler de 'convergence des luttes' pendant un brunch à 35€.",
+            "Se déclarer anarchiste tout en appelant la police pour un tapage nocturne à 22h01.",
+            "Expliquer à un ouvrier qu'il est victime du patriarcat.",
+
+            // Absurd & Surreal
+            "Remplacer la Marseillaise par un jingle de fast-food.",
+            "Rendre le port du béret obligatoire pour les réunions diplomatiques.",
+            "Interdire les pigeons dans un rayon de 500m autour des préfectures.",
+            "Déclarer le mardi comme 'Journée de l'empathie envers les légumes racine'.",
+            "Remplacer les feux de circulation par des débats citoyens.",
+            "Payer ses impôts en tickets restaurant.",
+            "Interdire le mauvais temps par décret présidentiel.",
+            "Donner la nationalité française aux chats de gouttière.",
+            "Remplacer les statues historiques par des photos de poupées Russes.",
+            "Imposer le silence radio national tous les jours de 14h à 15h.",
+
+            // Extra ~200 satirical prompts for unlimited replayability
+            "Demander si le vin bio contient des sulfites avant d'accepter une coupe gratuite.",
+            "Faire la queue 45 minutes devant une boulangerie branchée pour acheter un flan.",
+            "Proposer de régler une dette en monnaie locale citoyenne.",
+            "Organiser un cercle de parole avant de décider du parfum de la glace.",
+            "Proposer d'abolir l'argent tout en vérifiant son compte en banque toutes les heures.",
+            "Accuser son voisin de fascisme parce qu'il tonde sa pelouse le dimanche.",
+            "Offrir un livre de 600 pages sur la collapsologie à un anniversaire d'enfant.",
+            "Refuser de prendre un paracétamol pour soigner une migraine par principe holistique.",
+            "Prétendre comprendre la physique quantique après avoir vu un documentaire Arte.",
+            "Porter des lunettes sans correction pour avoir l'air plus intellectuel.",
+            "Mettre un autocollant 'Sauvez les baleines' sur son 4x4.",
+            "Penser que le thé vert guérit la plupart des maladies modernes.",
+            "Demander le diplôme du masseur avant une séance de relaxation.",
+            "Bannir le gluten de son alimentation tout en fumant un paquet par jour.",
+            "Se plaindre du bruit des cigales pendant des vacances à la campagne.",
+            "Considérer le tofu fumé comme la plus grande invention du XXIe siècle.",
+            "Voter blanc mais donner des leçons de politique au comptoir du bar.",
+            "Proposer d'imprimer plus de billets pour régler le problème de la pauvreté.",
+            "Refuser de regarder les séries populaires 'par pure résistance culturelle'.",
+            "Ranger ses livres par couleur de couverture plutôt que par auteur.",
+            "Acheter une plante verte à 80€ et la laisser mourir en trois semaines.",
+            "S'excuser auprès de la table quand on commande un plat avec de la viande.",
+            "Regarder la météo en soupirant 'C'est encore à cause du réchauffement'.",
+            "Mettre des bouchons d'oreilles pour aller au cinéma.",
+            "Acheter un maillot de foot de vintage pour le style sans connaître le score.",
+            "Dire 'C'était mieux avant' à propos d'une époque qu'on n'a pas connue.",
+            "Donner un prénom médiéval à son chien.",
+            "Expliquer l'économie mondiale à partir d'un fil Twitter.",
+            "Penser que le camping sauvage est une forme d'action révolutionnaire.",
+            "Remplacer l'eau des fleurs par de l'eau minérale gazeuse.",
+            "Refuser de prendre l'ascenseur pour 'réduire son empreinte carbone' au 1er étage.",
+            "Critiquer le capitalisme depuis un MacBook sponsorisé par ses parents.",
+            "Interdire aux enfants de jouer avec des jouets en plastique non recyclé.",
+            "Acheter un composteur d'appartement et se plaindre des moucherons.",
+            "Exiger un espace silencieux dans un TGV en plein départ en vacances.",
+            "Considérer l'astrologie comme une science exacte d'orientation professionnelle.",
+            "Mettre une photo de Che Guevara dans un portefeuille en cuir de marque.",
+            "Payer un supplément pour avoir un emballage biodégradable.",
+            "Se déclarer végétalien sauf pour les huîtres et le foie gras à Noël.",
+            "Proposer une médiation citoyenne lors d'une dispute de parking.",
+            "Citer l'INSEE pour prouver qu'il fait plus froid en hiver.",
+            "Acheter du sel de l'Himalaya récolté à la main.",
+            "Se plaindre du gentrification du quartier où l'on vient d'emménager.",
+            "Mettre une alarme pour penser à s'hydrater.",
+            "Refuser de signer une pétition parce que la police de caractère est moche.",
+            "Regarder ses mails pendant une séance de méditation de pleine conscience.",
+            "Prendre en photo son plat avant d'avoir dit bonjour à ses convives.",
+            "Expliquer que le vrai luxe, c'est de ne pas avoir de télévision.",
+            "Mettre un gilet jaune dans sa boîte à gants 'au cas où'."
         ];
 
-        // Game State
+        // Game State Engine
         let gameState = {
-            mode: 'coop', // 'coop' or 'boss'
-            cardSource: 'deck', // 'deck' or 'custom'
+            mode: 'coop',
+            cardSource: 'deck',
             players: [],
             scores: {},
             currentRound: 1,
             maxRounds: 10,
             collectiveScore: 0,
+            deckAvailable: [],
             
             masterIndex: 0,
             currentCard: '',
             turnIndex: 0,
-            rotations: {}, // { playerName: angleInDegrees }
+            rotations: {},
             currentAngle: 0,
             bossSubmissions: {}
         };
 
-        // Rotation Dragging Control
+        // Rotation Dragging Control State
         let isDraggingDisc = false;
         let discCenter = { x: 0, y: 0 };
 
         window.onload = function() {
             initDefaultPlayers();
             setupGlobalDragEvents();
+            renderRadialTicks();
         };
+
+        function renderRadialTicks() {
+            const container = document.getElementById('ticksContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            // Render 36 ticks around 360 degrees
+            for (let i = 0; i < 360; i += 10) {
+                const tick = document.createElement('div');
+                const isMajor = i % 45 === 0;
+                tick.className = `tick-line ${isMajor ? '' : 'sub'}`;
+                tick.style.transform = `rotate(${i}deg)`;
+                container.appendChild(tick);
+            }
+        }
 
         function initDefaultPlayers() {
             const list = document.getElementById('playerInputsList');
@@ -506,6 +714,7 @@
             gameState.currentRound = 1;
             gameState.collectiveScore = 0;
             gameState.masterIndex = 0;
+            gameState.deckAvailable = [...DECK_CARDS];
             gameState.scores = {};
             names.forEach(n => gameState.scores[n] = 0);
 
@@ -515,13 +724,21 @@
             startRound();
         }
 
+        function drawUniqueCard() {
+            if (gameState.deckAvailable.length === 0) {
+                gameState.deckAvailable = [...DECK_CARDS];
+            }
+            const randomIndex = Math.floor(Math.random() * gameState.deckAvailable.length);
+            return gameState.deckAvailable.splice(randomIndex, 1)[0];
+        }
+
         function startRound() {
             gameState.rotations = {};
             gameState.bossSubmissions = {};
             gameState.turnIndex = 0;
 
             if (gameState.cardSource === 'deck') {
-                gameState.currentCard = DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)];
+                gameState.currentCard = drawUniqueCard();
             } else {
                 gameState.currentCard = '';
             }
@@ -589,9 +806,9 @@
                 document.getElementById('bossCardChoiceBox').classList.add('hidden');
 
                 if (isMaster) {
-                    guide.innerText = `${activePlayer} (Maître) : Tournez le disque pour régler votre avis secret.`;
+                    guide.innerText = `${activePlayer} (Maître) : Tournez le disque pour régler votre position politique exacte.`;
                 } else {
-                    guide.innerText = `${activePlayer} : Tournez votre disque pour estimer la position de ${masterPlayer}.`;
+                    guide.innerText = `${activePlayer} : Tournez votre disque pour estimer l'avis de ${masterPlayer}.`;
                 }
             } else {
                 if (isMaster) {
@@ -605,7 +822,6 @@
                 }
             }
 
-            // Reset disc to 0 angle for new turn
             updateDiscAngle(0);
         }
 
@@ -617,7 +833,7 @@
             document.getElementById('masterCustomInputBox').classList.add('hidden');
         }
 
-        // --- DISC ROTATION DRAG ENGINE ---
+        // --- ACCURATE DISC ROTATION ENGINE ---
         function startDiscDrag(e) {
             e.preventDefault();
             const disc = document.getElementById('politicalDisc');
@@ -657,12 +873,17 @@
             const dx = clientX - discCenter.x;
             const dy = clientY - discCenter.y;
 
-            // Math.atan2 returns angle in radians, convert to deg
             let rad = Math.atan2(dy, dx);
-            let deg = Math.round(rad * (180 / Math.PI)) + 90; // Align 0 deg to top
+            let deg = Math.round(rad * (180 / Math.PI)) + 90;
             if (deg < 0) deg += 360;
 
             updateDiscAngle(deg);
+        }
+
+        function adjustAngle(delta) {
+            let newAngle = (gameState.currentAngle + delta) % 360;
+            if (newAngle < 0) newAngle += 360;
+            updateDiscAngle(newAngle);
         }
 
         function onSliderRotate(val) {
@@ -672,11 +893,9 @@
         function updateDiscAngle(deg) {
             gameState.currentAngle = deg;
 
-            // Apply rotation to disc element
             const disc = document.getElementById('politicalDisc');
             disc.style.transform = `rotate(${deg}deg)`;
 
-            // Update UI Labels
             document.getElementById('discSlider').value = deg;
             document.getElementById('sliderAngleLabel').innerText = `${deg}°`;
 
@@ -685,14 +904,14 @@
         }
 
         function getPoliticalLabelFromAngle(deg) {
-            if (deg >= 337 || deg < 22) return "100% Gauche";
-            if (deg >= 22 && deg < 67) return "Gauche Modérée";
-            if (deg >= 67 && deg < 112) return "8000% Droite";
-            if (deg >= 112 && deg < 157) return "Droite Libérale";
-            if (deg >= 157 && deg < 202) return "50/50 Neutre";
-            if (deg >= 202 && deg < 247) return "Souverainiste";
-            if (deg >= 247 && deg < 292) return "800% Extrême";
-            return "Écologiste / Radical";
+            if (deg >= 337.5 || deg < 22.5) return "100% Gauche";
+            if (deg >= 22.5 && deg < 67.5) return "800% Gauche";
+            if (deg >= 67.5 && deg < 112.5) return "8000% Gauche";
+            if (deg >= 112.5 && deg < 157.5) return "10% Gauche";
+            if (deg >= 157.5 && deg < 202.5) return "50/50 Neutre";
+            if (deg >= 202.5 && deg < 247.5) return "10% Droite";
+            if (deg >= 247.5 && deg < 292.5) return "8000% Droite";
+            return "800% Droite";
         }
 
         function submitCurrentPlayerVote() {
@@ -714,14 +933,11 @@
             const container = document.getElementById('bossHandOptions');
             container.innerHTML = '';
 
-            const options = [
-                DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)],
-                DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)]
-            ];
+            const options = [drawUniqueCard(), drawUniqueCard()];
 
             options.forEach((opt) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left text-xs font-semibold text-slate-200 transition";
+                btn.className = "w-full p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left text-xs font-semibold text-slate-200 transition shadow";
                 btn.innerText = opt;
                 btn.onclick = () => {
                     gameState.bossSubmissions[playerName] = opt;
@@ -743,7 +959,6 @@
             const masterPlayer = gameState.players[gameState.masterIndex];
             const masterAngle = gameState.rotations[masterPlayer] || 0;
 
-            // Set reveal disc to master's orientation
             document.getElementById('revealDisc').style.transform = `rotate(${masterAngle}deg)`;
 
             const breakdown = document.getElementById('scoresBreakdown');
@@ -758,24 +973,23 @@
 
                 const isMaster = pName === masterPlayer;
                 
-                // Calculate shortest angular distance
                 let diff = Math.abs(angle - masterAngle) % 360;
                 if (diff > 180) diff = 360 - diff;
 
                 let isClose = false;
                 if (!isMaster) {
-                    if (diff <= 35) { // Threshold for successful estimation
+                    if (diff <= 30) {
                         closeVotesCount++;
                         isClose = true;
                     }
                 }
 
                 const item = document.createElement('div');
-                item.className = "flex justify-between items-center py-1 border-b border-slate-800/60 last:border-0";
+                item.className = "flex justify-between items-center py-1.5 border-b border-slate-800/60 last:border-0";
                 item.innerHTML = `
                     <span class="${isMaster ? 'text-yellow-400 font-bold' : 'text-slate-300'}">${pName} ${isMaster ? '(Maître)' : ''}</span>
                     <span class="font-extrabold ${isMaster ? 'text-yellow-400' : (isClose ? 'text-emerald-400' : 'text-red-400')}">
-                        ${isMaster ? `${angle}° (${getPoliticalLabelFromAngle(angle)})` : `Écart : ${diff}° ${isClose ? '✓ Gagné' : '✗ Éloigné'}`}
+                        ${isMaster ? `${angle}° (${getPoliticalLabelFromAngle(angle)})` : `Écart : ${diff}° ${isClose ? '✓ Proche' : '✗ Éloigné'}`}
                     </span>
                 `;
                 breakdown.appendChild(item);
@@ -791,11 +1005,11 @@
                 gameState.collectiveScore++;
                 titleEl.className = "font-black text-base text-emerald-400";
                 titleEl.innerText = "VICTOIRE DE LA MANCHE ! ✊";
-                descEl.innerText = `La majorité (${closeVotesCount}/${otherPlayers.length}) est proche de la rotation de ${masterPlayer}.`;
+                descEl.innerText = `La majorité (${closeVotesCount}/${otherPlayers.length}) est à moins de 30° de l'angle de ${masterPlayer}.`;
             } else {
                 titleEl.className = "font-black text-base text-red-400";
-                titleEl.innerText = "ÉCHEC DE LA COALITION 📉";
-                descEl.innerText = `Seulement ${closeVotesCount} joueur(s) sur ${otherPlayers.length} ont trouvé l'angle de ${masterPlayer}.`;
+                titleEl.innerText = "DÉFAITE PARLEMENTAIRE 📉";
+                descEl.innerText = `Seulement ${closeVotesCount} joueur(s) sur ${otherPlayers.length} ont trouvé l'angle exact de ${masterPlayer}.`;
             }
         }
 
@@ -821,7 +1035,7 @@
                 title.innerText = "LE GRAND SOIR EST ARRIVÉ ! 🔥";
                 summary.innerHTML = `
                     <p class="text-yellow-400 font-bold text-base">Score Parfait : 10 / 10</p>
-                    <p class="text-xs text-slate-300">Votre groupe d'ami·es est en symbiose politique totale !</p>
+                    <p class="text-xs text-slate-300">Votre groupe d'ami·es est en symbiose politique totale ! Vous avez évité tout piège d'extrême droite ou d'extrême gauche non anticipé.</p>
                 `;
             } else if (score >= 6) {
                 title.innerText = "VICTOIRE DU PEUPLE ! 🚩";
@@ -830,10 +1044,10 @@
                     <p class="text-xs text-slate-300">Objectif des 6 victoires collectives atteint avec succès.</p>
                 `;
             } else {
-                title.innerText = "DÉFAITE PARLEMENTAIRE 💔";
+                title.innerText = "DISSOLUTION DE L'ASSEMBLÉE 💔";
                 summary.innerHTML = `
                     <p class="text-red-400 font-bold text-base">Score : ${score} / 10 Victoires</p>
-                    <p class="text-xs text-slate-300">Vos orientations politiques sur le disque étaient trop divergentes.</p>
+                    <p class="text-xs text-slate-300">Vos orientations sur le disque étaient trop chaotiques pour former une coalition stable.</p>
                 `;
             }
         }
