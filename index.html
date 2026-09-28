@@ -163,6 +163,12 @@
             font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--elysee-gold);
             border-top: 1px solid var(--glass-border); padding-top: 10px; width: 100%;
         }
+
+        .mj-setup { width:100%; padding:14px; border:1px solid var(--glass-border); border-radius:10px; background:rgba(255,255,255,.04); }
+        .mj-round-row { display:grid; grid-template-columns:80px 1fr 150px; gap:8px; align-items:center; margin:8px 0; }
+        .mj-round-row input, .mj-round-row select { padding:9px; border-radius:6px; border:1px solid var(--glass-border); background:#10182e; color:white; width:100%; }
+        .hand-card.selected { border-color:var(--elysee-gold); background:rgba(212,175,55,.18); transform:translateY(-3px); }
+        @media(max-width:600px){ .mj-round-row{grid-template-columns:1fr;} }
     </style>
 </head>
 <body>
@@ -181,20 +187,37 @@
             <button id="mode-droite-btn" class="btn-mode" onclick="switchGameMode('droite')">Mode de Droite (Patronal)</button>
         </div>
 
-        <!-- Configuration des joueurs -->
+        <!-- Configuration de la partie -->
         <div id="setup-panel" class="setup-panel">
             <div>
                 <strong>Configuration de la partie</strong>
-                <p style="font-size:.82rem;color:#a0aec0;margin-top:4px;">
-                    Chaque joueur joue seul, à son tour. Le patron ne voit jamais son nom pendant les votes.
+                <p id="setup-description" style="font-size:.82rem;color:#a0aec0;margin-top:4px;">
+                    Tous les joueurs jouent dans le même mode. Ils jouent chacun leur tour.
                 </p>
             </div>
+
             <label>Nombre de joueurs
                 <select id="player-count" onchange="renderPlayerSetup()" style="margin-left:8px;padding:7px;border-radius:6px;">
                     <option>2</option><option selected>4</option><option>6</option><option>8</option><option>10</option>
                 </select>
             </label>
             <div id="player-setup-list"></div>
+
+            <div id="left-mj-setup" class="mj-setup">
+                <h3 style="color:var(--gauche-red);margin-bottom:8px;">🎙️ Préparation du MJ</h3>
+                <p style="font-size:.82rem;color:#a0aec0;margin-bottom:10px;">
+                    Le MJ peut écrire ses propres propositions. Pour chacune, indiquez l'orientation secrète qui servira de référence.
+                </p>
+                <div id="mj-rounds"></div>
+            </div>
+
+            <div id="right-rules" class="mj-setup" style="display:none;">
+                <h3 style="color:#457b9d;margin-bottom:8px;">👔 Règles du mode de Droite</h3>
+                <p style="font-size:.82rem;color:#a0aec0;">
+                    Le Boss impose une orientation. Chaque joueur reçoit plusieurs phrases et en choisit une. Le Boss voit les propositions anonymisées et désigne le gagnant de chaque manche.
+                </p>
+            </div>
+
             <button class="btn-action" onclick="startGame()">Commencer la partie</button>
         </div>
 
@@ -335,17 +358,20 @@ const CARDS = [
             "La fête de la musique du 21 juin", "L'exposition universelle"
         ];
 
-        // --- ÉTAT DU JEU MULTIJOUEUR ---
+        // --- ÉTAT DU JEU ---
         let currentMode = 'gauche';
         let currentStep = 0;
         let targetAngle = 0;
-        let selectedVoteAngle = null;
         let currentPlayerIndex = 0;
-        let currentTurn = 0;
+        let currentRound = 0;
         let players = [];
         let results = [];
         let currentCardIndex = -1;
-        let anonymousSubmissions = [];
+        let leftRounds = [];
+        let rightRound = null;
+        let rightChoices = [];
+        let selectedChoice = null;
+        let rightSubmissions = [];
         const TOTAL_ROUNDS = 3;
 
         const POSITIONS = [
@@ -362,43 +388,66 @@ const CARDS = [
             currentMode = mode;
             document.getElementById('mode-gauche-btn').className = mode === 'gauche' ? 'btn-mode active-gauche' : 'btn-mode';
             document.getElementById('mode-droite-btn').className = mode === 'droite' ? 'btn-mode active-droite' : 'btn-mode';
+            document.getElementById('left-mj-setup').style.display = mode === 'gauche' ? 'block' : 'none';
+            document.getElementById('right-rules').style.display = mode === 'droite' ? 'block' : 'none';
+            document.getElementById('setup-description').innerText = mode === 'gauche'
+                ? "Tous les joueurs jouent en mode Gauche, chacun leur tour. Le MJ prépare les propositions et leurs orientations."
+                : "Tous les joueurs jouent en mode Droite, chacun leur tour. Le Boss donne l'orientation et arbitre les manches.";
             resetGame();
         }
 
         function resetGame() {
-            currentStep = 0; currentTurn = 0; currentPlayerIndex = 0;
-            players = []; results = []; anonymousSubmissions = [];
+            currentStep = 0;
+            currentPlayerIndex = 0;
+            currentRound = 0;
+            players = [];
+            results = [];
+            leftRounds = [];
+            rightRound = null;
+            rightSubmissions = [];
+            selectedChoice = null;
             document.getElementById('setup-panel').style.display = 'grid';
             document.getElementById('main-action-btn').style.display = 'none';
             document.getElementById('interactive-area').innerHTML = '';
             document.getElementById('anonymous-status').style.display = 'none';
             document.getElementById('score-summary').style.display = 'none';
-            document.getElementById('card-text').innerText = "Configurez les joueurs";
+            document.getElementById('card-text').innerText = "Configurez la partie";
             document.getElementById('card-num').innerText = "PRÉPARATION";
-            document.getElementById('phase-badge').innerText = "Configuration des joueurs";
+            document.getElementById('phase-badge').innerText = "Configuration de la partie";
+            document.getElementById('round-val').innerText = '0';
+            document.getElementById('total-turns-val').innerText = '0';
             setNeedle(0);
             renderPlayerSetup();
+            renderMJSetup();
         }
 
         function renderPlayerSetup() {
             const n = Number(document.getElementById('player-count').value);
             const list = document.getElementById('player-setup-list');
-            const old = [...list.querySelectorAll('.player-row')].map(row => ({
-                name: row.querySelector('input').value,
-                mode: row.querySelector('select').value
-            }));
+            const old = [...list.querySelectorAll('.player-row')].map(row => row.querySelector('input').value);
             list.innerHTML = '';
             for (let i = 0; i < n; i++) {
-                const saved = old[i] || {};
                 const row = document.createElement('div');
                 row.className = 'player-row';
-                row.innerHTML = `
-                    <input value="${escapeHtml(saved.name || `Joueur ${i+1}`)}" aria-label="Nom du joueur">
-                    <select>
-                        <option value="gauche" ${saved.mode === 'droite' ? '' : 'selected'}>Mode de Gauche</option>
-                        <option value="droite" ${saved.mode === 'droite' ? 'selected' : ''}>Mode de Droite</option>
-                    </select>`;
+                row.innerHTML = `<input value="${escapeHtml(old[i] || `Joueur ${i+1}`)}" aria-label="Nom du joueur">`;
                 list.appendChild(row);
+            }
+        }
+
+        function renderMJSetup() {
+            const box = document.getElementById('mj-rounds');
+            if (!box) return;
+            box.innerHTML = '';
+            for (let i = 0; i < TOTAL_ROUNDS; i++) {
+                const row = document.createElement('div');
+                row.className = 'mj-round-row';
+                row.innerHTML = `
+                    <div><strong>Manche ${i+1}</strong></div>
+                    <input class="mj-phrase" placeholder="Votre proposition personnalisée..." value="${escapeHtml(leftRounds[i]?.phrase || '')}">
+                    <select class="mj-angle">
+                        ${POSITIONS.map(p => `<option value="${p.angle}" ${leftRounds[i]?.angle == p.angle ? 'selected' : ''}>${p.label}</option>`).join('')}
+                    </select>`;
+                box.appendChild(row);
             }
         }
 
@@ -407,48 +456,60 @@ const CARDS = [
         }
 
         function startGame() {
-            const rows = [...document.querySelectorAll('.player-row')];
-            players = rows.map((row, i) => ({
-                name: row.querySelector('input').value.trim() || `Joueur ${i+1}`,
-                mode: row.querySelector('select').value
+            players = [...document.querySelectorAll('.player-row')].map((row, i) => ({
+                name: row.querySelector('input').value.trim() || `Joueur ${i+1}`
             }));
-            const left = players.filter(p => p.mode === 'gauche').length;
-            const right = players.filter(p => p.mode === 'droite').length;
-            if (!left || !right) {
-                alert("Il faut au moins un joueur dans chaque mode pour comparer les deux moyennes.");
-                return;
+            if (currentMode === 'gauche') {
+                const phrases = [...document.querySelectorAll('.mj-phrase')];
+                const angles = [...document.querySelectorAll('.mj-angle')];
+                leftRounds = phrases.map((el, i) => ({
+                    phrase: el.value.trim() || `Proposition personnalisée ${i+1}`,
+                    angle: Number(angles[i].value)
+                }));
             }
-            results = [];
-            currentTurn = 0;
+            currentRound = 0;
             currentPlayerIndex = 0;
+            results = [];
             document.getElementById('setup-panel').style.display = 'none';
             document.getElementById('main-action-btn').style.display = 'inline-block';
             document.getElementById('total-turns-val').innerText = players.length * TOTAL_ROUNDS;
-            nextPlayerTurn();
+            startRound();
         }
 
-        function nextPlayerTurn() {
-            if (currentTurn >= players.length * TOTAL_ROUNDS) {
+        function startRound() {
+            if (currentRound >= TOTAL_ROUNDS) {
                 finishGame();
                 return;
             }
+            currentPlayerIndex = 0;
+            rightSubmissions = [];
+            selectedChoice = null;
+            if (currentMode === 'gauche') {
+                const r = leftRounds[currentRound];
+                document.getElementById('card-text').innerText = r.phrase;
+                document.getElementById('card-num').innerText = `PROPOSITION DU MJ • MANCHE ${currentRound+1}`;
+                setNeedle(0);
+                currentStep = 1;
+                playLeftTurn();
+            } else {
+                rightRound = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
+                document.getElementById('card-text').innerText = 'Orientation secrète donnée par le Boss';
+                document.getElementById('card-num').innerText = `MANCHE ${currentRound+1}`;
+                setNeedle(rightRound.angle);
+                currentStep = 1;
+                playRightTurn();
+            }
+        }
 
-            currentPlayerIndex = currentTurn % players.length;
-            const player = players[currentPlayerIndex];
-            currentMode = player.mode;
-            currentStep = 1;
-            selectedVoteAngle = null;
-            currentCardIndex = Math.floor(Math.random() * CARDS.length);
-            document.getElementById('card-text').innerText = CARDS[currentCardIndex];
-            document.getElementById('card-num').innerText = `PROPOSITION #${currentCardIndex + 1}`;
-            document.getElementById('round-val').innerText = currentTurn + 1;
-            document.getElementById('anonymous-status').style.display = 'block';
-            document.getElementById('anonymous-status').innerText =
-                `Tour ${currentTurn + 1} : ${escapeHtml(player.name)} joue maintenant. Les autres attendent.`;
-            setNeedle(0);
-
-            if (player.mode === 'gauche') renderLeftTurn(player);
-            else renderRightTurn(player);
+        function nextPlayer() {
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= players.length) {
+                if (currentMode === 'gauche') finishLeftRound();
+                else finishRightRound();
+            } else {
+                if (currentMode === 'gauche') playLeftTurn();
+                else playRightTurn();
+            }
         }
 
         function setNeedle(angle) {
@@ -458,170 +519,161 @@ const CARDS = [
             if (needle) needle.style.transform = `translateX(-50%) rotate(${clamped}deg)`;
         }
 
-        function renderLeftTurn(player) {
-            document.getElementById('phase-badge').innerText =
-                `Tour de ${player.name} : position secrète`;
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `
-                <p style="font-size:.9rem;margin-bottom:8px;">
-                    ${escapeHtml(player.name)}, place la barre dans l'hémicycle. Les autres joueurs ne doivent pas regarder.
-                </p>
-                <input id="position-slider" type="range" min="-90" max="90" value="0" step="1"
-                       style="width:min(520px,90%);accent-color:var(--elysee-gold);"
-                       oninput="setNeedle(this.value)">
+        function playLeftTurn() {
+            const player = players[currentPlayerIndex];
+            const r = leftRounds[currentRound];
+            document.getElementById('round-val').innerText = `${currentRound+1} • joueur ${currentPlayerIndex+1}/${players.length}`;
+            document.getElementById('phase-badge').innerText = `MODE GAUCHE • ${player.name} joue seul`;
+            document.getElementById('anonymous-status').style.display = 'block';
+            document.getElementById('anonymous-status').innerText = `${player.name}, à toi. Les autres joueurs ne regardent pas.`;
+            setNeedle(0);
+            document.getElementById('interactive-area').innerHTML = `
+                <p style="font-size:.9rem;margin-bottom:8px;">Quelle orientation donne-tu à cette proposition ?</p>
+                <input id="position-slider" type="range" min="-90" max="90" value="0" step="1" style="width:min(520px,90%);accent-color:var(--elysee-gold);">
                 <p id="angle-readout" style="font-size:.78rem;color:#a0aec0;">Position : neutre</p>`;
-            document.getElementById('position-slider').oninput = function() {
+            const slider = document.getElementById('position-slider');
+            slider.oninput = function() {
                 setNeedle(this.value);
-                document.getElementById('angle-readout').innerText =
-                    `Position : ${describeAngle(Number(this.value))}`;
+                document.getElementById('angle-readout').innerText = `Position : ${describeAngle(Number(this.value))}`;
             };
-            document.getElementById('main-action-btn').innerText = "Valider et passer au joueur suivant";
+            document.getElementById('main-action-btn').innerText = 'Valider ma position';
+            document.getElementById('main-action-btn').onclick = submitLeftPlayer;
         }
 
-        function renderRightTurn(player) {
-            document.getElementById('phase-badge').innerText =
-                `Tour de ${player.name} : réponse individuelle`;
+        function submitLeftPlayer() {
+            const slider = document.getElementById('position-slider');
+            const answer = Number(slider.value);
+            const secret = leftRounds[currentRound].angle;
+            results.push({ mode:'gauche', round:currentRound, playerIndex:currentPlayerIndex, answer, secret });
+            document.getElementById('interactive-area').innerHTML = `<p style="color:var(--elysee-gold);font-weight:700;">Réponse enregistrée anonymement.</p>`;
+            document.getElementById('anonymous-status').innerText = 'Réponse enregistrée. Le joueur suivant peut prendre la place.';
+            document.getElementById('main-action-btn').innerText = currentPlayerIndex === players.length-1 ? 'Voir la moyenne de la manche' : 'Joueur suivant';
+            document.getElementById('main-action-btn').onclick = nextPlayer;
+        }
+
+        function finishLeftRound() {
+            const roundResults = results.filter(r => r.mode === 'gauche' && r.round === currentRound);
+            const average = roundResults.reduce((s,r)=>s+r.answer,0) / roundResults.length;
+            const target = leftRounds[currentRound].angle;
+            const distance = Math.abs(average - target);
+            const score = distance <= 10 ? 3 : distance <= 30 ? 2 : distance <= 60 ? 1 : 0;
+            roundResults.forEach(r => r.roundScore = score);
+            setNeedle(average);
+            document.getElementById('phase-badge').innerText = `MODE GAUCHE • Moyenne des joueurs : ${describeAngle(average)}`;
+            document.getElementById('card-text').innerText = leftRounds[currentRound].phrase;
+            document.getElementById('interactive-area').innerHTML = `
+                <div class="final-card">
+                    <h3>Moyenne des réponses</h3>
+                    <div style="font-size:1.8rem;font-weight:800;">${average.toFixed(1)}°</div>
+                    <p>Orientation du MJ : <strong>${describeAngle(target)}</strong></p>
+                    <p style="margin-top:6px;">Écart : <strong>${distance.toFixed(1)}°</strong> • Manche : <strong>${score}/3</strong></p>
+                </div>`;
+            document.getElementById('main-action-btn').innerText = currentRound === TOTAL_ROUNDS-1 ? 'Voir le résultat final' : 'Manche suivante';
+            document.getElementById('main-action-btn').onclick = () => { currentRound++; startRound(); };
+        }
+
+        function playRightTurn() {
+            const player = players[currentPlayerIndex];
+            document.getElementById('round-val').innerText = `${currentRound+1} • joueur ${currentPlayerIndex+1}/${players.length}`;
+            document.getElementById('phase-badge').innerText = `MODE DROITE • ${player.name} joue seul`;
+            document.getElementById('anonymous-status').style.display = 'block';
+            document.getElementById('anonymous-status').innerText = `${player.name}, choisis ta phrase. Les autres attendent.`;
+            setNeedle(rightRound.angle);
+            rightChoices = shuffle([0,1,2,3,4]).map(i => CARDS[(currentCardIndexForRight() + i * 17 + currentPlayerIndex * 3) % CARDS.length]);
             const area = document.getElementById('interactive-area');
-            const target = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
-            targetAngle = target.angle;
-            setNeedle(targetAngle);
-            const choices = shuffle([0,1,2,3,4]).map(i => CARDS[(currentCardIndex + i * 17 + 7) % CARDS.length]);
-            area.innerHTML = `
-                <p style="font-size:.9rem;margin-bottom:8px;">
-                    Une consigne politique est fixée secrètement. ${escapeHtml(player.name)}, choisis la réponse qui te semble la plus adaptée.
-                </p>
-                <div class="hand-container" id="hand-box"></div>`;
+            area.innerHTML = `<p style="font-size:.9rem;margin-bottom:8px;">Le Boss impose : <strong>${rightRound.label}</strong>. Choisis une phrase parmi les suivantes.</p><div class="hand-container" id="hand-box"></div>`;
             const box = document.getElementById('hand-box');
-            choices.forEach((text, i) => {
+            rightChoices.forEach((text, i) => {
                 const el = document.createElement('div');
                 el.className = 'hand-card';
                 el.innerText = text;
                 el.onclick = () => {
+                    selectedChoice = text;
                     document.querySelectorAll('.hand-card').forEach(c => c.classList.remove('selected'));
                     el.classList.add('selected');
-                    selectedVoteAngle = POSITIONS[i % POSITIONS.length].angle;
                 };
                 box.appendChild(el);
             });
-            document.getElementById('main-action-btn').innerText = "Valider la réponse";
+            document.getElementById('main-action-btn').innerText = 'Valider ma phrase';
+            document.getElementById('main-action-btn').onclick = submitRightPlayer;
+        }
+
+        function currentCardIndexForRight() {
+            return Math.floor(Math.random() * CARDS.length);
+        }
+
+        function submitRightPlayer() {
+            if (!selectedChoice) { alert('Choisis une phrase avant de valider.'); return; }
+            rightSubmissions.push({ anonymousId:`Joueur ${rightSubmissions.length+1}`, playerIndex:currentPlayerIndex, phrase:selectedChoice, winner:false });
+            selectedChoice = null;
+            document.getElementById('interactive-area').innerHTML = `<p style="color:var(--elysee-gold);font-weight:700;">Phrase enregistrée anonymement.</p>`;
+            document.getElementById('anonymous-status').innerText = 'Réponse enregistrée. Joueur suivant.';
+            document.getElementById('main-action-btn').innerText = currentPlayerIndex === players.length-1 ? 'Afficher les phrases au Boss' : 'Joueur suivant';
+            document.getElementById('main-action-btn').onclick = nextPlayer;
+        }
+
+        function finishRightRound() {
+            document.getElementById('phase-badge').innerText = 'MODE DROITE • LE BOSS DOIT CHOISIR';
+            document.getElementById('anonymous-status').innerText = 'Le Boss ne voit que les réponses anonymisées, jamais les noms.';
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `<p style="margin-bottom:10px;">Orientation imposée : <strong>${rightRound.label}</strong></p><div id="boss-submissions" class="hand-container"></div><p style="margin-top:10px;font-size:.8rem;color:#a0aec0;">Le Boss clique sur le participant qui gagne la manche.</p>`;
+            const box = document.getElementById('boss-submissions');
+            rightSubmissions.forEach((sub, i) => {
+                const el = document.createElement('div');
+                el.className = 'hand-card';
+                el.innerHTML = `<strong>${sub.anonymousId}</strong><br><span>${escapeHtml(sub.phrase)}</span>`;
+                el.onclick = () => bossSelectWinner(i);
+                box.appendChild(el);
+            });
+            document.getElementById('main-action-btn').style.display = 'none';
+        }
+
+        function bossSelectWinner(index) {
+            rightSubmissions.forEach(s => s.winner = false);
+            rightSubmissions[index].winner = true;
+            results.push(...rightSubmissions.map(s => ({ mode:'droite', round:currentRound, playerIndex:s.playerIndex, score:s.winner ? 3 : 0, phrase:s.phrase })));
+            document.getElementById('phase-badge').innerText = `${rightSubmissions[index].anonymousId} gagne la manche`;
+            document.getElementById('interactive-area').innerHTML = `<div class="final-card"><h3>Décision du Boss enregistrée</h3><p>${rightSubmissions[index].anonymousId} remporte la manche.</p></div>`;
+            document.getElementById('main-action-btn').style.display = 'inline-block';
+            document.getElementById('main-action-btn').innerText = currentRound === TOTAL_ROUNDS-1 ? 'Voir le résultat final' : 'Manche suivante';
+            document.getElementById('main-action-btn').onclick = () => { currentRound++; startRound(); };
         }
 
         function describeAngle(a) {
-            if (a <= -68) return "100% gauche";
-            if (a <= -30) return "50% gauche";
-            if (a < -5) return "10% gauche";
-            if (a <= 5) return "neutre";
-            if (a < 30) return "10% droite";
-            if (a < 68) return "50% droite";
-            return "100% droite";
+            if (a <= -68) return '100% gauche';
+            if (a <= -30) return '50% gauche';
+            if (a < -5) return '10% gauche';
+            if (a <= 5) return 'neutre';
+            if (a < 30) return '10% droite';
+            if (a < 68) return '50% droite';
+            return '100% droite';
         }
 
-        function shuffle(arr) {
-            return arr.sort(() => Math.random() - 0.5);
-        }
-
-        function handleMainAction() {
-            if (currentStep === 1) {
-                if (currentMode === 'gauche') {
-                    const slider = document.getElementById('position-slider');
-                    targetAngle = Number(slider.value);
-                    // Pour le mode gauche, le score mesure la précision par rapport à la position secrète générée.
-                    // Le joueur choisit sa position, puis une position de référence est tirée anonymement.
-                    const reference = POSITIONS[Math.floor(Math.random() * POSITIONS.length)].angle;
-                    const diff = Math.abs(targetAngle - reference);
-                    const score = diff <= 10 ? 3 : diff <= 35 ? 2 : diff <= 60 ? 1 : 0;
-                    saveResult(score, reference, targetAngle);
-                } else {
-                    if (selectedVoteAngle === null) {
-                        alert("Choisis d'abord une réponse.");
-                        return;
-                    }
-                    const diff = Math.abs(selectedVoteAngle - targetAngle);
-                    const score = diff <= 10 ? 3 : diff <= 35 ? 2 : diff <= 60 ? 1 : 0;
-                    saveResult(score, targetAngle, selectedVoteAngle);
-                }
-            }
-        }
-
-        function saveResult(score, secretAngle, answerAngle) {
-            const player = players[currentPlayerIndex];
-            results.push({
-                anonymousId: `Participant ${results.length + 1}`,
-                mode: player.mode,
-                score,
-                secretAngle,
-                answerAngle
-            });
-
-            // Le nom est effacé de la zone visible avant de passer au suivant.
-            document.getElementById('anonymous-status').innerText =
-                `Réponse enregistrée sous l'identifiant anonyme ${results[results.length-1].anonymousId}.`;
-            document.getElementById('interactive-area').innerHTML =
-                `<p style="color:var(--elysee-gold);font-weight:700;">Réponse enregistrée. Joueur suivant.</p>`;
-            currentStep = 3;
-            document.getElementById('main-action-btn').innerText = "Joueur suivant";
-            document.getElementById('main-action-btn').onclick = () => {
-                currentTurn++;
-                document.getElementById('main-action-btn').onclick = handleMainAction;
-                nextPlayerTurn();
-            };
-        }
+        function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 
         function finishGame() {
             currentStep = 4;
             document.getElementById('main-action-btn').style.display = 'none';
-            document.getElementById('anonymous-status').innerText =
-                "Toutes les réponses sont anonymisées. Le patron ne voit aucun nom.";
-            document.getElementById('phase-badge').innerText = "FIN DE PARTIE : LE PATRON DOIT TRANCHER";
-
-            const left = results.filter(r => r.mode === 'gauche');
-            const right = results.filter(r => r.mode === 'droite');
-            const avgLeft = left.reduce((a,r)=>a+r.score,0) / left.length;
-            const avgRight = right.reduce((a,r)=>a+r.score,0) / right.length;
-
-            // Le patron ne reçoit que les deux résultats agrégés.
+            document.getElementById('phase-badge').innerText = 'FIN DE PARTIE';
             const area = document.getElementById('interactive-area');
-            area.innerHTML = `
-                <div class="final-grid">
-                    <div class="final-card">
-                        <h3 style="color:var(--gauche-red)">Mode de Gauche</h3>
-                        <div style="font-size:1.8rem;font-weight:800">${avgLeft.toFixed(2)} / 3</div>
-                        <small>${left.length} participant(s), moyenne de leurs résultats</small>
-                    </div>
-                    <div class="final-card">
-                        <h3 style="color:#457b9d">Mode de Droite</h3>
-                        <div style="font-size:1.8rem;font-weight:800">${avgRight.toFixed(2)} / 3</div>
-                        <small>${right.length} participant(s), moyenne de leurs résultats</small>
-                    </div>
-                </div>
-                <div class="anonymous-box" style="margin-top:12px;">
-                    <strong>Table du patron</strong><br>
-                    Le patron ne voit ni les noms ni l'ordre des joueurs. Il ne dispose que des deux moyennes.
-                    <br><br>
-                    <button class="btn-action" onclick="bossDeclareWinner(${avgLeft}, ${avgRight})">Le patron indique le gagnant</button>
-                </div>`;
-            document.getElementById('score-summary').style.display = 'block';
-            document.getElementById('score-summary').innerHTML =
-                `Comparaison finale : Gauche ${avgLeft.toFixed(2)} / 3 · Droite ${avgRight.toFixed(2)} / 3`;
+            if (currentMode === 'gauche') {
+                const scores = results.filter(r=>r.mode==='gauche').map(r=>r.roundScore).filter(v=>v !== undefined);
+                const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+                area.innerHTML = `<div class="final-card"><h3 style="color:var(--gauche-red)">Mode de Gauche</h3><div style="font-size:2rem;font-weight:800">${avg.toFixed(2)} / 3</div><p>Moyenne des manches obtenues grâce à la moyenne des orientations des joueurs.</p><button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button></div>`;
+                document.getElementById('score-summary').style.display='block';
+                document.getElementById('score-summary').innerText=`Résultat moyen du mode Gauche : ${avg.toFixed(2)} / 3`;
+            } else {
+                const scores = results.filter(r=>r.mode==='droite').map(r=>r.score);
+                const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+                area.innerHTML = `<div class="final-card"><h3 style="color:#457b9d">Mode de Droite</h3><div style="font-size:2rem;font-weight:800">${avg.toFixed(2)} / 3</div><p>Le Boss a choisi anonymement les gagnants des manches.</p><button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button></div>`;
+                document.getElementById('score-summary').style.display='block';
+                document.getElementById('score-summary').innerText=`Résultat moyen du mode Droite : ${avg.toFixed(2)} / 3`;
+            }
         }
 
-        function bossDeclareWinner(left, right) {
-            let msg;
-            if (Math.abs(left-right) < 0.001) {
-                msg = "ÉGALITÉ : les deux modes terminent avec la même moyenne.";
-            } else if (left > right) {
-                msg = "LE PATRON DÉSIGNE LE MODE DE GAUCHE GAGNANT !";
-            } else {
-                msg = "LE PATRON DÉSIGNE LE MODE DE DROITE GAGNANT !";
-            }
-            document.getElementById('phase-badge').innerText = "DÉCISION DU PATRON";
-            document.getElementById('interactive-area').innerHTML =
-                `<div class="card-box"><div class="card-title">${msg}</div>
-                 <p style="margin-top:12px;font-size:.82rem;color:#a0aec0;">
-                 Aucun nom de joueur n'a été révélé au patron.
-                 </p></div>
-                 <button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button>`;
-        }
+        // Initialisation
+        renderPlayerSetup();
+        renderMJSetup();
 
     </script>
 </body>
