@@ -198,17 +198,16 @@
 
             <label>Nombre de joueurs
                 <select id="player-count" onchange="renderPlayerSetup()" style="margin-left:8px;padding:7px;border-radius:6px;">
-                    <option>2</option><option selected>4</option><option>6</option><option>8</option><option>10</option>
+                    <option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
                 </select>
             </label>
             <div id="player-setup-list"></div>
 
             <div id="left-mj-setup" class="mj-setup">
-                <h3 style="color:var(--gauche-red);margin-bottom:8px;">🎙️ Préparation du MJ</h3>
+                <h3 style="color:var(--gauche-red);margin-bottom:8px;">🎙️ MJ tournant</h3>
                 <p style="font-size:.82rem;color:#a0aec0;margin-bottom:10px;">
-                    Le MJ peut écrire ses propres propositions. Pour chacune, indiquez l'orientation secrète qui servira de référence.
+                    Le MJ change à chaque manche. Il choisira sa phrase et son orientation <strong>au moment de jouer</strong>. Le MJ de la manche ne participe pas au placement des joueurs.
                 </p>
-                <div id="mj-rounds"></div>
             </div>
 
             <div id="right-rules" class="mj-setup" style="display:none;">
@@ -368,6 +367,7 @@ const CARDS = [
         let results = [];
         let currentCardIndex = -1;
         let leftRounds = [];
+        let currentMJIndex = 0;
         let rightRound = null;
         let rightChoices = [];
         let selectedChoice = null;
@@ -418,7 +418,6 @@ const CARDS = [
             document.getElementById('total-turns-val').innerText = '0';
             setNeedle(0);
             renderPlayerSetup();
-            renderMJSetup();
         }
 
         function renderPlayerSetup() {
@@ -434,23 +433,6 @@ const CARDS = [
             }
         }
 
-        function renderMJSetup() {
-            const box = document.getElementById('mj-rounds');
-            if (!box) return;
-            box.innerHTML = '';
-            for (let i = 0; i < TOTAL_ROUNDS; i++) {
-                const row = document.createElement('div');
-                row.className = 'mj-round-row';
-                row.innerHTML = `
-                    <div><strong>Manche ${i+1}</strong></div>
-                    <input class="mj-phrase" placeholder="Votre proposition personnalisée..." value="${escapeHtml(leftRounds[i]?.phrase || '')}">
-                    <select class="mj-angle">
-                        ${POSITIONS.map(p => `<option value="${p.angle}" ${leftRounds[i]?.angle == p.angle ? 'selected' : ''}>${p.label}</option>`).join('')}
-                    </select>`;
-                box.appendChild(row);
-            }
-        }
-
         function escapeHtml(value) {
             return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
         }
@@ -459,17 +441,11 @@ const CARDS = [
             players = [...document.querySelectorAll('.player-row')].map((row, i) => ({
                 name: row.querySelector('input').value.trim() || `Joueur ${i+1}`
             }));
-            if (currentMode === 'gauche') {
-                const phrases = [...document.querySelectorAll('.mj-phrase')];
-                const angles = [...document.querySelectorAll('.mj-angle')];
-                leftRounds = phrases.map((el, i) => ({
-                    phrase: el.value.trim() || `Proposition personnalisée ${i+1}`,
-                    angle: Number(angles[i].value)
-                }));
-            }
             currentRound = 0;
             currentPlayerIndex = 0;
+            currentMJIndex = 0;
             results = [];
+            leftRounds = [];
             document.getElementById('setup-panel').style.display = 'none';
             document.getElementById('main-action-btn').style.display = 'inline-block';
             document.getElementById('total-turns-val').innerText = players.length * TOTAL_ROUNDS;
@@ -477,20 +453,17 @@ const CARDS = [
         }
 
         function startRound() {
-            if (currentRound >= TOTAL_ROUNDS) {
-                finishGame();
-                return;
-            }
+            if (currentRound >= TOTAL_ROUNDS) { finishGame(); return; }
             currentPlayerIndex = 0;
             rightSubmissions = [];
             selectedChoice = null;
             if (currentMode === 'gauche') {
-                const r = leftRounds[currentRound];
-                document.getElementById('card-text').innerText = r.phrase;
-                document.getElementById('card-num').innerText = `PROPOSITION DU MJ • MANCHE ${currentRound+1}`;
-                setNeedle(0);
+                currentMJIndex = currentRound % players.length;
                 currentStep = 1;
-                playLeftTurn();
+                document.getElementById('card-text').innerText = `Le MJ ${players[currentMJIndex].name} doit préparer la proposition`;
+                document.getElementById('card-num').innerText = `MANCHE ${currentRound+1} • MJ : ${players[currentMJIndex].name}`;
+                setNeedle(0);
+                playMJTurn();
             } else {
                 rightRound = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
                 document.getElementById('card-text').innerText = 'Orientation secrète donnée par le Boss';
@@ -501,8 +474,33 @@ const CARDS = [
             }
         }
 
+        function playMJTurn() {
+            const mj = players[currentMJIndex];
+            document.getElementById('phase-badge').innerText = `MODE GAUCHE • ${mj.name} est MJ`;
+            document.getElementById('anonymous-status').style.display = 'block';
+            document.getElementById('anonymous-status').innerText = 'Le MJ prépare sa proposition. Les autres joueurs ne regardent pas.';
+            document.getElementById('interactive-area').innerHTML = `
+                <p style="font-size:.9rem;margin-bottom:8px;"><strong>${escapeHtml(mj.name)}</strong>, écris ta phrase personnalisée :</p>
+                <input id="mj-custom-phrase" type="text" placeholder="Ex : La semaine de 4 jours" style="width:min(600px,95%);padding:12px;border-radius:6px;border:1px solid var(--glass-border);background:#10182f;color:white;">
+                <p style="font-size:.85rem;margin:12px 0 6px;">Puis indique son orientation :</p>
+                <select id="mj-custom-angle" style="padding:10px;border-radius:6px;">${POSITIONS.map(p => `<option value="${p.angle}">${p.label}</option>`).join('')}</select>`;
+            document.getElementById('main-action-btn').innerText = 'Valider la proposition du MJ';
+            document.getElementById('main-action-btn').onclick = submitMJTurn;
+        }
+
+        function submitMJTurn() {
+            const phrase = document.getElementById('mj-custom-phrase').value.trim();
+            if (!phrase) { alert('Le MJ doit écrire une proposition.'); return; }
+            const angle = Number(document.getElementById('mj-custom-angle').value);
+            leftRounds[currentRound] = { phrase, angle, mjIndex: currentMJIndex };
+            document.getElementById('card-text').innerText = phrase;
+            currentPlayerIndex = 0;
+            playLeftTurn();
+        }
+
         function nextPlayer() {
             currentPlayerIndex++;
+            if (currentMode === 'gauche' && currentPlayerIndex === currentMJIndex) currentPlayerIndex++;
             if (currentPlayerIndex >= players.length) {
                 if (currentMode === 'gauche') finishLeftRound();
                 else finishRightRound();
@@ -525,29 +523,23 @@ const CARDS = [
             document.getElementById('round-val').innerText = `${currentRound+1} • joueur ${currentPlayerIndex+1}/${players.length}`;
             document.getElementById('phase-badge').innerText = `MODE GAUCHE • ${player.name} joue seul`;
             document.getElementById('anonymous-status').style.display = 'block';
-            document.getElementById('anonymous-status').innerText = `${player.name}, à toi. Les autres joueurs ne regardent pas.`;
+            document.getElementById('anonymous-status').innerText = `${player.name}, à toi. Le MJ et les autres joueurs ne regardent pas.`;
             setNeedle(0);
             document.getElementById('interactive-area').innerHTML = `
-                <p style="font-size:.9rem;margin-bottom:8px;">Quelle orientation donne-tu à cette proposition ?</p>
+                <p style="font-size:.9rem;margin-bottom:8px;">Quelle orientation donnes-tu à cette proposition ?</p>
                 <input id="position-slider" type="range" min="-90" max="90" value="0" step="1" style="width:min(520px,90%);accent-color:var(--elysee-gold);">
                 <p id="angle-readout" style="font-size:.78rem;color:#a0aec0;">Position : neutre</p>`;
             const slider = document.getElementById('position-slider');
-            slider.oninput = function() {
-                setNeedle(this.value);
-                document.getElementById('angle-readout').innerText = `Position : ${describeAngle(Number(this.value))}`;
-            };
+            slider.oninput = function() { setNeedle(this.value); document.getElementById('angle-readout').innerText = `Position : ${describeAngle(Number(this.value))}`; };
             document.getElementById('main-action-btn').innerText = 'Valider ma position';
             document.getElementById('main-action-btn').onclick = submitLeftPlayer;
         }
 
         function submitLeftPlayer() {
-            const slider = document.getElementById('position-slider');
-            const answer = Number(slider.value);
-            const secret = leftRounds[currentRound].angle;
-            results.push({ mode:'gauche', round:currentRound, playerIndex:currentPlayerIndex, answer, secret });
+            const answer = Number(document.getElementById('position-slider').value);
+            results.push({ mode:'gauche', round:currentRound, playerIndex:currentPlayerIndex, answer, secret:leftRounds[currentRound].angle });
             document.getElementById('interactive-area').innerHTML = `<p style="color:var(--elysee-gold);font-weight:700;">Réponse enregistrée anonymement.</p>`;
-            document.getElementById('anonymous-status').innerText = 'Réponse enregistrée. Le joueur suivant peut prendre la place.';
-            document.getElementById('main-action-btn').innerText = currentPlayerIndex === players.length-1 ? 'Voir la moyenne de la manche' : 'Joueur suivant';
+            document.getElementById('main-action-btn').innerText = 'Joueur suivant';
             document.getElementById('main-action-btn').onclick = nextPlayer;
         }
 
@@ -559,15 +551,9 @@ const CARDS = [
             const score = distance <= 10 ? 3 : distance <= 30 ? 2 : distance <= 60 ? 1 : 0;
             roundResults.forEach(r => r.roundScore = score);
             setNeedle(average);
-            document.getElementById('phase-badge').innerText = `MODE GAUCHE • Moyenne des joueurs : ${describeAngle(average)}`;
+            document.getElementById('phase-badge').innerText = `MODE GAUCHE • Moyenne : ${describeAngle(average)}`;
             document.getElementById('card-text').innerText = leftRounds[currentRound].phrase;
-            document.getElementById('interactive-area').innerHTML = `
-                <div class="final-card">
-                    <h3>Moyenne des réponses</h3>
-                    <div style="font-size:1.8rem;font-weight:800;">${average.toFixed(1)}°</div>
-                    <p>Orientation du MJ : <strong>${describeAngle(target)}</strong></p>
-                    <p style="margin-top:6px;">Écart : <strong>${distance.toFixed(1)}°</strong> • Manche : <strong>${score}/3</strong></p>
-                </div>`;
+            document.getElementById('interactive-area').innerHTML = `<div class="final-card"><h3>Moyenne des joueurs</h3><div style="font-size:1.8rem;font-weight:800;">${average.toFixed(1)}°</div><p>Orientation du MJ : <strong>${describeAngle(target)}</strong></p><p>MJ : <strong>${escapeHtml(players[leftRounds[currentRound].mjIndex].name)}</strong></p><p style="margin-top:6px;">Écart : <strong>${distance.toFixed(1)}°</strong> • Manche : <strong>${score}/3</strong></p></div>`;
             document.getElementById('main-action-btn').innerText = currentRound === TOTAL_ROUNDS-1 ? 'Voir le résultat final' : 'Manche suivante';
             document.getElementById('main-action-btn').onclick = () => { currentRound++; startRound(); };
         }
@@ -673,7 +659,6 @@ const CARDS = [
 
         // Initialisation
         renderPlayerSetup();
-        renderMJSetup();
 
     </script>
 </body>
