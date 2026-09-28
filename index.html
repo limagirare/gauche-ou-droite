@@ -1,212 +1,858 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gauche / Droite Client</title>
-  <style>
-    :root {
-      --bg-color: #f4f6f8;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --primary-color: #0066cc;
-      --left-color: #e63946;
-      --right-color: #1d3557;
-      --border-radius: 12px;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .container {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      max-width: 500px;
-      width: 100%;
-      padding: 24px;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 0;
-      color: #111;
-    }
-
-    .status-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      background-color: #eee;
-      margin-bottom: 20px;
-    }
-
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #888;
-    }
-
-    .status-indicator.online { background-color: #2ec4b6; }
-    .status-indicator.offline { background-color: #e63946; }
-    .status-indicator.loading { background-color: #ff9f1c; }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      border: none;
-      border-radius: 8px;
-      padding: 14px 16px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s ease, opacity 0.2s ease;
-      color: white;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-left {
-      background-color: var(--left-color);
-    }
-
-    .btn-right {
-      background-color: var(--right-color);
-    }
-
-    .btn-fetch {
-      background-color: var(--primary-color);
-      width: 100%;
-    }
-
-    .response-box {
-      margin-top: 20px;
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 12px;
-      font-family: monospace;
-      font-size: 0.85rem;
-      white-space: pre-wrap;
-      word-break: break-all;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <h1>Gauche / Droite</h1>
-
-    <!-- État de la connexion au serveur Render -->
-    <div class="status-badge">
-      <div id="statusDot" class="status-indicator loading"></div>
-      <span id="statusText">Connexion au serveur...</span>
-    </div>
-
-    <!-- Boutons d'action -->
-    <div class="actions-grid">
-      <button class="btn-left" onclick="sendAction('gauche')">👈 Gauche</button>
-      <button class="btn-right" onclick="sendAction('droite')">Droite 👉</button>
-    </div>
-
-    <button class="btn-fetch" onclick="fetchData()">🔄 Rafraîchir les données</button>
-
-    <!-- Affichage des résultats / réponses API -->
-    <div id="output" class="response-box">En attente de données...</div>
-  </div>
-
-  <script>
-    const SERVER_URL = 'https://gauche-droite-server.onrender.com';
-
-    const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
-    const output = document.getElementById('output');
-
-    // Vérifier l'état du serveur Render au chargement
-    async function checkServerStatus() {
-      setStatus('loading', 'Réveil du serveur Render...');
-      try {
-        const response = await fetch(`${SERVER_URL}/health`, { method: 'GET' })
-          .catch(() => fetch(`${SERVER_URL}/`, { method: 'GET' }));
-
-        if (response.ok) {
-          setStatus('online', 'Serveur connecté');
-        } else {
-          setStatus('offline', `Erreur serveur (${response.status})`);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gauche ou Droite de l'Élysée - Disque Rotatif Local</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        leftwing: '#dc2626',
+                        rightwing: '#1e3a8a',
+                        gilded: '#f59e0b',
+                        darkbg: '#080c14'
+                    }
+                }
+            }
         }
-      } catch (err) {
-        setStatus('offline', 'Serveur inaccessible');
-        console.error(err);
-      }
-    }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+        
+        * {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    function setStatus(state, text) {
-      statusDot.className = `status-indicator ${state}`;
-      statusText.innerText = text;
-    }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at center, #111827 0%, #050810 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
 
-    // Fonction pour envoyer un choix (Gauche ou Droite)
-    async function sendAction(choice) {
-      output.innerText = `Envoi du choix: ${choice}...`;
-      try {
-        const response = await fetch(`${SERVER_URL}/api/action`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ choice: choice, timestamp: new Date().toISOString() })
-        });
+        /* Radial Wheel background matching image 1 */
+        .radial-wheel {
+            background: conic-gradient(
+                from 180deg,
+                #1e3a8a 0deg,
+                #000000 60deg,
+                #800000 120deg,
+                #dc2626 180deg,
+                #7e22ce 240deg,
+                #1e3a8a 360deg
+            );
+            box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.9), 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
 
-        const data = await response.json();
-        output.innerText = JSON.stringify(data, null, 2);
-      } catch (err) {
-        output.innerText = `Erreur lors de l'envoi vers le serveur:\n${err.message}`;
-      }
-    }
+        .card-blur {
+            backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
 
-    // Fonction pour récupérer des données depuis le serveur
-    async function fetchData() {
-      output.innerText = 'Chargement des données...';
-      try {
-        const response = await fetch(`${SERVER_URL}/api/data`);
-        const data = await response.json();
-        output.innerText = JSON.stringify(data, null, 2);
-      } catch (err) {
-        output.innerText = `Erreur de récupération:\n${err.message}`;
-      }
-    }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
 
-    // Initialisation
-    checkServerStatus();
-  </script>
+        /* Custom scrollbar for player list */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(239, 68, 68, 0.5);
+            border-radius: 8px;
+        }
+
+        /* Smooth rotation transition for non-drag state */
+        .disc-smooth {
+            transition: transform 0.15s ease-out;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between text-slate-100 antialiased overflow-x-hidden">
+
+    <header class="w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 py-3 sticky top-0 z-50">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full radial-wheel flex items-center justify-center font-black text-lg text-white border border-white/30 shadow-lg">
+                    <i class="fa-solid fa-compass text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-400 to-blue-500 leading-none">
+                        GAUCHE OU DROITE ?
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Élysée • Disque Rotatif Local</p>
+                </div>
+            </div>
+            
+            <button onclick="restartGameConfirm()" id="resetBtn" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 transition">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Quitter
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-xl w-full mx-auto p-4 flex-grow flex flex-col justify-center relative">
+
+        <section id="setupScreen" class="card-blur rounded-3xl p-5 sm:p-6 shadow-2xl space-y-5 my-auto border border-slate-800">
+            <div class="text-center space-y-1.5">
+                <div class="inline-block px-3 py-1 rounded-full text-[10px] font-black bg-red-950/80 text-red-400 border border-red-800/50 uppercase tracking-widest">
+                    Disque Rotatif • Pass & Play
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-white">Configurez le Débat</h2>
+                <p class="text-xs text-slate-400">Passez-vous le téléphone à tour de rôle ! Nombre illimité de camarades.</p>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Mode de Jeu</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button type="button" onclick="selectGameMode('coop')" id="modeCoopBtn" class="p-3.5 rounded-2xl border-2 border-red-500 bg-red-950/30 text-left transition-all">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-black text-red-400 text-sm">Mode Camarades</span>
+                            <i class="fa-solid fa-users text-red-400"></i>
+                        </div>
+                        <p class="text-[11px] text-slate-300 leading-tight">Coopératif. Chacun fait tourner le disque face cachée pour estimer l'avis de la personne désignée.</p>
+                    </button>
+
+                    <button type="button" onclick="selectGameMode('boss')" id="modeBossBtn" class="p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold text-slate-400 text-sm">Mode Le Boss</span>
+                            <i class="fa-solid fa-user-tie text-slate-400"></i>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-tight">Compétitif (Cards Against Humanity). Le boss fait tourner le disque pour dévoiler un bord.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Source Option -->
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Provenance des Cartes / Phrases</label>
+                <select id="cardSourceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-200 focus:outline-none focus:border-red-500">
+                    <option value="deck">📜 Tirées du jeu (Deck satirique automatique)</option>
+                    <option value="custom">✏️ Données par le maître / la maîtresse du tour</option>
+                </select>
+            </div>
+
+            <!-- Unlimited Players List -->
+            <div class="space-y-2.5">
+                <div class="flex justify-between items-center">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Joueurs (<span id="playerCountText" class="text-yellow-400 font-extrabold">3</span>)
+                    </label>
+                    <span class="text-[10px] text-slate-400 italic">2 joueurs minimum</span>
+                </div>
+                
+                <div id="playerInputsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scroll">
+                    <!-- Dynamic inputs injected by JS -->
+                </div>
+
+                <button type="button" onclick="addPlayerInput()" class="w-full bg-slate-800 hover:bg-slate-700 text-xs font-bold py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2 text-slate-200">
+                    <i class="fa-solid fa-user-plus text-red-400"></i> Ajouter un camarade
+                </button>
+            </div>
+
+            <button onclick="launchGame()" class="w-full bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 hover:from-red-500 hover:to-blue-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all transform active:scale-95 text-sm sm:text-base uppercase tracking-wider">
+                <i class="fa-solid fa-play mr-2"></i> Lancer la Partie
+            </button>
+        </section>
+
+
+        <section id="privacyPassScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border-2 border-purple-500/40">
+            <div class="w-20 h-20 mx-auto rounded-full bg-slate-900 border-2 border-purple-500 flex items-center justify-center text-3xl text-purple-400 shadow-xl pulse-glow">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+
+            <div class="space-y-2">
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Passez l'appareil secrètement</p>
+                <h2 class="text-2xl sm:text-3xl font-black text-white">Passe l'appareil à</h2>
+                <div id="targetPlayerNameDisplay" class="text-3xl font-black text-yellow-400 underline decoration-red-500 decoration-wavy py-1">
+                    [Nom du Joueur]
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-400 italic max-w-xs mx-auto">
+                Ne montrez pas l'écran aux autres avant d'avoir validé la rotation de votre disque.
+            </p>
+
+            <button onclick="confirmPlayerReady()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all text-sm uppercase tracking-wider">
+                <i class="fa-solid fa-eye mr-2"></i> C'est moi (<span id="readyPlayerNameBtn">---</span>), Révéler mon écran
+            </button>
+        </section>
+
+
+        <section id="gameplayScreen" class="hidden space-y-4 my-auto">
+            
+            <!-- Top Status Bar -->
+            <div class="card-blur rounded-2xl p-3 flex justify-between items-center shadow-md border border-slate-800 text-xs">
+                <div>
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Manche</span>
+                    <span class="font-black text-white text-base"><span id="roundCurrentDisplay">1</span> / <span id="roundMaxDisplay">10</span></span>
+                </div>
+
+                <div id="coopScoreBadge" class="text-right">
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Victoires Collectives</span>
+                    <span class="font-black text-emerald-400 text-base"><span id="scoreCollective">0</span> / 6 req.</span>
+                </div>
+                <div id="bossScoreBadge" class="hidden text-right">
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Le Boss actuel</span>
+                    <span class="font-black text-yellow-400 text-base" id="bossNameBadge">Boss</span>
+                </div>
+            </div>
+
+            <!-- Turn Banner -->
+            <div id="turnBanner" class="p-3.5 rounded-2xl bg-slate-900 border border-slate-700 text-center shadow-lg flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="turnRoleIcon" class="w-8 h-8 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center font-bold text-xs">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">C'est au tour de</p>
+                        <p id="activePlayerName" class="font-black text-white text-sm">Joueur</p>
+                    </div>
+                </div>
+                <span id="turnInstructionTag" class="text-[10px] px-2.5 py-1 rounded-full font-extrabold bg-purple-900/60 text-purple-300 border border-purple-500/30 uppercase">
+                    Disque Masqué
+                </span>
+            </div>
+
+            <!-- Subject Card Display -->
+            <div class="card-blur rounded-3xl p-4 shadow-xl border border-slate-800 text-center space-y-2">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    Sujet de la Manche
+                </span>
+
+                <div id="cardDisplayBox" class="min-h-[50px] flex items-center justify-center">
+                    <p id="cardText" class="text-base sm:text-lg font-black text-yellow-300 italic leading-snug">
+                        "En attente de la proposition..."
+                    </p>
+                </div>
+
+                <!-- Custom Input for Master -->
+                <div id="masterCustomInputBox" class="hidden space-y-2 pt-1">
+                    <input type="text" id="customCardInput" placeholder="Saisissez la proposition du tour..." class="w-full bg-slate-900 border border-yellow-500/50 rounded-xl px-3 py-2.5 text-xs text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    <button onclick="confirmCustomCard()" class="bg-yellow-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs shadow hover:bg-yellow-400">
+                        Valider la phrase
+                    </button>
+                </div>
+            </div>
+
+            <div id="compassCardBox" class="card-blur rounded-3xl p-4 shadow-xl border border-slate-800 flex flex-col items-center space-y-3">
+                
+                <p id="compassGuideText" class="text-xs font-bold text-slate-300 text-center px-2">
+                    Faites tourner le disque pour régler votre position politique secrète
+                </p>
+
+                <!-- FIXED POINTER MARKER (Top Needle) -->
+                <div class="relative w-full flex justify-center -mb-3 z-30">
+                    <div class="flex flex-col items-center">
+                        <div class="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-yellow-400 drop-shadow-md"></div>
+                        <span id="discAngleText" class="text-[11px] font-black bg-slate-900 border border-yellow-500/60 text-yellow-400 px-2.5 py-0.5 rounded-full shadow">
+                            0° • 100% Gauche
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ROTATING DISC CONTAINER -->
+                <div class="relative w-64 h-64 sm:w-72 sm:h-72 select-none touch-none">
+                    <div id="politicalDisc" class="w-full h-full rounded-full radial-wheel relative cursor-grab active:cursor-grabbing border-4 border-slate-900 overflow-hidden shadow-2xl disc-smooth" 
+                         onmousedown="startDiscDrag(event)" ontouchstart="startDiscDrag(event)">
+                        
+                        <!-- Axis Crosshair inside Disc -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
+                            <div class="w-full h-0.5 bg-white"></div>
+                            <div class="h-full w-0.5 bg-white absolute"></div>
+                        </div>
+
+                        <!-- Concentric Ticks -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="w-16 h-16 rounded-full border border-white/20"></div>
+                            <div class="w-32 h-32 rounded-full border border-white/20"></div>
+                            <div class="w-48 h-48 rounded-full border border-white/20"></div>
+                        </div>
+
+                        <!-- Ticks Labels matching Image 1 -->
+                        <span class="absolute top-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase drop-shadow">100% Gauche</span>
+                        <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-purple-200 uppercase drop-shadow">50/50 Neutre</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-200 uppercase drop-shadow">800% Extrême</span>
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-200 uppercase drop-shadow">8000% Droite</span>
+                        
+                        <span class="absolute top-1/4 left-6 text-[8px] font-bold text-white/80">10%</span>
+                        <span class="absolute top-1/4 right-6 text-[8px] font-bold text-white/80">10%</span>
+                    </div>
+                </div>
+
+                <!-- Rotation Slider Control for Mobile Accessibility -->
+                <div class="w-full max-w-xs space-y-1 pt-1">
+                    <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                        <span><i class="fa-solid fa-rotate-left mr-1"></i> Tourner le disque</span>
+                        <span id="sliderAngleLabel">0°</span>
+                    </div>
+                    <input type="range" id="discSlider" min="0" max="359" value="0" oninput="onSliderRotate(this.value)" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-400">
+                </div>
+
+                <!-- Submit Action Button -->
+                <button id="confirmVoteBtn" onclick="submitCurrentPlayerVote()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-slate-950 font-black py-3.5 px-6 rounded-2xl shadow-xl transition-all cursor-pointer text-xs uppercase tracking-wider">
+                    Valider ma rotation secrète
+                </button>
+            </div>
+
+            <!-- Boss Selection Box (For Mode Boss Cards) -->
+            <div id="bossCardChoiceBox" class="hidden card-blur rounded-3xl p-5 shadow-xl border border-slate-800 space-y-3">
+                <p id="bossChoiceGuide" class="text-xs font-bold text-slate-300 text-center">
+                    Joueurs : Soumettez votre carte d'incarnation
+                </p>
+                <div id="bossHandOptions" class="grid grid-cols-1 gap-2">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+
+        <section id="revealScreen" class="hidden card-blur rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4 my-auto">
+            <div class="text-center space-y-1">
+                <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-800/40">
+                    Révélation Générale
+                </span>
+                <h2 class="text-2xl font-black text-white">Résultats des Rotations !</h2>
+            </div>
+
+            <!-- Reveal Disc Visual -->
+            <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto rounded-full radial-wheel border-4 border-slate-900 shadow-2xl overflow-hidden disc-smooth" id="revealDisc">
+                <!-- Master Rotation Visual applied via JS -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-30">
+                    <div class="w-full h-0.5 bg-white"></div>
+                    <div class="h-full w-0.5 bg-white absolute"></div>
+                </div>
+                <span class="absolute top-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase">100% Gauche</span>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-200 uppercase">8000% Droite</span>
+                <span class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-black text-purple-200 uppercase">50/50</span>
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-200 uppercase">800%</span>
+            </div>
+
+            <!-- Verdict Box -->
+            <div id="roundVerdictBox" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 text-center space-y-1">
+                <h3 id="verdictTitle" class="font-black text-base text-yellow-400">Calcul des écarts d'angles...</h3>
+                <p id="verdictDesc" class="text-xs text-slate-300">Analyse de la proximité des rotations.</p>
+            </div>
+
+            <!-- Detailed Scores Breakdown -->
+            <div id="scoresBreakdown" class="text-xs space-y-1 bg-slate-950/60 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto custom-scroll">
+                <!-- Injected via JS -->
+            </div>
+
+            <button onclick="nextRound()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-3.5 px-6 rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider">
+                Manche Suivante <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </section>
+
+
+        <section id="gameOverScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border border-slate-800">
+            <div id="endIconBox" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-yellow-500 to-red-500 flex items-center justify-center text-3xl text-slate-950 font-black shadow-2xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div class="space-y-1">
+                <h2 id="endTitle" class="text-2xl sm:text-3xl font-black text-white">Fin de la Partie</h2>
+                <p id="endSubtitle" class="text-xs text-slate-400">Le décompte final des victoires collectives est établi.</p>
+            </div>
+
+            <div id="endSummaryBox" class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs sm:text-sm space-y-2">
+                <!-- Summary inserted JS -->
+            </div>
+
+            <button onclick="resetToSetup()" class="w-full bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all text-sm uppercase tracking-wider">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Relancer une Partie
+            </button>
+        </section>
+
+    </main>
+
+    <footer class="w-full text-center py-3 text-[11px] text-slate-500 border-t border-slate-900 bg-slate-950/80">
+        "Faites tourner le disque politique sans rien faire ruisseler."
+    </footer>
+
+    <script>
+        // Satirical Political Deck
+        const DECK_CARDS = [
+            "Partir à la retraite à 50 ans avec pension à 100%.",
+            "Mettre une taxe de 95% sur les yachts et jets privés.",
+            "Privatiser l'air des grandes métropoles régionales.",
+            "Remplacer les réunions d'entreprise par des duels d'escrime.",
+            "Obliger le port du costume trois pièces en pleine canicule.",
+            "Nationaliser la fabrication de croissants et pains au chocolat.",
+            "Interdire les e-mails professionnels après 17h00.",
+            "Remplacer le gouvernement par une IA tirée au sort.",
+            "Boire un vin à 500€ pour fêter la fin d'un séminaire RH.",
+            "Instaurer un salaire maximum plafonné à 4000€.",
+            "Rendre tous les transports publics totalement gratuits.",
+            "Supprimer le travail le vendredi pour encourager la sieste.",
+            "Obliger les banquiers à passer un diplôme d'humilité."
+        ];
+
+        // Game State
+        let gameState = {
+            mode: 'coop', // 'coop' or 'boss'
+            cardSource: 'deck', // 'deck' or 'custom'
+            players: [],
+            scores: {},
+            currentRound: 1,
+            maxRounds: 10,
+            collectiveScore: 0,
+            
+            masterIndex: 0,
+            currentCard: '',
+            turnIndex: 0,
+            rotations: {}, // { playerName: angleInDegrees }
+            currentAngle: 0,
+            bossSubmissions: {}
+        };
+
+        // Rotation Dragging Control
+        let isDraggingDisc = false;
+        let discCenter = { x: 0, y: 0 };
+
+        window.onload = function() {
+            initDefaultPlayers();
+            setupGlobalDragEvents();
+        };
+
+        function initDefaultPlayers() {
+            const list = document.getElementById('playerInputsList');
+            list.innerHTML = '';
+            const defaultNames = ['Camarade Alex', 'Camarade Sam', 'Camarade Jo'];
+            defaultNames.forEach((name) => addPlayerInput(name));
+            updatePlayerCountText();
+        }
+
+        function addPlayerInput(val = '') {
+            const list = document.getElementById('playerInputsList');
+            const pIndex = list.children.length + 1;
+
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2';
+            div.innerHTML = `
+                <div class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center text-[10px] font-bold">
+                    ${pIndex}
+                </div>
+                <input type="text" value="${val}" placeholder="Nom du joueur ${pIndex}" class="player-name-input flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
+                <button type="button" onclick="removePlayerInput(this)" class="text-slate-500 hover:text-red-400 p-2 transition">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            list.appendChild(div);
+            updatePlayerCountText();
+        }
+
+        function removePlayerInput(btn) {
+            const list = document.getElementById('playerInputsList');
+            if (list.children.length <= 2) {
+                alert("Il faut au moins 2 joueurs !");
+                return;
+            }
+            btn.parentElement.remove();
+            Array.from(list.children).forEach((row, idx) => {
+                row.children[0].innerText = idx + 1;
+            });
+            updatePlayerCountText();
+        }
+
+        function updatePlayerCountText() {
+            const count = document.querySelectorAll('.player-name-input').length;
+            document.getElementById('playerCountText').innerText = count;
+        }
+
+        function selectGameMode(mode) {
+            gameState.mode = mode;
+            const coopBtn = document.getElementById('modeCoopBtn');
+            const bossBtn = document.getElementById('modeBossBtn');
+
+            if (mode === 'coop') {
+                coopBtn.className = "p-3.5 rounded-2xl border-2 border-red-500 bg-red-950/30 text-left transition-all";
+                bossBtn.className = "p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all";
+            } else {
+                bossBtn.className = "p-3.5 rounded-2xl border-2 border-yellow-500 bg-yellow-950/30 text-left transition-all";
+                coopBtn.className = "p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all";
+            }
+        }
+
+        function launchGame() {
+            const inputs = document.querySelectorAll('.player-name-input');
+            const names = Array.from(inputs).map(i => i.value.trim()).filter(n => n.length > 0);
+
+            if (names.length < 2) {
+                alert("Veuillez inscrire au moins 2 joueurs !");
+                return;
+            }
+
+            gameState.players = names;
+            gameState.cardSource = document.getElementById('cardSourceSelect').value;
+            gameState.currentRound = 1;
+            gameState.collectiveScore = 0;
+            gameState.masterIndex = 0;
+            gameState.scores = {};
+            names.forEach(n => gameState.scores[n] = 0);
+
+            document.getElementById('resetBtn').classList.remove('hidden');
+            document.getElementById('setupScreen').classList.add('hidden');
+
+            startRound();
+        }
+
+        function startRound() {
+            gameState.rotations = {};
+            gameState.bossSubmissions = {};
+            gameState.turnIndex = 0;
+
+            if (gameState.cardSource === 'deck') {
+                gameState.currentCard = DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)];
+            } else {
+                gameState.currentCard = '';
+            }
+
+            if (gameState.mode === 'coop') {
+                document.getElementById('coopScoreBadge').classList.remove('hidden');
+                document.getElementById('bossScoreBadge').classList.add('hidden');
+            } else {
+                document.getElementById('coopScoreBadge').classList.add('hidden');
+                document.getElementById('bossScoreBadge').classList.remove('hidden');
+                document.getElementById('bossNameBadge').innerText = gameState.players[gameState.masterIndex];
+            }
+
+            promptNextPlayerTurn();
+        }
+
+        function promptNextPlayerTurn() {
+            document.getElementById('gameplayScreen').classList.add('hidden');
+            document.getElementById('revealScreen').classList.add('hidden');
+
+            const masterPlayer = gameState.players[gameState.masterIndex];
+            let activePlayer = '';
+
+            if (gameState.turnIndex === 0) {
+                activePlayer = masterPlayer;
+            } else {
+                const otherPlayers = gameState.players.filter((_, idx) => idx !== gameState.masterIndex);
+                activePlayer = otherPlayers[gameState.turnIndex - 1];
+            }
+
+            document.getElementById('targetPlayerNameDisplay').innerText = activePlayer;
+            document.getElementById('readyPlayerNameBtn').innerText = activePlayer;
+            document.getElementById('privacyPassScreen').classList.remove('hidden');
+        }
+
+        function confirmPlayerReady() {
+            document.getElementById('privacyPassScreen').classList.add('hidden');
+            document.getElementById('gameplayScreen').classList.remove('hidden');
+
+            const masterPlayer = gameState.players[gameState.masterIndex];
+            const isMaster = gameState.turnIndex === 0;
+            let activePlayer = isMaster ? masterPlayer : gameState.players.filter((_, idx) => idx !== gameState.masterIndex)[gameState.turnIndex - 1];
+
+            document.getElementById('roundCurrentDisplay').innerText = gameState.currentRound;
+            document.getElementById('scoreCollective').innerText = gameState.collectiveScore;
+            document.getElementById('activePlayerName').innerText = activePlayer;
+
+            const cardDisplay = document.getElementById('cardText');
+            const customInputBox = document.getElementById('masterCustomInputBox');
+
+            if (gameState.currentCard) {
+                cardDisplay.innerText = `"${gameState.currentCard}"`;
+                customInputBox.classList.add('hidden');
+            } else if (isMaster && gameState.cardSource === 'custom') {
+                cardDisplay.innerText = "Saisissez la proposition du tour :";
+                customInputBox.classList.remove('hidden');
+            } else {
+                cardDisplay.innerText = "En attente de la rédaction par le Maître...";
+                customInputBox.classList.add('hidden');
+            }
+
+            const guide = document.getElementById('compassGuideText');
+            if (gameState.mode === 'coop') {
+                document.getElementById('compassCardBox').classList.remove('hidden');
+                document.getElementById('bossCardChoiceBox').classList.add('hidden');
+
+                if (isMaster) {
+                    guide.innerText = `${activePlayer} (Maître) : Tournez le disque pour régler votre avis secret.`;
+                } else {
+                    guide.innerText = `${activePlayer} : Tournez votre disque pour estimer la position de ${masterPlayer}.`;
+                }
+            } else {
+                if (isMaster) {
+                    document.getElementById('compassCardBox').classList.remove('hidden');
+                    document.getElementById('bossCardChoiceBox').classList.add('hidden');
+                    guide.innerText = `Le Boss (${masterPlayer}) : Dévoilez le bord politique en tournant le disque.`;
+                } else {
+                    document.getElementById('compassCardBox').classList.add('hidden');
+                    document.getElementById('bossCardChoiceBox').classList.remove('hidden');
+                    renderBossHandOptions(activePlayer);
+                }
+            }
+
+            // Reset disc to 0 angle for new turn
+            updateDiscAngle(0);
+        }
+
+        function confirmCustomCard() {
+            const val = document.getElementById('customCardInput').value.trim();
+            if (!val) return;
+            gameState.currentCard = val;
+            document.getElementById('cardText').innerText = `"${val}"`;
+            document.getElementById('masterCustomInputBox').classList.add('hidden');
+        }
+
+        // --- DISC ROTATION DRAG ENGINE ---
+        function startDiscDrag(e) {
+            e.preventDefault();
+            const disc = document.getElementById('politicalDisc');
+            const rect = disc.getBoundingClientRect();
+            discCenter = {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+            isDraggingDisc = true;
+            disc.classList.remove('disc-smooth');
+            calculateAngleFromEvent(e);
+        }
+
+        function setupGlobalDragEvents() {
+            window.addEventListener('mousemove', (e) => {
+                if (isDraggingDisc) calculateAngleFromEvent(e);
+            });
+            window.addEventListener('touchmove', (e) => {
+                if (isDraggingDisc) calculateAngleFromEvent(e);
+            }, { passive: false });
+
+            window.addEventListener('mouseup', () => endDiscDrag());
+            window.addEventListener('touchend', () => endDiscDrag());
+        }
+
+        function endDiscDrag() {
+            if (isDraggingDisc) {
+                isDraggingDisc = false;
+                document.getElementById('politicalDisc').classList.add('disc-smooth');
+            }
+        }
+
+        function calculateAngleFromEvent(e) {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            const dx = clientX - discCenter.x;
+            const dy = clientY - discCenter.y;
+
+            // Math.atan2 returns angle in radians, convert to deg
+            let rad = Math.atan2(dy, dx);
+            let deg = Math.round(rad * (180 / Math.PI)) + 90; // Align 0 deg to top
+            if (deg < 0) deg += 360;
+
+            updateDiscAngle(deg);
+        }
+
+        function onSliderRotate(val) {
+            updateDiscAngle(parseInt(val, 10));
+        }
+
+        function updateDiscAngle(deg) {
+            gameState.currentAngle = deg;
+
+            // Apply rotation to disc element
+            const disc = document.getElementById('politicalDisc');
+            disc.style.transform = `rotate(${deg}deg)`;
+
+            // Update UI Labels
+            document.getElementById('discSlider').value = deg;
+            document.getElementById('sliderAngleLabel').innerText = `${deg}°`;
+
+            let labelStr = getPoliticalLabelFromAngle(deg);
+            document.getElementById('discAngleText').innerText = `${deg}° • ${labelStr}`;
+        }
+
+        function getPoliticalLabelFromAngle(deg) {
+            if (deg >= 337 || deg < 22) return "100% Gauche";
+            if (deg >= 22 && deg < 67) return "Gauche Modérée";
+            if (deg >= 67 && deg < 112) return "8000% Droite";
+            if (deg >= 112 && deg < 157) return "Droite Libérale";
+            if (deg >= 157 && deg < 202) return "50/50 Neutre";
+            if (deg >= 202 && deg < 247) return "Souverainiste";
+            if (deg >= 247 && deg < 292) return "800% Extrême";
+            return "Écologiste / Radical";
+        }
+
+        function submitCurrentPlayerVote() {
+            const masterPlayer = gameState.players[gameState.masterIndex];
+            const isMaster = gameState.turnIndex === 0;
+            let activePlayer = isMaster ? masterPlayer : gameState.players.filter((_, idx) => idx !== gameState.masterIndex)[gameState.turnIndex - 1];
+
+            gameState.rotations[activePlayer] = gameState.currentAngle;
+            gameState.turnIndex++;
+
+            if (gameState.turnIndex >= gameState.players.length) {
+                evaluateAndRevealRound();
+            } else {
+                promptNextPlayerTurn();
+            }
+        }
+
+        function renderBossHandOptions(playerName) {
+            const container = document.getElementById('bossHandOptions');
+            container.innerHTML = '';
+
+            const options = [
+                DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)],
+                DECK_CARDS[Math.floor(Math.random() * DECK_CARDS.length)]
+            ];
+
+            options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left text-xs font-semibold text-slate-200 transition";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    gameState.bossSubmissions[playerName] = opt;
+                    gameState.turnIndex++;
+                    if (gameState.turnIndex >= gameState.players.length) {
+                        evaluateAndRevealRound();
+                    } else {
+                        promptNextPlayerTurn();
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function evaluateAndRevealRound() {
+            document.getElementById('gameplayScreen').classList.add('hidden');
+            document.getElementById('revealScreen').classList.remove('hidden');
+
+            const masterPlayer = gameState.players[gameState.masterIndex];
+            const masterAngle = gameState.rotations[masterPlayer] || 0;
+
+            // Set reveal disc to master's orientation
+            document.getElementById('revealDisc').style.transform = `rotate(${masterAngle}deg)`;
+
+            const breakdown = document.getElementById('scoresBreakdown');
+            breakdown.innerHTML = '';
+
+            let closeVotesCount = 0;
+            const otherPlayers = gameState.players.filter(p => p !== masterPlayer);
+
+            gameState.players.forEach(pName => {
+                const angle = gameState.rotations[pName];
+                if (angle === undefined) return;
+
+                const isMaster = pName === masterPlayer;
+                
+                // Calculate shortest angular distance
+                let diff = Math.abs(angle - masterAngle) % 360;
+                if (diff > 180) diff = 360 - diff;
+
+                let isClose = false;
+                if (!isMaster) {
+                    if (diff <= 35) { // Threshold for successful estimation
+                        closeVotesCount++;
+                        isClose = true;
+                    }
+                }
+
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center py-1 border-b border-slate-800/60 last:border-0";
+                item.innerHTML = `
+                    <span class="${isMaster ? 'text-yellow-400 font-bold' : 'text-slate-300'}">${pName} ${isMaster ? '(Maître)' : ''}</span>
+                    <span class="font-extrabold ${isMaster ? 'text-yellow-400' : (isClose ? 'text-emerald-400' : 'text-red-400')}">
+                        ${isMaster ? `${angle}° (${getPoliticalLabelFromAngle(angle)})` : `Écart : ${diff}° ${isClose ? '✓ Gagné' : '✗ Éloigné'}`}
+                    </span>
+                `;
+                breakdown.appendChild(item);
+            });
+
+            const titleEl = document.getElementById('verdictTitle');
+            const descEl = document.getElementById('verdictDesc');
+
+            const majorityRequired = Math.max(1, Math.ceil(otherPlayers.length / 2));
+            const isRoundWon = closeVotesCount >= majorityRequired;
+
+            if (isRoundWon) {
+                gameState.collectiveScore++;
+                titleEl.className = "font-black text-base text-emerald-400";
+                titleEl.innerText = "VICTOIRE DE LA MANCHE ! ✊";
+                descEl.innerText = `La majorité (${closeVotesCount}/${otherPlayers.length}) est proche de la rotation de ${masterPlayer}.`;
+            } else {
+                titleEl.className = "font-black text-base text-red-400";
+                titleEl.innerText = "ÉCHEC DE LA COALITION 📉";
+                descEl.innerText = `Seulement ${closeVotesCount} joueur(s) sur ${otherPlayers.length} ont trouvé l'angle de ${masterPlayer}.`;
+            }
+        }
+
+        function nextRound() {
+            if (gameState.currentRound >= gameState.maxRounds) {
+                finishGame();
+            } else {
+                gameState.currentRound++;
+                gameState.masterIndex = (gameState.masterIndex + 1) % gameState.players.length;
+                startRound();
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('revealScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+
+            const summary = document.getElementById('endSummaryBox');
+            const title = document.getElementById('endTitle');
+            const score = gameState.collectiveScore;
+
+            if (score >= 10) {
+                title.innerText = "LE GRAND SOIR EST ARRIVÉ ! 🔥";
+                summary.innerHTML = `
+                    <p class="text-yellow-400 font-bold text-base">Score Parfait : 10 / 10</p>
+                    <p class="text-xs text-slate-300">Votre groupe d'ami·es est en symbiose politique totale !</p>
+                `;
+            } else if (score >= 6) {
+                title.innerText = "VICTOIRE DU PEUPLE ! 🚩";
+                summary.innerHTML = `
+                    <p class="text-emerald-400 font-bold text-base">Score : ${score} / 10 Victoires</p>
+                    <p class="text-xs text-slate-300">Objectif des 6 victoires collectives atteint avec succès.</p>
+                `;
+            } else {
+                title.innerText = "DÉFAITE PARLEMENTAIRE 💔";
+                summary.innerHTML = `
+                    <p class="text-red-400 font-bold text-base">Score : ${score} / 10 Victoires</p>
+                    <p class="text-xs text-slate-300">Vos orientations politiques sur le disque étaient trop divergentes.</p>
+                `;
+            }
+        }
+
+        function restartGameConfirm() {
+            if (confirm("Voulez-vous vraiment quitter la partie en cours ?")) {
+                resetToSetup();
+            }
+        }
+
+        function resetToSetup() {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameplayScreen').classList.add('hidden');
+            document.getElementById('revealScreen').classList.add('hidden');
+            document.getElementById('privacyPassScreen').classList.add('hidden');
+            
+            document.getElementById('resetBtn').classList.add('hidden');
+            document.getElementById('setupScreen').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
