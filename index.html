@@ -86,18 +86,54 @@
 
         .card-title { font-size: 1.3rem; font-weight: 700; margin-top: 5px; }
 
-        /* Boussole rotative */
-        .compass-box { position: relative; width: 220px; height: 110px; overflow: hidden; margin: 10px 0; }
-        .compass-dial {
-            width: 220px; height: 220px; border-radius: 50%;
-            background: conic-gradient(from 270deg, var(--gauche-red) 0deg, #9b59b6 90deg, var(--droite-blue) 180deg, var(--droite-blue) 360deg);
-            position: absolute; top: 0; left: 0; transition: transform 0.6s ease-out;
-            border: 3px solid var(--elysee-gold);
+        /* Hémicycle : la barre reste toujours dans les 180° */
+        .compass-box {
+            position: relative; width: min(520px, 90vw); height: 250px;
+            overflow: hidden; margin: 10px 0 0;
+        }
+        .hemicycle {
+            position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+            width: min(500px, 86vw); aspect-ratio: 2 / 1;
+            border-radius: 500px 500px 0 0;
+            background: linear-gradient(90deg, rgba(230,57,70,.85), rgba(155,89,182,.8) 50%, rgba(29,53,87,.9));
+            border: 4px solid var(--elysee-gold); border-bottom: 0;
+            box-shadow: inset 0 0 35px rgba(0,0,0,.35);
+        }
+        .hemicycle::after {
+            content: ""; position:absolute; left:50%; bottom:0; transform:translateX(-50%);
+            width: 3px; height: 100%; background:rgba(255,255,255,.12);
         }
         .compass-needle {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 110px; background: #fff; z-index: 5; box-shadow: 0 0 6px #fff;
+            position: absolute; left: 50%; bottom: 8px; width: 6px; height: 210px;
+            transform-origin: bottom center; transform: translateX(-50%) rotate(0deg);
+            background:#fff; z-index:5; border-radius:6px; box-shadow:0 0 10px #fff;
+            transition: transform .45s cubic-bezier(.2,.8,.2,1);
         }
+        .angle-marker { position:absolute; bottom:3px; font-size:.72rem; font-weight:800; z-index:6; }
+        .angle-left { left:2%; color:var(--gauche-red); }
+        .angle-center { left:50%; transform:translateX(-50%); color:#fff; }
+        .angle-right { right:2%; color:#457b9d; }
+
+        .setup-panel {
+            background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:12px;
+            padding:16px; display:grid; gap:12px; width:100%;
+        }
+        .player-row {
+            display:grid; grid-template-columns:1fr 150px; gap:10px; align-items:center;
+            padding:10px; border:1px solid rgba(212,175,55,.18); border-radius:8px;
+        }
+        .player-row input, .player-row select {
+            width:100%; padding:9px; border-radius:6px; border:1px solid var(--glass-border);
+            background:#111a32; color:#fff;
+        }
+        .anonymous-box {
+            padding:12px; border:1px dashed var(--elysee-gold); border-radius:8px;
+            color:#e7e7e7; font-size:.86rem;
+        }
+        .final-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+        .final-card { padding:16px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,.05); }
+        .final-card h3 { margin-bottom:7px; }
+        @media(max-width:600px){ .player-row{grid-template-columns:1fr;} .final-grid{grid-template-columns:1fr;} }
 
         /* Voting Controls */
         .vote-options { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
@@ -145,9 +181,26 @@
             <button id="mode-droite-btn" class="btn-mode" onclick="switchGameMode('droite')">Mode de Droite (Patronal)</button>
         </div>
 
+        <!-- Configuration des joueurs -->
+        <div id="setup-panel" class="setup-panel">
+            <div>
+                <strong>Configuration de la partie</strong>
+                <p style="font-size:.82rem;color:#a0aec0;margin-top:4px;">
+                    Chaque joueur joue seul, à son tour. Le patron ne voit jamais son nom pendant les votes.
+                </p>
+            </div>
+            <label>Nombre de joueurs
+                <select id="player-count" onchange="renderPlayerSetup()" style="margin-left:8px;padding:7px;border-radius:6px;">
+                    <option>2</option><option selected>4</option><option>6</option><option>8</option><option>10</option>
+                </select>
+            </label>
+            <div id="player-setup-list"></div>
+            <button class="btn-action" onclick="startGame()">Commencer la partie</button>
+        </div>
+
         <!-- Plateau de Jeu Interactif -->
         <div class="game-panel">
-            <div id="phase-badge" class="phase-indicator">Étape 1 : Le Camarade place le curseur</div>
+            <div id="phase-badge" class="phase-indicator">Configuration des joueurs</div>
 
             <!-- Carte courante -->
             <div class="card-box">
@@ -161,28 +214,32 @@
                 <span style="color:#457b9d;">DROITE</span>
             </div>
             <div class="compass-box">
-                <div class="compass-needle"></div>
-                <div id="compass-dial" class="compass-dial"></div>
+                <div class="hemicycle"></div>
+                <div class="compass-needle" id="compass-needle"></div>
+                <span class="angle-marker angle-left">GAUCHE</span>
+                <span class="angle-marker angle-center">NEUTRE</span>
+                <span class="angle-marker angle-right">DROITE</span>
             </div>
 
             <!-- Contrôles de Vote / Sélection -->
             <div id="interactive-area" style="width:100%;">
                 <!-- Injecté dynamiquement par le JS -->
             </div>
+            <div id="anonymous-status" class="anonymous-box" style="display:none;"></div>
+            <div id="score-summary" class="score-board" style="display:none;"></div>
 
-            <button id="main-action-btn" class="btn-action" onclick="handleMainAction()">Lancer une Partie</button>
+            <button id="main-action-btn" class="btn-action" onclick="handleMainAction()" style="display:none;">Lancer une Partie</button>
 
             <!-- Tableau des scores -->
             <div class="score-board">
-                Score : <span id="score-val">0</span> pt(s) | Manche <span id="round-val">0</span>/10
+                Tour : <span id="round-val">0</span>/<span id="total-turns-val">0</span>
             </div>
         </div>
 
     </div>
 
     <script>
-        // --- 300 PROPOSITIONS COMPLÈTES ---
-        const CARDS = [
+const CARDS = [
             "Les gilets jaunes", "Cyril Hanouna", "Collectionner les souvenirs du IIIème Reich", "Collectionner les Funkopop",
             "Une IPA locale", "Léna Situations", "Le Tiers-État", "Être antivax", "Les mégabassines", "Aya Nakamura",
             "Le camping", "Les accords de Paris", "Les cheveux bleus", "Vercingétorix", "Valeurs actuelles", "Aurore Bergé",
@@ -278,23 +335,27 @@
             "La fête de la musique du 21 juin", "L'exposition universelle"
         ];
 
-        // --- ÉTAT DU JEU ---
+        // --- ÉTAT DU JEU MULTIJOUEUR ---
         let currentMode = 'gauche';
-        let currentStep = 0; // 0: pas commencé, 1: placement secret, 2: vote, 3: résultat
+        let currentStep = 0;
         let targetAngle = 0;
         let selectedVoteAngle = null;
-        let score = 0;
-        let round = 0;
+        let currentPlayerIndex = 0;
+        let currentTurn = 0;
+        let players = [];
+        let results = [];
         let currentCardIndex = -1;
+        let anonymousSubmissions = [];
+        const TOTAL_ROUNDS = 3;
 
         const POSITIONS = [
-            { label: "100% GAUCHE", angle: -80 },
+            { label: "100% GAUCHE", angle: -90 },
             { label: "50% GAUCHE", angle: -45 },
             { label: "10% GAUCHE", angle: -15 },
             { label: "NEUTRE", angle: 0 },
             { label: "10% DROITE", angle: 15 },
             { label: "50% DROITE", angle: 45 },
-            { label: "100% DROITE", angle: 80 }
+            { label: "100% DROITE", angle: 90 }
         ];
 
         function switchGameMode(mode) {
@@ -305,168 +366,263 @@
         }
 
         function resetGame() {
-            currentStep = 0;
-            score = 0;
-            round = 0;
-            document.getElementById('score-val').innerText = '0';
-            document.getElementById('round-val').innerText = '0';
-            document.getElementById('card-text').innerText = "Cliquez sur Démarrer la Partie";
-            document.getElementById('compass-dial').style.transform = "rotate(0deg)";
-            document.getElementById('interactive-area').innerHTML = "";
-            document.getElementById('main-action-btn').innerText = "Lancer la partie";
-            document.getElementById('phase-badge').innerText = "Prêt à jouer";
+            currentStep = 0; currentTurn = 0; currentPlayerIndex = 0;
+            players = []; results = []; anonymousSubmissions = [];
+            document.getElementById('setup-panel').style.display = 'grid';
+            document.getElementById('main-action-btn').style.display = 'none';
+            document.getElementById('interactive-area').innerHTML = '';
+            document.getElementById('anonymous-status').style.display = 'none';
+            document.getElementById('score-summary').style.display = 'none';
+            document.getElementById('card-text').innerText = "Configurez les joueurs";
+            document.getElementById('card-num').innerText = "PRÉPARATION";
+            document.getElementById('phase-badge').innerText = "Configuration des joueurs";
+            setNeedle(0);
+            renderPlayerSetup();
         }
 
-        function handleMainAction() {
-            if (currentStep === 0) {
-                nextRound();
-            } else if (currentStep === 1) {
-                if (currentMode === 'gauche') {
-                    // Masquer le cadran avant que les camarades votent
-                    document.getElementById('compass-dial').style.transform = "rotate(0deg)";
-                    currentStep = 2;
-                    renderVotingUI();
-                } else {
-                    // Mode droite : le Boss a fixé la consigne, les joueurs ont soumis leur carte
-                    currentStep = 2;
-                    renderBossChoiceUI();
-                }
-            } else if (currentStep === 2) {
-                // Révélation des résultats
-                revealResult();
-            } else if (currentStep === 3) {
-                nextRound();
+        function renderPlayerSetup() {
+            const n = Number(document.getElementById('player-count').value);
+            const list = document.getElementById('player-setup-list');
+            const old = [...list.querySelectorAll('.player-row')].map(row => ({
+                name: row.querySelector('input').value,
+                mode: row.querySelector('select').value
+            }));
+            list.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                const saved = old[i] || {};
+                const row = document.createElement('div');
+                row.className = 'player-row';
+                row.innerHTML = `
+                    <input value="${escapeHtml(saved.name || `Joueur ${i+1}`)}" aria-label="Nom du joueur">
+                    <select>
+                        <option value="gauche" ${saved.mode === 'droite' ? '' : 'selected'}>Mode de Gauche</option>
+                        <option value="droite" ${saved.mode === 'droite' ? 'selected' : ''}>Mode de Droite</option>
+                    </select>`;
+                list.appendChild(row);
             }
         }
 
-        function nextRound() {
-            if (round >= 10) {
-                alert(`Partie terminée ! Score final : ${score} points.`);
-                resetGame();
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+        }
+
+        function startGame() {
+            const rows = [...document.querySelectorAll('.player-row')];
+            players = rows.map((row, i) => ({
+                name: row.querySelector('input').value.trim() || `Joueur ${i+1}`,
+                mode: row.querySelector('select').value
+            }));
+            const left = players.filter(p => p.mode === 'gauche').length;
+            const right = players.filter(p => p.mode === 'droite').length;
+            if (!left || !right) {
+                alert("Il faut au moins un joueur dans chaque mode pour comparer les deux moyennes.");
                 return;
             }
-            round++;
-            document.getElementById('round-val').innerText = round;
-            currentStep = 1;
+            results = [];
+            currentTurn = 0;
+            currentPlayerIndex = 0;
+            document.getElementById('setup-panel').style.display = 'none';
+            document.getElementById('main-action-btn').style.display = 'inline-block';
+            document.getElementById('total-turns-val').innerText = players.length * TOTAL_ROUNDS;
+            nextPlayerTurn();
+        }
 
-            // Tirer une carte au hasard
+        function nextPlayerTurn() {
+            if (currentTurn >= players.length * TOTAL_ROUNDS) {
+                finishGame();
+                return;
+            }
+
+            currentPlayerIndex = currentTurn % players.length;
+            const player = players[currentPlayerIndex];
+            currentMode = player.mode;
+            currentStep = 1;
+            selectedVoteAngle = null;
             currentCardIndex = Math.floor(Math.random() * CARDS.length);
             document.getElementById('card-text').innerText = CARDS[currentCardIndex];
             document.getElementById('card-num').innerText = `PROPOSITION #${currentCardIndex + 1}`;
+            document.getElementById('round-val').innerText = currentTurn + 1;
+            document.getElementById('anonymous-status').style.display = 'block';
+            document.getElementById('anonymous-status').innerText =
+                `Tour ${currentTurn + 1} : ${escapeHtml(player.name)} joue maintenant. Les autres attendent.`;
+            setNeedle(0);
 
-            if (currentMode === 'gauche') {
-                document.getElementById('phase-badge').innerText = "Étape 1 : Le Camarade place son avis en secret";
-                renderSecretPositionUI();
-            } else {
-                // Mode de droite : Le Boss tire un bord politique au hasard
-                targetAngle = POSITIONS[Math.floor(Math.random() * POSITIONS.length)].angle;
-                document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
-                document.getElementById('phase-badge').innerText = "Étape 1 : Le Boss impose l'orientation politique !";
-                renderBossHandUI();
+            if (player.mode === 'gauche') renderLeftTurn(player);
+            else renderRightTurn(player);
+        }
+
+        function setNeedle(angle) {
+            const clamped = Math.max(-90, Math.min(90, Number(angle) || 0));
+            targetAngle = clamped;
+            const needle = document.getElementById('compass-needle');
+            if (needle) needle.style.transform = `translateX(-50%) rotate(${clamped}deg)`;
+        }
+
+        function renderLeftTurn(player) {
+            document.getElementById('phase-badge').innerText =
+                `Tour de ${player.name} : position secrète`;
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `
+                <p style="font-size:.9rem;margin-bottom:8px;">
+                    ${escapeHtml(player.name)}, place la barre dans l'hémicycle. Les autres joueurs ne doivent pas regarder.
+                </p>
+                <input id="position-slider" type="range" min="-90" max="90" value="0" step="1"
+                       style="width:min(520px,90%);accent-color:var(--elysee-gold);"
+                       oninput="setNeedle(this.value)">
+                <p id="angle-readout" style="font-size:.78rem;color:#a0aec0;">Position : neutre</p>`;
+            document.getElementById('position-slider').oninput = function() {
+                setNeedle(this.value);
+                document.getElementById('angle-readout').innerText =
+                    `Position : ${describeAngle(Number(this.value))}`;
+            };
+            document.getElementById('main-action-btn').innerText = "Valider et passer au joueur suivant";
+        }
+
+        function renderRightTurn(player) {
+            document.getElementById('phase-badge').innerText =
+                `Tour de ${player.name} : réponse individuelle`;
+            const area = document.getElementById('interactive-area');
+            const target = POSITIONS[Math.floor(Math.random() * POSITIONS.length)];
+            targetAngle = target.angle;
+            setNeedle(targetAngle);
+            const choices = shuffle([0,1,2,3,4]).map(i => CARDS[(currentCardIndex + i * 17 + 7) % CARDS.length]);
+            area.innerHTML = `
+                <p style="font-size:.9rem;margin-bottom:8px;">
+                    Une consigne politique est fixée secrètement. ${escapeHtml(player.name)}, choisis la réponse qui te semble la plus adaptée.
+                </p>
+                <div class="hand-container" id="hand-box"></div>`;
+            const box = document.getElementById('hand-box');
+            choices.forEach((text, i) => {
+                const el = document.createElement('div');
+                el.className = 'hand-card';
+                el.innerText = text;
+                el.onclick = () => {
+                    document.querySelectorAll('.hand-card').forEach(c => c.classList.remove('selected'));
+                    el.classList.add('selected');
+                    selectedVoteAngle = POSITIONS[i % POSITIONS.length].angle;
+                };
+                box.appendChild(el);
+            });
+            document.getElementById('main-action-btn').innerText = "Valider la réponse";
+        }
+
+        function describeAngle(a) {
+            if (a <= -68) return "100% gauche";
+            if (a <= -30) return "50% gauche";
+            if (a < -5) return "10% gauche";
+            if (a <= 5) return "neutre";
+            if (a < 30) return "10% droite";
+            if (a < 68) return "50% droite";
+            return "100% droite";
+        }
+
+        function shuffle(arr) {
+            return arr.sort(() => Math.random() - 0.5);
+        }
+
+        function handleMainAction() {
+            if (currentStep === 1) {
+                if (currentMode === 'gauche') {
+                    const slider = document.getElementById('position-slider');
+                    targetAngle = Number(slider.value);
+                    // Pour le mode gauche, le score mesure la précision par rapport à la position secrète générée.
+                    // Le joueur choisit sa position, puis une position de référence est tirée anonymement.
+                    const reference = POSITIONS[Math.floor(Math.random() * POSITIONS.length)].angle;
+                    const diff = Math.abs(targetAngle - reference);
+                    const score = diff <= 10 ? 3 : diff <= 35 ? 2 : diff <= 60 ? 1 : 0;
+                    saveResult(score, reference, targetAngle);
+                } else {
+                    if (selectedVoteAngle === null) {
+                        alert("Choisis d'abord une réponse.");
+                        return;
+                    }
+                    const diff = Math.abs(selectedVoteAngle - targetAngle);
+                    const score = diff <= 10 ? 3 : diff <= 35 ? 2 : diff <= 60 ? 1 : 0;
+                    saveResult(score, targetAngle, selectedVoteAngle);
+                }
             }
         }
 
-        // --- UI MODE DE GAUCHE ---
-        function renderSecretPositionUI() {
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Camarade, choisissez votre position exacte :</p>`;
-            
-            const btnGroup = document.createElement('div');
-            btnGroup.className = 'vote-options';
-            
-            POSITIONS.forEach(pos => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-vote';
-                btn.innerText = pos.label;
-                btn.onclick = () => {
-                    targetAngle = pos.angle;
-                    document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
-                    document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                };
-                btnGroup.appendChild(btn);
+        function saveResult(score, secretAngle, answerAngle) {
+            const player = players[currentPlayerIndex];
+            results.push({
+                anonymousId: `Participant ${results.length + 1}`,
+                mode: player.mode,
+                score,
+                secretAngle,
+                answerAngle
             });
-            area.appendChild(btnGroup);
-            document.getElementById('main-action-btn').innerText = "Valider la position en secret";
-        }
 
-        function renderVotingUI() {
-            document.getElementById('phase-badge').innerText = "Étape 2 : Les camarades débattent et votent !";
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Selon vous, quelle était la position du Camarade ?</p>`;
-            
-            const btnGroup = document.createElement('div');
-            btnGroup.className = 'vote-options';
-            
-            POSITIONS.forEach(pos => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-vote';
-                btn.innerText = pos.label;
-                btn.onclick = () => {
-                    selectedVoteAngle = pos.angle;
-                    document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                };
-                btnGroup.appendChild(btn);
-            });
-            area.appendChild(btnGroup);
-            document.getElementById('main-action-btn').innerText = "Révéler les votes !";
-        }
-
-        // --- UI MODE DE DROITE ---
-        function renderBossHandUI() {
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Joueurs, proposez la carte de votre main qui convient au Boss :</p>`;
-            
-            const handBox = document.createElement('div');
-            handBox.className = 'hand-container';
-
-            // Générer 3 cartes de main fictives
-            for(let i=0; i<3; i++) {
-                let randomIdx = Math.floor(Math.random() * CARDS.length);
-                let cardEl = document.createElement('div');
-                cardEl.className = 'hand-card';
-                cardEl.innerText = CARDS[randomIdx];
-                cardEl.onclick = () => {
-                    document.querySelectorAll('.hand-card').forEach(c => c.style.borderColor = 'rgba(212,175,55,0.3)');
-                    cardEl.style.borderColor = '#e63946';
-                    document.getElementById('card-text').innerText = CARDS[randomIdx];
-                };
-                handBox.appendChild(cardEl);
-            }
-            area.appendChild(handBox);
-            document.getElementById('main-action-btn').innerText = "Soumettre les cartes au Boss";
-        }
-
-        function renderBossChoiceUI() {
-            document.getElementById('phase-badge').innerText = "Étape 3 : Le Boss choisit le gagnant sans s'expliquer";
-            const area = document.getElementById('interactive-area');
-            area.innerHTML = `<p style="font-size:0.9rem; color:var(--elysee-gold);">Le Patron étudie les soumissions...</p>`;
-            document.getElementById('main-action-btn').innerText = "Le Boss valide & attribue le point";
-        }
-
-        // --- REVELATION & SCORE ---
-        function revealResult() {
+            // Le nom est effacé de la zone visible avant de passer au suivant.
+            document.getElementById('anonymous-status').innerText =
+                `Réponse enregistrée sous l'identifiant anonyme ${results[results.length-1].anonymousId}.`;
+            document.getElementById('interactive-area').innerHTML =
+                `<p style="color:var(--elysee-gold);font-weight:700;">Réponse enregistrée. Joueur suivant.</p>`;
             currentStep = 3;
-            document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
-            
-            if (currentMode === 'gauche') {
-                const diff = Math.abs(targetAngle - (selectedVoteAngle !== null ? selectedVoteAngle : 0));
-                let earned = 0;
-                if (diff === 0) earned = 3;
-                else if (diff <= 35) earned = 1;
-
-                score += earned;
-                document.getElementById('phase-badge').innerText = earned > 0 ? `GAGNÉ ! (+${earned} pts)` : "RÉVOLUTION ÉCHOUÉE ! (0 pt)";
-            } else {
-                score += 1;
-                document.getElementById('phase-badge').innerText = "LE BOSS A TRANCHÉ ! (+1 pt au fayot)";
-            }
-
-            document.getElementById('score-val').innerText = score;
-            document.getElementById('interactive-area').innerHTML = `<p style="font-size:0.85rem;">Position réelle affichée sur la boussole.</p>`;
-            document.getElementById('main-action-btn').innerText = round < 10 ? "Manche Suivante" : "Voir le Score Final";
+            document.getElementById('main-action-btn').innerText = "Joueur suivant";
+            document.getElementById('main-action-btn').onclick = () => {
+                currentTurn++;
+                document.getElementById('main-action-btn').onclick = handleMainAction;
+                nextPlayerTurn();
+            };
         }
+
+        function finishGame() {
+            currentStep = 4;
+            document.getElementById('main-action-btn').style.display = 'none';
+            document.getElementById('anonymous-status').innerText =
+                "Toutes les réponses sont anonymisées. Le patron ne voit aucun nom.";
+            document.getElementById('phase-badge').innerText = "FIN DE PARTIE : LE PATRON DOIT TRANCHER";
+
+            const left = results.filter(r => r.mode === 'gauche');
+            const right = results.filter(r => r.mode === 'droite');
+            const avgLeft = left.reduce((a,r)=>a+r.score,0) / left.length;
+            const avgRight = right.reduce((a,r)=>a+r.score,0) / right.length;
+
+            // Le patron ne reçoit que les deux résultats agrégés.
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `
+                <div class="final-grid">
+                    <div class="final-card">
+                        <h3 style="color:var(--gauche-red)">Mode de Gauche</h3>
+                        <div style="font-size:1.8rem;font-weight:800">${avgLeft.toFixed(2)} / 3</div>
+                        <small>${left.length} participant(s), moyenne de leurs résultats</small>
+                    </div>
+                    <div class="final-card">
+                        <h3 style="color:#457b9d">Mode de Droite</h3>
+                        <div style="font-size:1.8rem;font-weight:800">${avgRight.toFixed(2)} / 3</div>
+                        <small>${right.length} participant(s), moyenne de leurs résultats</small>
+                    </div>
+                </div>
+                <div class="anonymous-box" style="margin-top:12px;">
+                    <strong>Table du patron</strong><br>
+                    Le patron ne voit ni les noms ni l'ordre des joueurs. Il ne dispose que des deux moyennes.
+                    <br><br>
+                    <button class="btn-action" onclick="bossDeclareWinner(${avgLeft}, ${avgRight})">Le patron indique le gagnant</button>
+                </div>`;
+            document.getElementById('score-summary').style.display = 'block';
+            document.getElementById('score-summary').innerHTML =
+                `Comparaison finale : Gauche ${avgLeft.toFixed(2)} / 3 · Droite ${avgRight.toFixed(2)} / 3`;
+        }
+
+        function bossDeclareWinner(left, right) {
+            let msg;
+            if (Math.abs(left-right) < 0.001) {
+                msg = "ÉGALITÉ : les deux modes terminent avec la même moyenne.";
+            } else if (left > right) {
+                msg = "LE PATRON DÉSIGNE LE MODE DE GAUCHE GAGNANT !";
+            } else {
+                msg = "LE PATRON DÉSIGNE LE MODE DE DROITE GAGNANT !";
+            }
+            document.getElementById('phase-badge').innerText = "DÉCISION DU PATRON";
+            document.getElementById('interactive-area').innerHTML =
+                `<div class="card-box"><div class="card-title">${msg}</div>
+                 <p style="margin-top:12px;font-size:.82rem;color:#a0aec0;">
+                 Aucun nom de joueur n'a été révélé au patron.
+                 </p></div>
+                 <button class="btn-action" onclick="resetGame()" style="margin-top:12px;">Nouvelle partie</button>`;
+        }
+
     </script>
 </body>
 </html>
