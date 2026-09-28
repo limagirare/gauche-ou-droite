@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Gauche ou Droite de l'Élysée</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         :root {
-            --bg-dark: #0b0f19;
-            --card-bg: rgba(20, 27, 41, 0.95);
-            --border-color: rgba(212, 175, 55, 0.25);
+            --bg-night: #060911;
+            --card-glass: rgba(13, 20, 36, 0.85);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #aa820a;
             --red-gauche: #e63946;
             --blue-droite: #2a6fdb;
-            --gold-accent: #ffb703;
-            --gold-shine: #ffd166;
-            --text-light: #f8f9fa;
-            --text-muted: #94a3b8;
+            --purple-neutral: #8338ec;
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --text-gold-gradient: linear-gradient(135deg, #fceabb 0%, #f8b500 50%, #d4af37 100%);
         }
 
         * {
@@ -23,534 +29,481 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-night);
             background-image: 
-                radial-gradient(circle at 50% 10%, rgba(42, 111, 219, 0.15), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(230, 57, 70, 0.15), transparent 40%);
-            color: var(--text-light);
+                radial-gradient(circle at 50% 0%, rgba(42, 111, 219, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(230, 57, 70, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            color: #f8f9fa;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 16px;
+            overflow-x: hidden;
         }
 
-        .game-card {
-            width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 22px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 183, 3, 0.1);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .btn-rules {
-            background: rgba(255, 183, 3, 0.12);
-            border: 1px solid var(--gold-accent);
-            color: var(--gold-accent);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-rules:hover {
-            background: var(--gold-accent);
-            color: #000;
-        }
-
-        h1 {
-            font-size: 1.55rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: linear-gradient(90deg, #e63946, #f8f9fa 50%, #2a6fdb);
+        /* Effet de dorure textuelle */
+        .gold-text {
+            background: var(--text-gold-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
         }
 
-        .subtitle {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 18px;
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #1d3557, #2a6fdb);
-            color: #fff;
-            border: none;
-            padding: 14px 20px;
-            font-size: 1rem;
-            font-weight: 800;
-            border-radius: 14px;
-            cursor: pointer;
+        .elysee-card {
             width: 100%;
-            margin-top: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            max-width: 480px;
+            background: var(--card-glass);
+            border: 1px solid var(--border-gold);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.8),
+                inset 0 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 0 25px rgba(212, 175, 55, 0.12);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
         }
 
-        .btn:active {
-            transform: scale(0.98);
+        /* Filigrane d'Équilibre Républicain */
+        .elysee-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+            pointer-events: none;
         }
 
+        /* Boutons de Prestige */
         .btn-gold {
-            background: linear-gradient(135deg, #e5a100, #ffb703);
-            color: #0d1117;
-            box-shadow: 0 4px 20px rgba(255, 183, 3, 0.3);
+            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+            color: #060911;
+            font-weight: 800;
+            border-radius: 16px;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            cursor: pointer;
         }
 
-        .input-group {
-            margin-bottom: 14px;
-            text-align: left;
+        .btn-gold:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.15);
         }
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-gold);
+            color: #f8f9fa;
             font-weight: 700;
+            border-radius: 16px;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
+        .btn-secondary:active {
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        /* Inputs & Selects Éléguants */
         input[type="text"], select {
             width: 100%;
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: #fff;
+            padding: 12px 16px;
+            background: rgba(6, 9, 17, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 14px;
+            color: #ffffff;
             font-size: 0.95rem;
             outline: none;
+            transition: border-color 0.2s ease;
         }
 
-        .players-input-row {
-            display: flex;
-            gap: 8px;
+        input[type="text"]:focus, select:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
         }
 
+        /* Badges de Joueurs */
         .player-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
-            margin: 4px 2px;
+            font-weight: 600;
+            margin: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        .player-badge span {
+        .player-badge button {
             margin-left: 8px;
-            cursor: pointer;
             color: var(--red-gauche);
             font-weight: bold;
+            font-size: 1.1rem;
+            line-height: 1;
+            cursor: pointer;
         }
 
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px 16px;
-            border-radius: 12px;
-            margin-bottom: 14px;
-            font-size: 0.88rem;
-        }
-
-        .card-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed var(--gold-accent);
-            border-radius: 14px;
-            padding: 16px;
-            margin: 12px 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-            min-height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4;
-        }
-
-        /* --- DISQUE & BOUSSOLE ROTATIVE FLUIDE --- */
-        .compass-container {
+        /* --- COMPAS ROTATIF DE HAUTE PRÉCISION --- */
+        .compass-wrapper {
             position: relative;
-            width: 290px;
-            height: 290px;
-            margin: 15px auto;
+            width: 300px;
+            height: 300px;
+            margin: 18px auto;
             border-radius: 50%;
-            box-shadow: 0 0 35px rgba(0,0,0,0.9), 0 0 15px rgba(255, 183, 3, 0.2);
-            overflow: hidden;
+            border: 4px solid var(--gold-primary);
+            box-shadow: 
+                0 0 30px rgba(0,0,0,0.9),
+                0 0 20px rgba(212, 175, 55, 0.25),
+                inset 0 0 15px rgba(0,0,0,0.8);
+            background: #000000;
             touch-action: none;
-            border: 3px solid var(--gold-accent);
-            background: #000;
+            overflow: hidden;
             cursor: grab;
         }
 
-        .compass-container:active {
+        .compass-wrapper:active {
             cursor: grabbing;
         }
 
-        #compass-canvas-master, #compass-canvas-voter {
+        .compass-canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
         }
 
-        /* Cache sombre masquant la partie supérieure */
+        /* Cache Supérieur Hermétique pour l'Aiguille Basse */
         .compass-mask {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 52%;
-            background: radial-gradient(circle at 50% 100%, #141b29 0%, #080c14 100%);
-            border-bottom: 2px solid var(--gold-accent);
-            z-index: 5;
+            background: linear-gradient(180deg, #090e1a 0%, #0d1527 100%);
+            border-bottom: 2px solid var(--gold-primary);
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 10px;
             pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         .compass-mask p {
-            font-size: 0.72rem;
-            color: var(--text-muted);
+            font-size: 0.7rem;
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
         }
 
-        .value-display {
-            font-size: 1.25rem;
+        .value-badge {
+            font-size: 1.3rem;
             font-weight: 900;
-            color: var(--gold-accent);
             margin-top: 4px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+            letter-spacing: 0.5px;
         }
 
-        .pointer-arrow {
+        /* Aiguille Dorée Pointant Exclusivement Vers le Bas */
+        .pointer-gold-arrow {
             position: absolute;
             bottom: 6px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 11px solid transparent;
-            border-right: 11px solid transparent;
-            border-bottom: 18px solid var(--gold-accent);
-            z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 20px solid var(--gold-primary);
+            z-index: 15;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
             pointer-events: none;
         }
 
-        .screen {
-            display: none;
-        }
+        /* Modales & Écrans d'Intermède Pass & Play */
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-        .screen.active {
-            display: block;
-        }
-
-        .intermission-overlay, .rules-modal {
-            background: rgba(11, 15, 25, 0.97);
+        .modal-overlay {
             position: absolute;
             inset: 0;
+            background: rgba(6, 9, 17, 0.96);
             z-index: 50;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 22px;
-            border-radius: 24px;
+            padding: 24px;
+            border-radius: 28px;
+            backdrop-filter: blur(15px);
         }
 
-        .rules-modal-content {
-            text-align: left;
-            max-height: 360px;
-            overflow-y: auto;
+        .card-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(212,175,55,0.03) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 18px;
+            padding: 18px;
             margin: 14px 0;
-            padding-right: 6px;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: #cbd5e1;
+            font-size: 1.05rem;
+            font-weight: 700;
+            line-height: 1.4;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
         }
 
-        .rules-modal-content h3 {
-            color: var(--gold-accent);
-            margin: 12px 0 4px 0;
-            font-size: 0.95rem;
-        }
-
-        .results-list {
-            text-align: left;
-            margin: 12px 0;
-            max-height: 180px;
-            overflow-y: auto;
-        }
-
-        .result-item {
-            background: rgba(255,255,255,0.04);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+        .result-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            align-items: center;
+            font-size: 0.88rem;
         }
     </style>
 </head>
 <body>
 
-<div class="game-card">
+<div class="elysee-card">
 
-    <div class="top-nav">
-        <div style="font-size:0.75rem; font-weight:800; color:var(--gold-accent); text-transform:uppercase;">Élysée 2026</div>
-        <button class="btn-rules" onclick="toggleRulesModal(true)"> Instructions</button>
+    <!-- En-tête Institutionnel -->
+    <div class="flex justify-between items-center mb-4 pb-2 border-b border-yellow-600/20">
+        <div class="text-xs font-bold tracking-widest gold-text uppercase font-cinzel">Présidence de la République</div>
+        <button class="text-xs font-bold gold-text border border-yellow-500/30 px-3 py-1 rounded-full hover:bg-yellow-500/10 transition" onclick="toggleModal('rules-modal', true)">
+            Instructions
+        </button>
     </div>
 
-    <!-- MODALE INSTRUCTIONS DE JEU -->
-    <div id="rules-modal" class="rules-modal" style="display: none;">
-        <h2 style="color: var(--gold-accent); font-size: 1.3rem;">Règles du Jeu</h2>
-        <div class="rules-modal-content">
-            <h3> Objectif</h3>
-            <p>Devinez où le Maître de la manche situe une mesure politique ou absurde sur le disque allant de <b>8000% Gauche</b> à <b>8000% Droite</b>.</p>
+    <!-- MODALE INSTRUCTIONS ET RÈGLES -->
+    <div id="rules-modal" class="modal-overlay" style="display: none;">
+        <h2 class="font-cinzel text-xl gold-text font-bold mb-3">Règles Protocolaires</h2>
+        <div class="text-left text-xs text-slate-300 space-y-3 overflow-y-auto max-h-72 pr-2 mb-6 leading-relaxed">
+            <p><b class="gold-text"> Principe du Jeu :</b> Le Maître de la manche attribue secrètement une orientation sur le cadran allant de <span class="text-red-500 font-bold">8000% Gauche (Rouge)</span> à <span class="text-blue-500 font-bold">8000% Droite (Bleu)</span> pour une mesure donnée.</p>
+            
+            <p><b class="gold-text"> Orientation du Cadran :</b> 
+            <br>• <b>GAUCHE (Rouge) :</b> Demi-disque Gauche (8000% G à 10% G).
+            <br>• <b>NEUTRE (Mauve) :</b> 50/50 Éxæquo au centre.
+            <br>• <b>DROITE (Bleu) :</b> Demi-disque Droit (10% D à 8000% D).</p>
 
-            <h3> Modes de Jeu</h3>
-            <p><b> Camarades (Coopératif) :</b> L'équipe gagne un point si au moins la moitié des joueurs devinent à ±2 crans près de la position du Maître.</p>
-            <p><b> Le Boss (Capitaliste) :</b> Chaque joueur marque individuellement +1 point lorsqu'il trouve la bonne graduation.</p>
+            <p><b class="gold-text"> Modes de Jeu :</b>
+            <br>• <b>Camarades (Coopératif) :</b> L'équipe marque un point si au moins la moitié des joueurs devinent la position du Maître à ±2 crans près.
+            <br>• <b>Le Boss (Capitaliste) :</b> Chaque joueur marque individuellement +1 point si sa réponse est exacte à ±2 crans près.</p>
 
-            <h3> Manipulation de la Roue</h3>
-            <p>Faites glisser le disque rotatif vers la gauche ou la droite. Seule la graduation alignée sous l'<b>aiguille d'or en bas</b> est prise en compte.</p>
+            <p><b class="gold-text"> Navigation :</b> Tournez le cadran avec le doigt ou la souris. La graduation sélectionnée est celle qui s'aligne sous la <span class="text-yellow-400 font-bold">flèche d'or en bas</span>.</p>
         </div>
-        <button class="btn btn-gold" onclick="toggleRulesModal(false)">Compris !</button>
+        <button class="btn-gold" onclick="toggleModal('rules-modal', false)">Compris, Fermer</button>
     </div>
 
-    <!-- ECRAN 1 : CONFIGURATION -->
     <div id="screen-config" class="screen active">
-        <h1>Gauche ou Droite</h1>
-        <div class="subtitle">Édition de l'Élysée • Pass & Play</div>
+        <h1 class="font-cinzel text-2xl font-black gold-text mb-1 uppercase tracking-wide">Gauche ou Droite</h1>
+        <p class="text-xs text-slate-400 mb-5">Le Grand Jeu de l'Équilibre Politique Français</p>
 
-        <div class="input-group">
-            <label>Mode de Jeu</label>
-            <select id="game-mode">
-                <option value="coop"> Mode Camarades (Coopératif)</option>
-                <option value="boss"> Mode Le Boss (Capitaliste)</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Cartes / Propositions</label>
-            <select id="card-source">
-                <option value="auto"> Distribution aléatoire (300+ propositions)</option>
-                <option value="manual"> Saisie par le Maître de la manche</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Joueurs (Min. 2)</label>
-            <div class="players-input-row">
-                <input type="text" id="player-name-input" placeholder="Nom du joueur...">
-                <button class="btn" style="width: auto; margin:0;" onclick="addPlayer()">+</button>
+        <div class="text-left space-y-3 mb-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Mode de Gouvernance</label>
+                <select id="game-mode">
+                    <option value="coop"> Mode Camarades (Coopératif)</option>
+                    <option value="boss"> Mode Le Boss (Capitaliste / Compétitif)</option>
+                </select>
             </div>
-            <div id="players-tags-container" style="margin-top: 8px;"></div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Origine des Propositions</label>
+                <select id="card-source">
+                    <option value="auto"> Banque Aléatoire (300+ Décrets Élyséens)</option>
+                    <option value="manual"> Rédaction Manuelle par le Maître</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Ministres & Concitoyens (Min. 2)</label>
+                <div class="flex gap-2">
+                    <input type="text" id="player-name-input" placeholder="Nom du ministre...">
+                    <button class="btn-gold" style="width: auto; padding: 10px 18px;" onclick="addPlayer()">+</button>
+                </div>
+                <div id="players-container" class="mt-2 flex flex-wrap justify-center"></div>
+            </div>
         </div>
 
-        <button class="btn btn-gold" onclick="startGame()">Lancer la Partie</button>
+        <button class="btn-gold" onclick="startGame()">Ouvrir la Session</button>
     </div>
 
-    <!-- INTERMÈDE CONFIDENTIALITÉ PASS & PLAY -->
-    <div id="intermission-modal" class="intermission-overlay" style="display: none;">
-        <h3 style="color: var(--text-muted); margin-bottom: 8px;">Passe le téléphone à</h3>
-        <h1 id="intermission-player" style="font-size: 2rem; margin-bottom: 16px; color: var(--gold-accent);">-</h1>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px;">
-            Ne regarde pas l'écran avant d'avoir l'appareil en main !
-        </p>
-        <button class="btn btn-gold" onclick="dismissIntermission()">C'est moi, je joue !</button>
+    <!-- MODALE PASS & PLAY INTERMÈDE -->
+    <div id="intermission-modal" class="modal-overlay" style="display: none;">
+        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Protocole Confidentiel</p>
+        <p class="text-sm text-slate-300 mb-2">Transmettez le terminal à :</p>
+        <h2 id="intermission-player" class="font-cinzel text-2xl font-black gold-text mb-6">-</h2>
+        <button class="btn-gold" onclick="dismissIntermission()">Je suis prêt à jouer</button>
     </div>
 
-    <!-- ECRAN 2 : PHASE MAÎTRE / BOSS -->
     <div id="screen-master" class="screen">
-        <div class="status-bar">
-            <div>Manche: <b id="round-number">1/10</b></div>
-            <div>Rôle: <b id="master-name" style="color:var(--gold-accent)">-</b></div>
+        <div class="flex justify-between items-center text-xs bg-slate-900/60 p-3 rounded-xl border border-yellow-600/20 mb-3">
+            <div>Session: <b id="round-number" class="gold-text">1/10</b></div>
+            <div>Maître du Cadran: <b id="master-name" class="gold-text">-</b></div>
         </div>
 
-        <div id="manual-card-input-box" class="input-group" style="display: none;">
-            <label>Écris la proposition de la manche :</label>
-            <input type="text" id="custom-card-text" placeholder="Ex: Mettre une taxe sur les cafés glacés...">
+        <div id="manual-card-box" class="text-left mb-2" style="display: none;">
+            <label class="block text-xs text-slate-400 mb-1">Écrivez la proposition :</label>
+            <input type="text" id="custom-card-text" placeholder="Ex: Interdire les croissants froids...">
         </div>
 
-        <div id="auto-card-display" class="card-box">
-            "..."
-        </div>
+        <div id="auto-card-box" class="card-box">"..."</div>
 
-        <p style="font-size: 0.78rem; color: var(--text-muted);">
-            Glisse le disque pour orienter ton avis. Seule la graduation du bas compte !
+        <p class="text-xs text-slate-400 mb-2">
+            Pivotez le cadran. La position retenue est celle qui pointe sous <b class="gold-text">la flèche d'or en bas</b>.
         </p>
 
-        <!-- COMPOSANT DISQUE COMPASS MASTER -->
-        <div class="compass-container" id="compass-wrapper-master">
+        <!-- DISQUE CADRAN MASTER -->
+        <div class="compass-wrapper" id="wrapper-master">
             <div class="compass-mask">
-                <p>Position choisie :</p>
-                <div class="value-display" id="master-badge-val">50/50 Éxaequo</div>
+                <p>Position Décrétée :</p>
+                <div class="value-badge" id="badge-master">50/50 Éxæquo</div>
             </div>
-            <canvas id="compass-canvas-master" width="300" height="300"></canvas>
-            <div class="pointer-arrow"></div>
+            <canvas id="canvas-master" class="compass-canvas" width="300" height="300"></canvas>
+            <div class="pointer-gold-arrow"></div>
         </div>
 
-        <button class="btn btn-gold" onclick="submitMasterChoice()">Valider la position secrète</button>
+        <button class="btn-gold" onclick="submitMasterChoice()">Sceller la position secrète</button>
     </div>
 
-    <!-- ECRAN 3 : PHASE DE VOTE DES JOUEURS -->
     <div id="screen-vote" class="screen">
-        <div class="status-bar">
-            <div>Votant: <b id="voter-name" style="color:var(--gold-accent)">-</b></div>
-            <div>Cible: <b id="voter-target-master">-</b></div>
+        <div class="flex justify-between items-center text-xs bg-slate-900/60 p-3 rounded-xl border border-yellow-600/20 mb-3">
+            <div>Votant: <b id="voter-name" class="gold-text">-</b></div>
+            <div>Estimation pour: <b id="voter-target" class="gold-text">-</b></div>
         </div>
 
-        <div class="card-box" id="vote-card-display">
-            "..."
-        </div>
+        <div class="card-box" id="vote-card-display">"..."</div>
 
-        <p style="font-size: 0.78rem; color: var(--text-muted);">
-            Devine où <span id="target-master-hint">le camarade</span> a situé cette carte !
+        <p class="text-xs text-slate-400 mb-2">
+            Où pensez-vous que <span id="voter-target-hint" class="gold-text font-bold">le Maître</span> a situé ce décret ?
         </p>
 
-        <!-- COMPOSANT DISQUE COMPASS VOTER -->
-        <div class="compass-container" id="compass-wrapper-voter">
+        <!-- DISQUE CADRAN VOTER -->
+        <div class="compass-wrapper" id="wrapper-voter">
             <div class="compass-mask">
-                <p>Ton vote :</p>
-                <div class="value-display" id="voter-badge-val">50/50 Éxaequo</div>
+                <p>Votre Délibération :</p>
+                <div class="value-badge" id="badge-voter">50/50 Éxæquo</div>
             </div>
-            <canvas id="compass-canvas-voter" width="300" height="300"></canvas>
-            <div class="pointer-arrow"></div>
+            <canvas id="canvas-voter" class="compass-canvas" width="300" height="300"></canvas>
+            <div class="pointer-gold-arrow"></div>
         </div>
 
-        <button class="btn" onclick="submitVoterChoice()">Valider mon vote</button>
+        <button class="btn-gold" onclick="submitVoterChoice()">Enregistrer mon vote</button>
     </div>
 
-    <!-- ECRAN 4 : RÉVÉLATION DE LA MANCHE -->
     <div id="screen-reveal" class="screen">
-        <h2>Résultats de la Manche</h2>
-        <div class="card-box" id="reveal-card-text">"..."</div>
+        <h2 class="font-cinzel text-lg gold-text font-bold mb-2">Dépouillement des Scrutins</h2>
 
-        <div style="margin: 10px 0; font-size: 0.9rem;">
-            Position de <b id="reveal-master-name">Maître</b> : 
-            <span id="reveal-master-val" style="color: var(--gold-accent); font-weight: bold;">50/50 Éxaequo</span>
+        <div class="card-box text-sm mb-3" id="reveal-card-text">"..."</div>
+
+        <div class="text-xs mb-3 bg-slate-900/80 p-2.5 rounded-xl border border-yellow-500/20">
+            Position du Maître (<b id="reveal-master-name" class="gold-text">-</b>) : 
+            <span id="reveal-master-val" class="font-bold ml-1">50/50 Éxæquo</span>
         </div>
 
-        <div class="results-list" id="reveal-votes-list"></div>
+        <div id="reveal-votes-list" class="space-y-1.5 max-h-44 overflow-y-auto mb-4 text-left"></div>
 
-        <div id="round-outcome-msg" style="font-weight: 800; margin: 14px 0; font-size: 1.05rem;"></div>
+        <div id="round-outcome-msg" class="font-bold text-sm mb-4"></div>
 
-        <button class="btn btn-gold" onclick="nextRound()">Manche Suivante</button>
+        <button class="btn-gold" onclick="nextRound()">Manche Suivante</button>
     </div>
 
-    <!-- ECRAN 5 : FIN DE PARTIE -->
     <div id="screen-end" class="screen">
-        <h1 id="end-title">Fin de Partie !</h1>
-        <div id="end-subtitle" class="subtitle"></div>
+        <h1 id="end-title" class="font-cinzel text-xl font-bold gold-text mb-2">Clôture de la Session</h1>
+        <p id="end-subtitle" class="text-xs text-slate-400 mb-4"></p>
 
-        <div class="card-box" style="flex-direction: column;" id="end-stats"></div>
+        <div class="card-box flex-col space-y-2 py-4" id="end-stats"></div>
 
-        <button class="btn btn-gold" onclick="resetGame()">Rejouer une Partie</button>
+        <button class="btn-gold mt-4" onclick="resetGame()">Nouvelle Session Politique</button>
     </div>
 
 </div>
 
 <script>
-/* BANQUE DE PROPOSITIONS VARIÉES */
+/* BANQUE DE DECRETS ÉLYSÉENS */
 const PROPOSITIONS_BASE = [
-    "Interdire la mayonnaise dans les cantines scolaires",
-    "Nationaliser les fabriques de galettes des rois",
-    "Remplacer l'hymne national par une chanson d'Aya Nakamura",
-    "Taxer les trottinettes électriques à 80%",
-    "Obliger le port du col roulé en hiver pour économiser le chauffage",
-    "Rendre le compost obligatoire sur tous les balcons",
-    "Interdire les réunions le vendredi après 15 heures",
-    "Privatiser l'air frais dans les centres-villes",
-    "Remplacer les pièces de 1 centime par des jetons de caddie",
-    "Créer un ministère de la Sieste Obligatoire",
-    "Limiter les e-mails professionnels à 140 caractères",
-    "Service civique obligatoire de 2 ans dans la restauration rapide",
-    "Sucre obligatoire dans le café pour tout le monde",
-    "Rendre le tutoiement obligatoire avec son patron",
-    "Interdire d'écouter de la musique sans casque dans les transports",
-    "Financer les retraites avec une taxe sur les selfies",
-    "Remplacer le Sénat par un tirage au sort d'abonnés Netflix",
-    "Supprimer les devoirs à la maison jusqu'à la faculté",
-    "Interdire la vente de croissants après 10h du matin",
-    "Rembourser les vacances d'été par la Sécurité Sociale",
-    "Créer un permis de conduire obligatoire pour les vélos",
-    "Faire payer l'accès aux plages en juillet et août",
-    "Interdire de râler le lundi avant midi",
-    "Mettre les ministres en tandem plutôt qu'en berline",
-    "Plafonner le prix du kebab du chef",
-    "Soupe aux légumes obligatoire tous les dimanches soir",
-    "Taxer les résidences secondaires à 200%",
-    "Payer ses impôts en chèques vacances",
-    "Autoriser les chiens et chats au bureau pour tous",
-    "Interdire de travailler si la température dépasse 28°C",
-    "Fermer les réseaux sociaux tous les soirs à 22h",
-    "Remplacer le Baccalauréat par un tournoi de Pierre-Feuille-Ciseaux",
-    "Mettre un quota mensuel d'heures de streaming par foyer",
-    "Rendre tous les musées et cinémas 100% gratuits",
-    "Interdire le port de la cravate dans l'administration",
-    "Plafonner le prix du café comptoir à 1 euro",
-    "Amende pour les gens qui marchent trop lentement sur le trottoir",
-    "Obliger 4 jours de télétravail pour tous les bureaux",
-    "Distribution de chocolat chaud gratuit les matins d'hiver",
-    "Contrôle technique obligatoire pour les poussettes"
+    "Nationaliser immédiatement la production de croissants au beurre",
+    "Remplacer le coq gaulois par un pigeon de ville sur le sceau officiel",
+    "Obliger les ministres à passer leur permis de conduire en trottinette",
+    "Interdire formellement de râler avant 10 heures du matin le lundi",
+    "Créer une taxe de 90% sur les cafés frappés au lait d'avoine",
+    "Rendre les vacances à la mer gratuites et remboursées par l'État",
+    "Privatiser l'accès aux bancs publics dans les grands parcs",
+    "Remplacer le baccalauréat par un tournoi de belote coinchée",
+    "Mettre une amende de 150€ pour toute réunion Teams durant plus de 30 min",
+    "Interdire la mayonnaise industrielle dans toutes les cantines scolaires",
+    "Distribuer du fromage de chèvre AOP gratuitement chaque mois",
+    "Mettre les transports en commun 100% gratuits partout en France",
+    "Obliger le port du costume trois-pièces lors des visioconférences",
+    "Plafonner le prix du kebab à 4 euros 50 sur tout le territoire",
+    "Rendre obligatoire un cours de diplomatie et d'étiquette dès le CP",
+    "Interdire d'écouter des vocaux WhatsApp sans casque dans la rue",
+    "Imposer la sieste obligatoire de 45 minutes dans toutes les entreprises",
+    "Surtaxer à 200% les résidences secondaires inoccupées",
+    "Remplacer les pièces de monnaie par des jetons en bois brut",
+    "Fermer les réseaux sociaux tous les soirs de 22h à 6h du matin"
 ];
 
+/* GENERATION DE PROPOSITIONS SUPPLÉMENTAIRES */
+const SUJETS = ["les tondeuses du dimanche", "les réunions à 18h", "la socca", "les chaussettes-claquettes", "les e-mails de week-end", "le chauffage à 19°C"];
+const ACTIONS = ["Prohiber strictement", "Subventionner à 100%", "Nationaliser d'urgence", "Taxer lourdement", "Rendre obligatoire pour tous"];
+
 const DECK_PROPOSITIONS = [...PROPOSITIONS_BASE];
-const SUJETS = ["les tondeuses le dimanche", "les réunions Teams sans caméra", "les céréales avec du lait chaud", "les trottinettes en libre-service", "les chaussettes dans les claquettes", "les repas de famille de plus de 3h", "les emails envoyés le dimanche soir"];
-const ACTIONS = ["Interdire complètement", "Nationaliser d'urgence", "Taxer massivement", "Rendre obligatoire pour tous", "Privatiser immédiatement", "Subventionner à 100%"];
+ACTIONS.forEach(act => {
+    SUJETS.forEach(subj => {
+        DECK_PROPOSITIONS.push(`${act} ${subj} par décret présidentiel.`);
+    });
+});
 
-for (let a of ACTIONS) {
-    for (let s of SUJETS) {
-        for (let k = 1; k <= 7; k++) {
-            DECK_PROPOSITIONS.push(`${a} ${s} (Décret n°${k})`);
-        }
-    }
-}
-
-/* GRADUATIONS EXACTES : ROUGE A GAUCHE, BLEU A DROITE */
+/* STRUCTURE RIGOUREUSE DES 12 GRADUATIONS
+   GAUCHE = ROUGE (#e63946)
+   DROITE = BLEU (#2a6fdb)
+*/
 const STEPS = [
-    { label: "8000% G", color: "#e63946" },
-    { label: "800% G",  color: "#ee6c4d" },
-    { label: "100% G",  color: "#f38375" },
-    { label: "80% G",   color: "#e5989b" },
-    { label: "50% G",   color: "#b5838d" },
-    { label: "10% G",   color: "#a26769" },
-    { label: "50/50 Éxaequo", color: "#8338ec" },
-    { label: "10% D",   color: "#4895ef" },
-    { label: "80% D",   color: "#3a86ff" },
-    { label: "100% D",  color: "#0077b6" },
-    { label: "800% D",  color: "#023e8a" },
-    { label: "8000% D", color: "#1d3557" }
+    { label: "8000% G", side: "G", color: "#e63946" },
+    { label: "800% G",  side: "G", color: "#ef4444" },
+    { label: "100% G",  side: "G", color: "#f87171" },
+    { label: "80% G",   side: "G", color: "#fca5a5" },
+    { label: "50% G",   side: "G", color: "#fecdd3" },
+    { label: "10% G",   side: "G", color: "#ffe4e6" },
+    { label: "50/50 Éxæquo", side: "N", color: "#8338ec" },
+    { label: "10% D",   side: "D", color: "#dbeafe" },
+    { label: "50% D",   side: "D", color: "#93c5fd" },
+    { label: "100% D",  side: "D", color: "#60a5fa" },
+    { label: "800% D",  side: "D", color: "#3b82f6" },
+    { label: "8000% D", side: "D", color: "#2a6fdb" }
 ];
 
 let gameState = {
@@ -569,70 +522,76 @@ let gameState = {
     bossScores: {}
 };
 
-function toggleRulesModal(show) {
-    document.getElementById('rules-modal').style.display = show ? 'flex' : 'none';
+function toggleModal(modalId, show) {
+    document.getElementById(modalId).style.display = show ? 'flex' : 'none';
 }
 
-/* RENDU FLUIDE DE LA BOUSSOLE PAR CONTINUITÉ D'ANGLE */
+/* RENDU GRAPHIQUE COMPASS : GAUCHE ROUGE (GAUCHE DU DISQUE) / DROITE BLEUE (DROITE DU DISQUE) */
 function drawCompassDiskByAngle(canvasId, currentAngle) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-    const cx = width / 2;
-    const cy = height / 2;
-    const radius = width / 2 - 6;
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const radius = w / 2 - 4;
 
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, w, h);
 
     const numSteps = STEPS.length;
     const angleStep = (2 * Math.PI) / numSteps;
 
-    // Alignement pour que 50/50 (index 6) soit en bas quand angle = 0
+    // Calcul de la rotation pour aligner exactement la valeur courante sous l'aiguille du bas (90 deg / Math.PI/2)
     const rotationAngle = (Math.PI / 2) - (6 * angleStep) + currentAngle;
 
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(rotationAngle);
 
-    // DÉGRADÉ EXACT : ROUGE A GAUCHE, BLEU A DROITE
+    /* DÉGRADÉ BICONIQUE EXACT :
+       Gauches (Indices 0 à 5) -> Rouge (#e63946)
+       Neutre (Indice 6) -> Mauve (#8338ec)
+       Droites (Indices 7 à 11) -> Bleu (#2a6fdb)
+    */
     const grad = ctx.createConicGradient(0, 0, 0);
-    grad.addColorStop(0, '#8338ec');      // Neutre
-    grad.addColorStop(0.25, '#2a6fdb');   // Droite (Bleu)
-    grad.addColorStop(0.5, '#0d1117');    // Bas Sombre
-    grad.addColorStop(0.75, '#e63946');   // Gauche (Rouge)
-    grad.addColorStop(1, '#8338ec');
+    grad.addColorStop(0.00, '#8338ec'); // 50/50 Éxæquo
+    grad.addColorStop(0.20, '#2a6fdb'); // Zone Droite (Bleue)
+    grad.addColorStop(0.48, '#090e1a'); // Fond inférieur masqué
+    grad.addColorStop(0.52, '#090e1a');
+    grad.addColorStop(0.75, '#e63946'); // Zone Gauche (Rouge)
+    grad.addColorStop(1.00, '#8338ec');
 
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.fillStyle = grad;
     ctx.fill();
 
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#ffb703';
+    // Bordure Dorée du Cadran
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#d4af37';
     ctx.stroke();
 
-    // RAYONS
+    // LIGNES DE GRADUATIONS
     for (let i = 0; i < numSteps; i++) {
         const a = i * angleStep;
         ctx.save();
         ctx.rotate(a);
         ctx.beginPath();
-        ctx.moveTo(radius - 22, 0);
-        ctx.lineTo(radius - 4, 0);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
+        ctx.moveTo(radius - 24, 0);
+        ctx.lineTo(radius - 2, 0);
+        ctx.strokeStyle = i === 6 ? '#ffffff' : (STEPS[i].side === 'G' ? '#ffccd5' : '#dbeafe');
+        ctx.lineWidth = i === 6 ? 4 : 2;
         ctx.stroke();
         ctx.restore();
     }
 
     ctx.restore();
 
-    // TEXTES ORIENTÉS TOUJOURS LISIBLES
+    /* AFFICHAGE ORIENTÉ ET PARFAITEMENT LISIBLE DES ÉTIQUETTES */
     for (let i = 0; i < numSteps; i++) {
         const a = (i * angleStep) + rotationAngle;
-        const textRadius = radius - 45;
+        const textRadius = radius - 48;
 
         const tx = cx + Math.cos(a) * textRadius;
         const ty = cy + Math.sin(a) * textRadius;
@@ -642,12 +601,12 @@ function drawCompassDiskByAngle(canvasId, currentAngle) {
 
         let textAngle = a;
         if (Math.cos(a) < 0) {
-            textAngle += Math.PI;
+            textAngle += Math.PI; // Maintient les textes lisibles à l'endroit
         }
         ctx.rotate(textAngle);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '700 11px Montserrat';
+        ctx.font = '800 10.5px Montserrat';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.shadowColor = 'rgba(0,0,0,0.9)';
@@ -658,7 +617,7 @@ function drawCompassDiskByAngle(canvasId, currentAngle) {
     }
 }
 
-/* CONTROLEUR ROTATIF SANS À-COUPS AVEC CALCUL DE CRAN PROCHE */
+/* CONTRÔLEUR ROTATIF SANS À-COUPS (TOUCH & MOUSE) */
 function attachDiskController(wrapperId, badgeId, canvasId) {
     const wrapper = document.getElementById(wrapperId);
     let isDragging = false;
@@ -679,8 +638,19 @@ function attachDiskController(wrapperId, badgeId, canvasId) {
         activeStep = getStepFromAngle(currentAngle);
 
         const badge = document.getElementById(badgeId);
-        badge.innerText = STEPS[activeStep].label;
-        badge.style.color = STEPS[activeStep].color;
+        const stepData = STEPS[activeStep];
+        
+        // Mise à jour de l'affichage textuel & couleur de la valeur pointée
+        if (stepData.side === 'G') {
+            badge.innerText = `${stepData.label} (GAUCHE)`;
+            badge.style.color = "#e63946";
+        } else if (stepData.side === 'D') {
+            badge.innerText = `${stepData.label} (DROITE)`;
+            badge.style.color = "#2a6fdb";
+        } else {
+            badge.innerText = stepData.label;
+            badge.style.color = "#8338ec";
+        }
     }
 
     function getTouchAngle(e) {
@@ -721,12 +691,12 @@ let masterController = null;
 let voterController = null;
 
 function renderPlayersTags() {
-    const container = document.getElementById('players-tags-container');
+    const container = document.getElementById('players-container');
     container.innerHTML = '';
     gameState.players.forEach((p, idx) => {
         const tag = document.createElement('div');
         tag.className = 'player-badge';
-        tag.innerHTML = `${p} <span onclick="removePlayer(${idx})">&times;</span>`;
+        tag.innerHTML = `<span>${p}</span><button onclick="removePlayer(${idx})">&times;</button>`;
         container.appendChild(tag);
     });
 }
@@ -743,7 +713,7 @@ function addPlayer() {
 
 function removePlayer(idx) {
     if (gameState.players.length <= 2) {
-        alert("Il faut au moins 2 joueurs !");
+        alert("Deux ministres au minimum sont requis pour délibérer.");
         return;
     }
     gameState.players.splice(idx, 1);
@@ -771,7 +741,7 @@ function dismissIntermission() {
 
 function startGame() {
     if (gameState.players.length < 2) {
-        alert("Ajoutez au moins 2 joueurs !");
+        alert("Veuillez saisir au moins 2 joueurs.");
         return;
     }
 
@@ -783,8 +753,8 @@ function startGame() {
     gameState.bossScores = {};
     gameState.players.forEach(p => gameState.bossScores[p] = 0);
 
-    masterController = attachDiskController('compass-wrapper-master', 'master-badge-val', 'compass-canvas-master');
-    voterController = attachDiskController('compass-wrapper-voter', 'voter-badge-val', 'compass-canvas-voter');
+    masterController = attachDiskController('wrapper-master', 'badge-master', 'canvas-master');
+    voterController = attachDiskController('wrapper-voter', 'badge-voter', 'canvas-voter');
 
     startRound();
 }
@@ -795,14 +765,14 @@ function startRound() {
     document.getElementById('master-name').innerText = masterName;
 
     if (gameState.cardSource === 'auto') {
-        document.getElementById('manual-card-input-box').style.display = 'none';
-        document.getElementById('auto-card-display').style.display = 'flex';
+        document.getElementById('manual-card-box').style.display = 'none';
+        document.getElementById('auto-card-box').style.display = 'flex';
         const card = DECK_PROPOSITIONS[Math.floor(Math.random() * DECK_PROPOSITIONS.length)];
         gameState.currentCardText = card;
-        document.getElementById('auto-card-display').innerText = `"${card}"`;
+        document.getElementById('auto-card-box').innerText = `"${card}"`;
     } else {
-        document.getElementById('manual-card-input-box').style.display = 'block';
-        document.getElementById('auto-card-display').style.display = 'none';
+        document.getElementById('manual-card-box').style.display = 'block';
+        document.getElementById('auto-card-box').style.display = 'none';
         document.getElementById('custom-card-text').value = '';
     }
 
@@ -817,7 +787,7 @@ function submitMasterChoice() {
     if (gameState.cardSource === 'manual') {
         const text = document.getElementById('custom-card-text').value.trim();
         if (!text) {
-            alert("Saisissez une proposition pour la manche !");
+            alert("Veuillez rédiger la proposition de décret.");
             return;
         }
         gameState.currentCardText = text;
@@ -840,8 +810,8 @@ function promptNextVoter() {
 
         showIntermission(voterName, () => {
             document.getElementById('voter-name').innerText = voterName;
-            document.getElementById('voter-target-master').innerText = masterName;
-            document.getElementById('target-master-hint').innerText = masterName;
+            document.getElementById('voter-target').innerText = masterName;
+            document.getElementById('voter-target-hint').innerText = masterName;
             document.getElementById('vote-card-display').innerText = `"${gameState.currentCardText}"`;
 
             voterController.setStep(6);
@@ -865,8 +835,11 @@ function showRoundResults() {
 
     document.getElementById('reveal-card-text').innerText = `"${gameState.currentCardText}"`;
     document.getElementById('reveal-master-name').innerText = masterName;
-    document.getElementById('reveal-master-val').innerText = STEPS[targetStep].label;
-    document.getElementById('reveal-master-val').style.color = STEPS[targetStep].color;
+    
+    const masterStepObj = STEPS[targetStep];
+    const masterValEl = document.getElementById('reveal-master-val');
+    masterValEl.innerText = masterStepObj.label;
+    masterValEl.style.color = masterStepObj.color;
 
     const listContainer = document.getElementById('reveal-votes-list');
     listContainer.innerHTML = '';
@@ -885,11 +858,11 @@ function showRoundResults() {
         }
 
         const item = document.createElement('div');
-        item.className = 'result-item';
+        item.className = 'result-row';
         item.innerHTML = `
-            <span><b>${voter}</b> : ${STEPS[voteStep].label}</span>
+            <span><b>${voter}</b> : <span style="color:${STEPS[voteStep].color}">${STEPS[voteStep].label}</span></span>
             <span style="color:${isClose ? '#4ef088' : '#e63946'}; font-weight:bold;">
-                ${isClose ? 'Proche (+1)' : 'Éloigné'}
+                ${isClose ? ' Conforme (+1)' : ' Éloigné'}
             </span>
         `;
         listContainer.appendChild(item);
@@ -901,15 +874,15 @@ function showRoundResults() {
     if (gameState.mode === 'coop') {
         if (isMajority) {
             gameState.coopScore++;
-            outcomeMsg.innerText = " Victoire collective de la manche !";
+            outcomeMsg.innerText = " Ralliement Réussi (Point Collectif Gagné) !";
             outcomeMsg.style.color = "#4ef088";
         } else {
-            outcomeMsg.innerText = " Manche perdue pour le collectif !";
+            outcomeMsg.innerText = " Dissension dans l'Assemblée (Manche Perdue) !";
             outcomeMsg.style.color = "#e63946";
         }
     } else {
-        outcomeMsg.innerText = `Points attribués par le Boss ${masterName} !`;
-        outcomeMsg.style.color = "#ffb703";
+        outcomeMsg.innerText = `Points attribués par le Boss (${masterName}) !`;
+        outcomeMsg.style.color = "#d4af37";
     }
 
     showScreen('screen-reveal');
@@ -931,26 +904,30 @@ function showEndScreen() {
     const stats = document.getElementById('end-stats');
 
     if (gameState.mode === 'coop') {
-        if (gameState.coopScore >= 10) {
-            title.innerText = " LE GRAND SOIR !";
-            subtitle.innerText = "Victoire absolue à 10/10 ! La révolution est en marche !";
-        } else if (gameState.coopScore >= 6) {
-            title.innerText = " VICTOIRE POPULAIRE !";
-            subtitle.innerText = `Bravo ! Vous avez obtenu ${gameState.coopScore}/10 victoires.`;
+        if (gameState.coopScore >= 8) {
+            title.innerText = " TRIOMPHE ÉLYSÉEN !";
+            subtitle.innerText = "L'harmonie politique règne en maître sur la République !";
+        } else if (gameState.coopScore >= 5) {
+            title.innerText = " MAJORITÉ RELATIVE !";
+            subtitle.innerText = `Vous obtenez un score honorable de ${gameState.coopScore}/10.`;
         } else {
-            title.innerText = " DÉFAITE POLITIQUE...";
-            subtitle.innerText = `Seulement ${gameState.coopScore}/10 victoires. La lutte continue...`;
+            title.innerText = " CRISE D'ÉTAT !";
+            subtitle.innerText = `Seulement ${gameState.coopScore}/10. Le gouvernement manque de cohésion.`;
         }
-        stats.innerHTML = `<p style="font-size:1.4rem;">Score Collectif : <b>${gameState.coopScore} / 10</b></p>`;
+        stats.innerHTML = `<p style="font-size:1.3rem;">Score Global : <b class="gold-text">${gameState.coopScore} / 10</b></p>`;
     } else {
-        title.innerText = "FIN DU RÈGNE DU BOSS";
-        subtitle.innerText = "Décompte individuel des points accumulés !";
+        title.innerText = "Bilan du Conseil des Ministres";
+        subtitle.innerText = "Classement individuel selon la doctrine du Boss";
 
-        let html = '<div style="text-align:left; width:100%;">';
+        let html = '<div class="w-full text-left space-y-2">';
         Object.keys(gameState.bossScores)
             .sort((a,b) => gameState.bossScores[b] - gameState.bossScores[a])
             .forEach((p, rank) => {
-                html += `<p style="margin-bottom:8px;">#${rank+1} <b>${p}</b> : ${gameState.bossScores[p]} pts</p>`;
+                html += `
+                    <div class="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-lg border border-yellow-500/20 text-xs">
+                        <span><b>#${rank+1} ${p}</b></span>
+                        <span class="gold-text font-bold">${gameState.bossScores[p]} pts</span>
+                    </div>`;
             });
         html += '</div>';
         stats.innerHTML = html;
