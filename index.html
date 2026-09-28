@@ -7,14 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f141c;
-            --card-bg: rgba(22, 30, 42, 0.95);
-            --border-color: rgba(255, 255, 255, 0.12);
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(20, 27, 41, 0.95);
+            --border-color: rgba(212, 175, 55, 0.25);
             --red-gauche: #e63946;
             --blue-droite: #2a6fdb;
             --gold-accent: #ffb703;
+            --gold-shine: #ffd166;
             --text-light: #f8f9fa;
-            --text-muted: #8d99ae;
+            --text-muted: #94a3b8;
         }
 
         * {
@@ -27,6 +28,9 @@
 
         body {
             background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(42, 111, 219, 0.15), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(230, 57, 70, 0.15), transparent 40%);
             color: var(--text-light);
             min-height: 100vh;
             display: flex;
@@ -42,14 +46,39 @@
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 22px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 183, 3, 0.1);
             text-align: center;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .btn-rules {
+            background: rgba(255, 183, 3, 0.12);
+            border: 1px solid var(--gold-accent);
+            color: var(--gold-accent);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-rules:hover {
+            background: var(--gold-accent);
+            color: #000;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -77,7 +106,7 @@
             width: 100%;
             margin-top: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s ease;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
         }
 
         .btn:active {
@@ -87,6 +116,7 @@
         .btn-gold {
             background: linear-gradient(135deg, #e5a100, #ffb703);
             color: #0d1117;
+            box-shadow: 0 4px 20px rgba(255, 183, 3, 0.3);
         }
 
         .input-group {
@@ -105,7 +135,7 @@
         input[type="text"], select {
             width: 100%;
             padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: #fff;
@@ -122,7 +152,7 @@
             display: inline-flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -139,7 +169,8 @@
         .status-bar {
             display: flex;
             justify-content: space-between;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.08);
             padding: 10px 16px;
             border-radius: 12px;
             margin-bottom: 14px;
@@ -161,21 +192,26 @@
             line-height: 1.4;
         }
 
-        /* --- DISQUE & BOUSSOLE ROTATIVE --- */
+        /* --- DISQUE & BOUSSOLE ROTATIVE FLUIDE --- */
         .compass-container {
             position: relative;
             width: 290px;
             height: 290px;
             margin: 15px auto;
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            box-shadow: 0 0 35px rgba(0,0,0,0.9), 0 0 15px rgba(255, 183, 3, 0.2);
             overflow: hidden;
             touch-action: none;
-            border: 3px solid #ffb703;
+            border: 3px solid var(--gold-accent);
             background: #000;
+            cursor: grab;
         }
 
-        #compass-canvas {
+        .compass-container:active {
+            cursor: grabbing;
+        }
+
+        #compass-canvas-master, #compass-canvas-voter {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -188,7 +224,7 @@
             left: 0;
             width: 100%;
             height: 52%;
-            background: radial-gradient(circle at 50% 100%, #161e2a 0%, #0c1017 100%);
+            background: radial-gradient(circle at 50% 100%, #141b29 0%, #080c14 100%);
             border-bottom: 2px solid var(--gold-accent);
             z-index: 5;
             display: flex;
@@ -196,6 +232,7 @@
             align-items: center;
             justify-content: center;
             padding: 8px;
+            pointer-events: none;
         }
 
         .compass-mask p {
@@ -210,6 +247,7 @@
             font-weight: 900;
             color: var(--gold-accent);
             margin-top: 4px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
         .pointer-arrow {
@@ -224,6 +262,7 @@
             border-bottom: 18px solid var(--gold-accent);
             z-index: 10;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+            pointer-events: none;
         }
 
         .screen {
@@ -234,8 +273,8 @@
             display: block;
         }
 
-        .intermission-overlay {
-            background: rgba(12, 16, 23, 0.96);
+        .intermission-overlay, .rules-modal {
+            background: rgba(11, 15, 25, 0.97);
             position: absolute;
             inset: 0;
             z-index: 50;
@@ -243,8 +282,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 22px;
             border-radius: 24px;
+        }
+
+        .rules-modal-content {
+            text-align: left;
+            max-height: 360px;
+            overflow-y: auto;
+            margin: 14px 0;
+            padding-right: 6px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .rules-modal-content h3 {
+            color: var(--gold-accent);
+            margin: 12px 0 4px 0;
+            font-size: 0.95rem;
         }
 
         .results-list {
@@ -268,6 +324,28 @@
 <body>
 
 <div class="game-card">
+
+    <div class="top-nav">
+        <div style="font-size:0.75rem; font-weight:800; color:var(--gold-accent); text-transform:uppercase;">Élysée 2026</div>
+        <button class="btn-rules" onclick="toggleRulesModal(true)"> Instructions</button>
+    </div>
+
+    <!-- MODALE INSTRUCTIONS DE JEU -->
+    <div id="rules-modal" class="rules-modal" style="display: none;">
+        <h2 style="color: var(--gold-accent); font-size: 1.3rem;">Règles du Jeu</h2>
+        <div class="rules-modal-content">
+            <h3> Objectif</h3>
+            <p>Devinez où le Maître de la manche situe une mesure politique ou absurde sur le disque allant de <b>8000% Gauche</b> à <b>8000% Droite</b>.</p>
+
+            <h3> Modes de Jeu</h3>
+            <p><b> Camarades (Coopératif) :</b> L'équipe gagne un point si au moins la moitié des joueurs devinent à ±2 crans près de la position du Maître.</p>
+            <p><b> Le Boss (Capitaliste) :</b> Chaque joueur marque individuellement +1 point lorsqu'il trouve la bonne graduation.</p>
+
+            <h3> Manipulation de la Roue</h3>
+            <p>Faites glisser le disque rotatif vers la gauche ou la droite. Seule la graduation alignée sous l'<b>aiguille d'or en bas</b> est prise en compte.</p>
+        </div>
+        <button class="btn btn-gold" onclick="toggleRulesModal(false)">Compris !</button>
+    </div>
 
     <!-- ECRAN 1 : CONFIGURATION -->
     <div id="screen-config" class="screen active">
@@ -336,7 +414,7 @@
         <div class="compass-container" id="compass-wrapper-master">
             <div class="compass-mask">
                 <p>Position choisie :</p>
-                <div class="value-display" id="master-badge-val">50/50</div>
+                <div class="value-display" id="master-badge-val">50/50 Éxaequo</div>
             </div>
             <canvas id="compass-canvas-master" width="300" height="300"></canvas>
             <div class="pointer-arrow"></div>
@@ -364,7 +442,7 @@
         <div class="compass-container" id="compass-wrapper-voter">
             <div class="compass-mask">
                 <p>Ton vote :</p>
-                <div class="value-display" id="voter-badge-val">50/50</div>
+                <div class="value-display" id="voter-badge-val">50/50 Éxaequo</div>
             </div>
             <canvas id="compass-canvas-voter" width="300" height="300"></canvas>
             <div class="pointer-arrow"></div>
@@ -380,7 +458,7 @@
 
         <div style="margin: 10px 0; font-size: 0.9rem;">
             Position de <b id="reveal-master-name">Maître</b> : 
-            <span id="reveal-master-val" style="color: var(--gold-accent); font-weight: bold;">50/50</span>
+            <span id="reveal-master-val" style="color: var(--gold-accent); font-weight: bold;">50/50 Éxaequo</span>
         </div>
 
         <div class="results-list" id="reveal-votes-list"></div>
@@ -403,9 +481,7 @@
 </div>
 
 <script>
-/* ==========================================================================
-   BANQUE DE 300+ PROPOSITIONS SATIRIQUES ET VARIÉES
-   ========================================================================== */
+/* BANQUE DE PROPOSITIONS VARIÉES */
 const PROPOSITIONS_BASE = [
     "Interdire la mayonnaise dans les cantines scolaires",
     "Nationaliser les fabriques de galettes des rois",
@@ -449,7 +525,6 @@ const PROPOSITIONS_BASE = [
     "Contrôle technique obligatoire pour les poussettes"
 ];
 
-// Extension automatique pour garantir plus de 300 propositions
 const DECK_PROPOSITIONS = [...PROPOSITIONS_BASE];
 const SUJETS = ["les tondeuses le dimanche", "les réunions Teams sans caméra", "les céréales avec du lait chaud", "les trottinettes en libre-service", "les chaussettes dans les claquettes", "les repas de famille de plus de 3h", "les emails envoyés le dimanche soir"];
 const ACTIONS = ["Interdire complètement", "Nationaliser d'urgence", "Taxer massivement", "Rendre obligatoire pour tous", "Privatiser immédiatement", "Subventionner à 100%"];
@@ -462,25 +537,22 @@ for (let a of ACTIONS) {
     }
 }
 
-/* ==========================================================================
-   PALIER STRICTS DE LA BOUSSOLE POLITIQUE (ROUGE GAUCHE, BLEU DROITE)
-   ========================================================================== */
+/* GRADUATIONS EXACTES : ROUGE A GAUCHE, BLEU A DROITE */
 const STEPS = [
-    { label: "8000% Gauche", color: "#e63946" },
-    { label: "800% Gauche",  color: "#ee6c4d" },
-    { label: "100% Gauche",  color: "#f38375" },
-    { label: "80% Gauche",   color: "#e5989b" },
-    { label: "50% Gauche",   color: "#b5838d" },
-    { label: "10% Gauche",   color: "#a26769" },
-    { label: "50/50 Éxaequo",color: "#8338ec" },
-    { label: "10% Droite",   color: "#4895ef" },
-    { label: "50% Droite",   color: "#3a86ff" },
-    { label: "80% Droite",   color: "#0077b6" },
-    { label: "800% Droite",  color: "#023e8a" },
-    { label: "8000% Droite", color: "#1d3557" }
+    { label: "8000% G", color: "#e63946" },
+    { label: "800% G",  color: "#ee6c4d" },
+    { label: "100% G",  color: "#f38375" },
+    { label: "80% G",   color: "#e5989b" },
+    { label: "50% G",   color: "#b5838d" },
+    { label: "10% G",   color: "#a26769" },
+    { label: "50/50 Éxaequo", color: "#8338ec" },
+    { label: "10% D",   color: "#4895ef" },
+    { label: "80% D",   color: "#3a86ff" },
+    { label: "100% D",  color: "#0077b6" },
+    { label: "800% D",  color: "#023e8a" },
+    { label: "8000% D", color: "#1d3557" }
 ];
 
-/* STATE DU JEU */
 let gameState = {
     mode: 'coop',
     cardSource: 'auto',
@@ -497,10 +569,12 @@ let gameState = {
     bossScores: {}
 };
 
-/* ==========================================================================
-   DESSIN ET RENDU DU CANVAS DE LA BOUSSOLE (CORRIGÉ & LISIBLE)
-   ========================================================================== */
-function drawCompassDisk(canvasId, stepIndex) {
+function toggleRulesModal(show) {
+    document.getElementById('rules-modal').style.display = show ? 'flex' : 'none';
+}
+
+/* RENDU FLUIDE DE LA BOUSSOLE PAR CONTINUITÉ D'ANGLE */
+function drawCompassDiskByAngle(canvasId, currentAngle) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -513,21 +587,20 @@ function drawCompassDisk(canvasId, stepIndex) {
     ctx.clearRect(0, 0, width, height);
 
     const numSteps = STEPS.length;
-    // On étale les 12 paliers régulièrement sur la circonférence
     const angleStep = (2 * Math.PI) / numSteps;
 
-    // Angle de rotation pour amener le palier sélectionné EN BAS (à Math.PI/2)
-    const rotationAngle = (Math.PI / 2) - (stepIndex * angleStep);
+    // Alignement pour que 50/50 (index 6) soit en bas quand angle = 0
+    const rotationAngle = (Math.PI / 2) - (6 * angleStep) + currentAngle;
 
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(rotationAngle);
 
-    // 1. Fond Dégradé Conique (Rouge à Gauche / Bleu à Droite)
+    // DÉGRADÉ EXACT : ROUGE A GAUCHE, BLEU A DROITE
     const grad = ctx.createConicGradient(0, 0, 0);
-    grad.addColorStop(0, '#8338ec');      // Top/Neutre
+    grad.addColorStop(0, '#8338ec');      // Neutre
     grad.addColorStop(0.25, '#2a6fdb');   // Droite (Bleu)
-    grad.addColorStop(0.5, '#0d1117');    // Fond Sombre
+    grad.addColorStop(0.5, '#0d1117');    // Bas Sombre
     grad.addColorStop(0.75, '#e63946');   // Gauche (Rouge)
     grad.addColorStop(1, '#8338ec');
 
@@ -536,46 +609,40 @@ function drawCompassDisk(canvasId, stepIndex) {
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Bordure
     ctx.lineWidth = 4;
     ctx.strokeStyle = '#ffb703';
     ctx.stroke();
 
-    // 2. Dessin des rayons et graduations
+    // RAYONS
     for (let i = 0; i < numSteps; i++) {
         const a = i * angleStep;
         ctx.save();
         ctx.rotate(a);
-
-        // Trait de graduation
         ctx.beginPath();
         ctx.moveTo(radius - 22, 0);
         ctx.lineTo(radius - 4, 0);
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 3;
         ctx.stroke();
-
         ctx.restore();
     }
 
-    ctx.restore(); // Annuler la rotation pour dessiner les textes toujours droits !
+    ctx.restore();
 
-    // 3. Dessin des étiquettes orientées de façon LISIBLE sous l'axe
+    // TEXTES ORIENTÉS TOUJOURS LISIBLES
     for (let i = 0; i < numSteps; i++) {
         const a = (i * angleStep) + rotationAngle;
         const textRadius = radius - 45;
 
-        // Calcul de la position X, Y du texte
         const tx = cx + Math.cos(a) * textRadius;
         const ty = cy + Math.sin(a) * textRadius;
 
         ctx.save();
         ctx.translate(tx, ty);
 
-        // Rotation du texte pour qu'il suive le rayon mais reste lisible
         let textAngle = a;
         if (Math.cos(a) < 0) {
-            textAngle += Math.PI; // Retourner le texte s'il est du côté gauche pour éviter d'être tête en bas
+            textAngle += Math.PI;
         }
         ctx.rotate(textAngle);
 
@@ -591,43 +658,48 @@ function drawCompassDisk(canvasId, stepIndex) {
     }
 }
 
-/* ==========================================================================
-   CONTROLEUR DU SWIPE DU DISQUE
-   ========================================================================== */
+/* CONTROLEUR ROTATIF SANS À-COUPS AVEC CALCUL DE CRAN PROCHE */
 function attachDiskController(wrapperId, badgeId, canvasId) {
     const wrapper = document.getElementById(wrapperId);
     let isDragging = false;
-    let startX = 0;
-    let currentStep = 6;
+    let startAngle = 0;
+    let currentAngle = 0;
+    let activeStep = 6;
 
-    function setStep(newStep) {
-        if (newStep < 0) newStep = 0;
-        if (newStep >= STEPS.length) newStep = STEPS.length - 1;
+    const angleStep = (2 * Math.PI) / STEPS.length;
 
-        currentStep = newStep;
-        drawCompassDisk(canvasId, currentStep);
+    function getStepFromAngle(angle) {
+        let index = 6 + Math.round(angle / angleStep);
+        index = ((index % STEPS.length) + STEPS.length) % STEPS.length;
+        return index;
+    }
+
+    function updateView() {
+        drawCompassDiskByAngle(canvasId, currentAngle);
+        activeStep = getStepFromAngle(currentAngle);
 
         const badge = document.getElementById(badgeId);
-        badge.innerText = STEPS[currentStep].label;
-        badge.style.color = STEPS[currentStep].color;
+        badge.innerText = STEPS[activeStep].label;
+        badge.style.color = STEPS[activeStep].color;
+    }
+
+    function getTouchAngle(e) {
+        const rect = wrapper.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        return Math.atan2(e.clientY - cy, e.clientX - cx);
     }
 
     wrapper.addEventListener('pointerdown', (e) => {
         isDragging = true;
-        startX = e.clientX;
+        startAngle = getTouchAngle(e) - currentAngle;
         wrapper.setPointerCapture(e.pointerId);
     });
 
     wrapper.addEventListener('pointermove', (e) => {
         if (!isDragging) return;
-        const diffX = e.clientX - startX;
-        const threshold = 28;
-
-        if (Math.abs(diffX) > threshold) {
-            const stepDelta = Math.sign(diffX);
-            setStep(currentStep - stepDelta);
-            startX = e.clientX;
-        }
+        currentAngle = getTouchAngle(e) - startAngle;
+        updateView();
     });
 
     wrapper.addEventListener('pointerup', (e) => {
@@ -636,17 +708,18 @@ function attachDiskController(wrapperId, badgeId, canvasId) {
     });
 
     return {
-        getStep: () => currentStep,
-        setStep: setStep
+        getStep: () => activeStep,
+        setStep: (stepIdx) => {
+            activeStep = stepIdx;
+            currentAngle = (stepIdx - 6) * angleStep;
+            updateView();
+        }
     };
 }
 
 let masterController = null;
 let voterController = null;
 
-/* ==========================================================================
-   GESTION DE LA LOGIQUE DE JEU
-   ========================================================================== */
 function renderPlayersTags() {
     const container = document.getElementById('players-tags-container');
     container.innerHTML = '';
@@ -803,7 +876,7 @@ function showRoundResults() {
     gameState.voterQueue.forEach(voter => {
         const voteStep = gameState.votes[voter];
         const diff = Math.abs(voteStep - targetStep);
-        const isClose = diff <= 2; // Proche à +-2 paliers
+        const isClose = diff <= 2;
 
         if (isClose) roundSuccesses++;
 
