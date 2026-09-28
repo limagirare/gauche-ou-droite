@@ -3,334 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Présidence de la République — Gauche ou Droite ?</title>
-    <!-- Polices officielles / élégantes -->
+    <title>Gauche ou Droite ? — Le Jeu Officiel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --elysee-navy: #0a1128;
             --elysee-dark: #050814;
             --elysee-gold: #d4af37;
-            --elysee-gold-light: #f3e5ab;
             --gauche-red: #e63946;
             --droite-blue: #1d3557;
             --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(212, 175, 55, 0.25);
+            --glass-border: rgba(212, 175, 55, 0.3);
             --text-light: #f8f9fa;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
 
         body {
-            background: radial-gradient(circle at top center, #101f42 0%, var(--elysee-navy) 60%, var(--elysee-dark) 100%);
+            background: radial-gradient(circle at top, #101f42 0%, var(--elysee-navy) 60%, var(--elysee-dark) 100%);
             color: var(--text-light);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* En-tête Élyséen */
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 900px;
         }
 
         .cockade {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: conic-gradient(var(--gauche-red) 0 120deg, #ffffff 120deg 240deg, var(--droite-blue) 240deg 360deg);
-            margin: 0 auto 10px auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            border: 2px solid var(--elysee-gold);
+            width: 36px; height: 36px; border-radius: 50%;
+            background: conic-gradient(var(--gauche-red) 0 120deg, #fff 120deg 240deg, var(--droite-blue) 240deg 360deg);
+            margin: 0 auto 8px auto; border: 2px solid var(--elysee-gold);
         }
 
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.2rem;
-            color: var(--elysee-gold-light);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-        }
+        h1 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--elysee-gold); letter-spacing: 2px; }
 
-        .subtitle {
-            font-size: 0.9rem;
-            color: #a0aec0;
-            margin-top: 5px;
-            font-style: italic;
-        }
+        .app-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px; }
 
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        /* Sélecteur de Mode */
-        .mode-selector-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            text-align: center;
-        }
-
-        .mode-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;;
+        /* Mode Selector */
+        .mode-switch {
+            display: flex; justify-content: center; gap: 15px; background: var(--glass-bg);
+            padding: 10px; border-radius: 10px; border: 1px solid var(--glass-border);
         }
 
         .btn-mode {
-            background: transparent;
-            border: 2px solid var(--elysee-gold);
-            color: var(--text-light);
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: transparent; border: 2px solid var(--elysee-gold); color: #fff;
+            padding: 10px 20px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: all 0.3s;
         }
 
-        .btn-mode.active-gauche {
-            background: var(--gauche-red);
-            border-color: var(--gauche-red);
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+        .btn-mode.active-gauche { background: var(--gauche-red); border-color: var(--gauche-red); }
+        .btn-mode.active-droite { background: var(--droite-blue); border-color: #457b9d; }
+
+        /* Game Board Area */
+        .game-panel {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 20px; backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;
         }
 
-        .btn-mode.active-droite {
-            background: var(--droite-blue);
-            border-color: #457b9d;
-            box-shadow: 0 0 15px rgba(29, 53, 87, 0.6);
+        .phase-indicator {
+            background: var(--elysee-gold); color: var(--elysee-dark);
+            padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;
         }
 
-        .mode-desc {
-            font-size: 0.95rem;
-            color: #cbd5e1;
-            margin-top: 10px;
-            min-height: 40px;
+        .card-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 2px solid var(--elysee-gold); border-radius: 10px;
+            padding: 20px; width: 100%; max-width: 450px; min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
-        /* Grille des 3 règles */
-        .rules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
+        .card-title { font-size: 1.3rem; font-weight: 700; margin-top: 5px; }
 
-        .rule-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .rule-number {
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--elysee-gold);
-            color: var(--elysee-dark);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        .rule-title {
-            font-family: 'Cinzel', serif;
-            color: var(--elysee-gold-light);
-            margin: 10px 0;
-            font-size: 1.1rem;
-        }
-
-        .rule-text {
-            font-size: 0.9rem;
-            color: #e2e8f0;
-            line-height: 1.4;
-        }
-
-        /* Zone Interactive de Jeu */
-        .game-zone {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .card-display {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
-            border: 2px solid var(--elysee-gold);
-            border-radius: 12px;
-            padding: 25px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .card-topic {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 15px 0;
-        }
-
-        .card-category {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--elysee-gold);
-        }
-
-        /* Boussole Politique - ROUGE À GAUCHE / BLEU À DROITE */
-        .compass-container {
-            position: relative;
-            width: 260px;
-            height: 130px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-
+        /* Boussole rotative */
+        .compass-box { position: relative; width: 220px; height: 110px; overflow: hidden; margin: 10px 0; }
         .compass-dial {
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            /* Gauche: Rouge (#e63946) -> Droite: Bleu (#1d3557) */
-            background: conic-gradient(
-                from 270deg,
-                var(--gauche-red) 0deg,
-                #8338ec 90deg,
-                var(--droite-blue) 180deg,
-                var(--droite-blue) 360deg
-            );
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 220px; height: 220px; border-radius: 50%;
+            background: conic-gradient(from 270deg, var(--gauche-red) 0deg, #9b59b6 90deg, var(--droite-blue) 180deg, var(--droite-blue) 360deg);
+            position: absolute; top: 0; left: 0; transition: transform 0.6s ease-out;
             border: 3px solid var(--elysee-gold);
         }
-
-        .compass-pointer {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 130px;
-            background: #ffffff;
-            z-index: 10;
-            box-shadow: 0 0 8px rgba(255,255,255,0.8);
+        .compass-needle {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 110px; background: #fff; z-index: 5; box-shadow: 0 0 6px #fff;
         }
 
-        .compass-labels {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 300px;
-            font-weight: 700;
-            font-size: 0.9rem;
+        /* Voting Controls */
+        .vote-options { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
+        .btn-vote {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--elysee-gold); color: #fff;
+            padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
         }
-
-        .label-gauche { color: var(--gauche-red); }
-        .label-droite { color: #457b9d; }
+        .btn-vote:hover, .btn-vote.selected { background: var(--elysee-gold); color: var(--elysee-dark); font-weight: 700; }
 
         .btn-action {
-            background: linear-gradient(135deg, var(--elysee-gold) 0%, #b8860b 100%);
-            color: var(--elysee-dark);
-            border: none;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--elysee-gold), #b8860b); color: var(--elysee-dark);
+            border: none; padding: 12px 25px; font-weight: 800; border-radius: 6px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px; transition: transform 0.1s;
         }
+        .btn-action:active { transform: scale(0.98); }
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        /* Hand / Cards Selection in Mode Droite */
+        .hand-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .hand-card {
+            background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border);
+            border-radius: 8px; padding: 10px; width: 140px; cursor: pointer; font-size: 0.85rem;
+            transition: all 0.2s;
         }
+        .hand-card:hover { border-color: var(--elysee-gold); transform: translateY(-4px); }
 
-        /* Section Recherche dans les 300 propositions */
-        .list-section {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-        }
-
-        .propositions-list {
-            max-height: 300px;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 10px;
-            padding-right: 5px;
-        }
-
-        .prop-item {
-            background: rgba(255,255,255,0.03);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            border-left: 3px solid var(--elysee-gold);
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #64748b;
+        .score-board {
+            font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--elysee-gold);
+            border-top: 1px solid var(--glass-border); padding-top: 10px; width: 100%;
         }
     </style>
 </head>
@@ -339,88 +134,60 @@
     <header>
         <div class="cockade"></div>
         <h1>Gauche ou Droite ?</h1>
-        <div class="subtitle">Édition Élyséenne — Débat & Arbitrage National</div>
+        <p style="font-size:0.85rem; color:#a0aec0;">Le Jeu d'Arbitrage Politique</p>
     </header>
 
-    <div class="container">
-        
-        <!-- Sélecteur de Mode de Jeu -->
-        <div class="mode-selector-card">
-            <h2 style="font-family: 'Cinzel', serif; color: var(--elysee-gold-light);">Sélectionnez le Mode de Jeu</h2>
-            <div class="mode-buttons">
-                <button id="btn-gauche" class="btn-mode active-gauche" onclick="setMode('gauche')">Mode de Gauche</button>
-                <button id="btn-droite" class="btn-mode" onclick="setMode('droite')">Mode de Droite</button>
-            </div>
-            <p id="mode-description" class="mode-desc">
-                <strong>Mode de Gauche :</strong> Essayez de comprendre la façon de penser de vos ami·es, votez pour gagner ou perdre ensemble, comme dans la vraie lutte de la vraie life.
-            </p>
+    <div class="app-container">
+
+        <!-- Selection du Mode -->
+        <div class="mode-switch">
+            <button id="mode-gauche-btn" class="btn-mode active-gauche" onclick="switchGameMode('gauche')">Mode de Gauche (Coopératif)</button>
+            <button id="mode-droite-btn" class="btn-mode" onclick="switchGameMode('droite')">Mode de Droite (Patronal)</button>
         </div>
 
-        <!-- RÈGLES EN 3 ÉTAPES (Mise à jour dynamique selon le mode) -->
-        <div class="rules-grid">
-            <div class="rule-card">
-                <div class="rule-number">1</div>
-                <h3 id="step1-title" class="rule-title">Tirage & Placement Secret</h3>
-                <p id="step1-text" class="rule-text">Un·e camarade désigné·e tire une carte et la place secrètement sur sa boussole politique.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-number">2</div>
-                <h3 id="step2-title" class="rule-title">Débat Collectif</h3>
-                <p id="step2-text" class="rule-text">Les autres débattent sur l'avis de la personne qui a situé la carte, puis votent chacun·e sur leur boussole face cachée.</p>
-            </div>
-            <div class="rule-card">
-                <div class="rule-number">3</div>
-                <h3 id="step3-title" class="rule-title">Révélation & Victoire</h3>
-                <p id="step3-text" class="rule-text">On retourne tout : c'est gagné si la majorité est proche de la position du·de la camarade !</p>
-            </div>
-        </div>
+        <!-- Plateau de Jeu Interactif -->
+        <div class="game-panel">
+            <div id="phase-badge" class="phase-indicator">Étape 1 : Le Camarade place le curseur</div>
 
-        <!-- ZONE DE JEU INTERACTIVE -->
-        <div class="game-zone">
-            <div class="card-display">
-                <div class="card-category">Proposition N°<span id="card-id">1</span></div>
-                <div id="card-topic" class="card-topic">Les gilets jaunes</div>
+            <!-- Carte courante -->
+            <div class="card-box">
+                <span id="card-num" style="font-size:0.75rem; color:var(--elysee-gold);">PROPOSITION</span>
+                <div id="card-text" class="card-title">Cliquez sur Démarrer la Partie</div>
             </div>
 
-            <!-- Dial Rotatif (Rouge Droite/Gauche Fixé) -->
-            <div class="compass-labels">
-                <span class="label-gauche">← GAUCHE (Rouge)</span>
-                <span class="label-droite">DROITE (Bleu) →</span>
+            <!-- Boussole interactive -->
+            <div style="display:flex; justify-shadow:space-between; width:220px; font-size:0.75rem; font-weight:700;">
+                <span style="color:var(--gauche-red);">GAUCHE</span>
+                <span style="color:#457b9d;">DROITE</span>
             </div>
-            <div class="compass-container">
-                <div class="compass-pointer"></div>
+            <div class="compass-box">
+                <div class="compass-needle"></div>
                 <div id="compass-dial" class="compass-dial"></div>
             </div>
 
-            <button class="btn-action" onclick="drawCard()">Tirer une autre proposition</button>
-        </div>
+            <!-- Contrôles de Vote / Sélection -->
+            <div id="interactive-area" style="width:100%;">
+                <!-- Injecté dynamiquement par le JS -->
+            </div>
 
-        <!-- LISTE COMPLÈTE DES 300 PROPOSITIONS -->
-        <div class="list-section">
-            <h3 style="font-family: 'Cinzel', serif; color: var(--elysee-gold-light); margin-bottom: 10px;">
-                Base Nationale des 300 Propositions Politiques
-            </h3>
-            <input type="text" id="search-input" class="search-bar" placeholder="Rechercher une proposition (ex: ISF, Nucléaire, Handi...)" oninput="filterPropositions()">
-            <div id="propositions-container" class="propositions-list"></div>
+            <button id="main-action-btn" class="btn-action" onclick="handleMainAction()">Lancer une Partie</button>
+
+            <!-- Tableau des scores -->
+            <div class="score-board">
+                Score : <span id="score-val">0</span> pt(s) | Manche <span id="round-val">0</span>/10
+            </div>
         </div>
 
     </div>
 
-    <footer>
-        Présidence de la République — République Française © 2026
-    </footer>
-
     <script>
-        // --- BASE DES 300 PROPOSITIONS RÉELLES ET POLITIQUES ---
-        const ALL_PROPOSITIONS = [
-            // Cartes originales du jeu
+        // --- 300 PROPOSITIONS COMPLÈTES ---
+        const CARDS = [
             "Les gilets jaunes", "Cyril Hanouna", "Collectionner les souvenirs du IIIème Reich", "Collectionner les Funkopop",
             "Une IPA locale", "Léna Situations", "Le Tiers-État", "Être antivax", "Les mégabassines", "Aya Nakamura",
             "Le camping", "Les accords de Paris", "Les cheveux bleus", "Vercingétorix", "Valeurs actuelles", "Aurore Bergé",
             "Le Sénat", "Versailles", "L'ascenseur social", "Les sans-culottes", "Les cheveux blancs", "Les cigarettes Gauloises",
             "Télérama", "L'Académie française", "Le glamping", "L'accord du participe passé", "Les tiers-lieux", "Être anti-taxes", "Les pédiluves",
-
-            // Économie, Fiscalité & Travail
             "L'Impôt de Solidarité sur la Fortune (ISF)", "La semaine de 4 jours", "La retraite à 60 ans", "La retraite à 65 ans",
             "La Flat Tax sur les revenus du capital", "Le Revenu Universel d'Existence", "Le salaire minimum à 1600 € net",
             "La suppression de la taxe professionnelle", "La taxation des superprofits", "La privatisation de Radio France et France Télévisions",
@@ -434,9 +201,7 @@
             "L'encadrement des loyers dans les métropoles", "La suppression des niches fiscales immobilières (Pinel, etc.)", "La baisse des impôts sur les sociétés à 15 %",
             "Le chèque énergie", "La priorité nationale pour les aides sociales", "L'augmentation des droits de succession", "Les tickets restaurant utilisables le dimanche",
             "Le travail dominical payé double", "L'obligation de résidence pour payer ses impôts en France", "La suppression de la taxe foncière",
-
-            // Institutions & Démocratie
-            "Le vote obligatoire", "La VIe République", "L'usage fréquent du référendum (RIC)", "La comptabilisation du vote blanc dans les suffrages exprimés",
+            "Le vote obligatoire", "La VIe République", "L'usage frequent du référendum (RIC)", "La comptabilisation du vote blanc dans les suffrages exprimés",
             "Le mode de scrutin proportionnel aux législatives", "Le septennat non renouvelable", "La suppression du Conseil Économique, Social et Environnemental (CESE)",
             "Le statut du conjoint du Chef de l'État", "La réduction du nombre de députés et de sénateurs", "La décentralisation renforcée vers les régions",
             "Le cumul des mandats locaux et nationaux", "La suppression du 49.3", "Le Conseil Constitutionnel tiré au sort", "Le non-cumul des mandats dans le temps (max 2 mandats)",
@@ -447,8 +212,6 @@
             "L'ENA (École Nationale d'Administration) sous son ancien nom", "Le Sénat tiré au sort", "L'interdiction du pantouflage (passage du public vers le privé)",
             "La parité stricte dans les gouvernements", "Les conseils de quartier citoyens", "La suppression des départements", "Le découpage des cantons",
             "Le budget participatif des communes", "L'utilisation de la langue régionale à l'Assemblée",
-
-            // Écologie, Énergie & Agriculture
             "Le relancement massif du nucléaire (EPR)", "Les éoliennes maritimes (offshore)", "L'interdiction des vols intérieurs courts quand le train existe",
             "La taxe carbone aux frontières de l'Europe", "La légalisation ou sortie du glyphosate", "Les zones à faibles émissions (ZFE) dans les villes",
             "Le développement du TGV à bas coût", "La gratuité des transports en commun urbains", "La fin de la vente des voitures thermiques en 2035",
@@ -460,8 +223,6 @@
             "L'interdiction de la taille des haies pendant la nidification", "La végétalisation des cours d'école", "La taxe sur le kérosène des avions",
             "Le passe rail illimité", "Les circuits courts à la cantine", "Le prêt à taux zéro pour le véhicule électrique", "La fin de l'artificialisation nette des sols (ZAN)",
             "L'interdiction des publicités pour les SUV", "L'autonomie énergétique des territoires de l'Outre-mer",
-
-            // Justice, Sécurité & Immigration
             "Les peines planchers pour les récidivistes", "La police de sécurité du quotidien (police de proximité)", "L'armement obligatoire de toutes les polices municipales",
             "La suppression de l'Aide Médicale d'État (AME)", "La régularisation des travailleurs sans-papiers dans les métiers en tension",
             "Les peines de prison exécutées dès le premier mois", "Le rétablissement du Service National Obligatoire", "Les caméras piétons sur tous les policiers",
@@ -474,8 +235,6 @@
             "La présence de juges non professionnels dans les tribunaux", "Le bracelet électronique comme alternative principale à la prison", "Le contrôle renforcé des frontières nationales",
             "Le statut de réfugié climatique", "La création de brigades de gendarmerie rurales", "La fin de la prescription pour les crimes sexuels sur mineurs",
             "La formation continue obligatoire pour les forces de l'ordre", "Les peines d'inégibilité à vie pour corruption",
-
-            // Éducation, Santé & Société
             "Le port de l'uniforme à l'école publique", "L'interdiction du téléphone portable jusqu'au lycée", "Le Pass Culture accordé aux jeunes",
             "Le remboursement à 100 % des soins dentaires et optiques (100% Santé)", "La fin du numerus clausus dans les études de médecine",
             "L'obligation pour les jeunes médecins de s'installer dans les déserts médicaux", "L'aide active à mourir (Euthanasie / Suicide assisté)", "La PMA pour toutes les femmes",
@@ -490,8 +249,6 @@
             "La création d'une ordonnance de protection immédiate pour violences conjugales", "L'enseignement de l'empathie à l'école maternelle et primaire",
             "La généralisation des mutuelles d'entreprise", "Les assises de la santé mentale", "La médecine du travail obligatoire", "Le droit à la déconnexion après les heures de travail",
             "Le financement de la restauration des monuments historiques", "Le soutien à l'audiovisuel public français", "L'interdiction des corridas",
-
-            // International & Numérique
             "La création d'une armée européenne commune", "La sortie de la France du commandement intégré de l'OTAN", "L'augmentation du budget de la Défense à 2% puis 3% du PIB",
             "L'élargissement de l'Union Européenne à de nouveaux pays", "Le Frexit (sortie de la France de l'Union Européenne)", "L'abandon de la monnaie unique Euro au profit du Franc",
             "La suppression de la règle des 3% de déficit public européen", "Le siège unique du Parlement européen à Strasbourg", "Le développement de la Francophonie économique",
@@ -509,95 +266,207 @@
             "L'interdiction du ciblage publicitaire basé sur les données personnelles", "L'indépendance de la CNIL renforcée", "Le passeport vaccinal ou sanitaire sur application mobile",
             "Les licences de logiciels libres privilégiées dans la commande publique", "La vidéoprotection dans les transports en commun", "L'encadrement des influenceurs sur les réseaux sociaux",
             "La création d'une devise numérique de banque centrale (Euro numérique)", "La fin de l'impression automatique des tickets de caisse",
-
-            // Culture & Débats sociétaux
             "Les repas végétariens quotidiens à la cantine", "La chasse à courre", "Le Tour de France cycliste", "Les résidences secondaires taxées en zone tendue",
             "La tarification des musées gratuits le premier dimanche du mois", "Le foie gras artisanal", "Le barbecue du dimanche", "Le travail en open-space",
             "Les trottinettes électriques en libre-service", "Les jets privés", "Les résidences fermées avec gardien (gated communities)", "Le café en terrasse à 2,50 €",
             "Le vouvoiement systématique au travail", "Le vin bio", "La téléréalité", "Le football professionnel et ses transferts millionnaires",
             "Les plateformes de livraison de repas à domicile (Deliveroo, UberEats)", "Les feux d'artifice du 14 juillet", "Les friches industrielles réhabilitées",
-            "Le bivouac sauvage en parc national", "La langue française protégée contre les anglicismes", "Les foires d'art contemporain", "Les fast-foods près des établissements scolaires",
+            "Le bivouac sauvage en parc national", "La langue française protegée contre les anglicismes", "Les foires d'art contemporain", "Les fast-foods près des établissements scolaires",
             "Les piscines privées en période de sécheresse", "Les cours de récréation non genrées", "La musique rap subventionnée par le Centre National de la Musique",
             "Les feux de cheminée individuels en région parisienne", "Les animaux de compagnie en refuge", "Le ramassage collaboratif de déchets (cleanwalk)",
             "Le commerce équitable nord-sud", "Les résidences séniors avec services", "Les péages d'autoroute", "Le chèque vacances", "La presse écrite papier subventionnée",
             "La fête de la musique du 21 juin", "L'exposition universelle"
         ];
 
+        // --- ÉTAT DU JEU ---
         let currentMode = 'gauche';
+        let currentStep = 0; // 0: pas commencé, 1: placement secret, 2: vote, 3: résultat
+        let targetAngle = 0;
+        let selectedVoteAngle = null;
+        let score = 0;
+        let round = 0;
+        let currentCardIndex = -1;
 
-        // --- GESTION DU CHANGEMENT DE MODE ---
-        function setMode(mode) {
+        const POSITIONS = [
+            { label: "100% GAUCHE", angle: -80 },
+            { label: "50% GAUCHE", angle: -45 },
+            { label: "10% GAUCHE", angle: -15 },
+            { label: "NEUTRE", angle: 0 },
+            { label: "10% DROITE", angle: 15 },
+            { label: "50% DROITE", angle: 45 },
+            { label: "100% DROITE", angle: 80 }
+        ];
+
+        function switchGameMode(mode) {
             currentMode = mode;
-            const btnGauche = document.getElementById('btn-gauche');
-            const btnDroite = document.getElementById('btn-droite');
-            const modeDesc = document.getElementById('mode-description');
+            document.getElementById('mode-gauche-btn').className = mode === 'gauche' ? 'btn-mode active-gauche' : 'btn-mode';
+            document.getElementById('mode-droite-btn').className = mode === 'droite' ? 'btn-mode active-droite' : 'btn-mode';
+            resetGame();
+        }
 
-            const s1Title = document.getElementById('step1-title');
-            const s1Text = document.getElementById('step1-text');
-            const s2Title = document.getElementById('step2-title');
-            const s2Text = document.getElementById('step2-text');
-            const s3Title = document.getElementById('step3-title');
-            const s3Text = document.getElementById('step3-text');
+        function resetGame() {
+            currentStep = 0;
+            score = 0;
+            round = 0;
+            document.getElementById('score-val').innerText = '0';
+            document.getElementById('round-val').innerText = '0';
+            document.getElementById('card-text').innerText = "Cliquez sur Démarrer la Partie";
+            document.getElementById('compass-dial').style.transform = "rotate(0deg)";
+            document.getElementById('interactive-area').innerHTML = "";
+            document.getElementById('main-action-btn').innerText = "Lancer la partie";
+            document.getElementById('phase-badge').innerText = "Prêt à jouer";
+        }
 
-            if(mode === 'gauche') {
-                btnGauche.className = 'btn-mode active-gauche';
-                btnDroite.className = 'btn-mode';
-                modeDesc.innerHTML = "<strong>Mode de Gauche :</strong> Essayez de comprendre la façon de penser de vos ami·es, votez pour gagner ou perdre ensemble, comme dans la vraie lutte de la vraie vie. Sauf que vous pouvez vraiment gagner.";
-                
-                s1Title.innerText = "Tirage & Placement Secret";
-                s1Text.innerText = "Un·e camarade désigné·e tire une carte d'item et la place secrètement sur sa boussole politique.";
-                s2Title.innerText = "Débat Collectif";
-                s2Text.innerText = "Les autres débattent sur l'avis de la personne qui a situé la carte, puis votent chacun·e sur leur boussole face cachée.";
-                s3Title.innerText = "Révélation & Victoire";
-                s3Text.innerText = "On retourne tout : c'est gagné si la majorité est proche de la position du·de la camarade !";
-            } else {
-                btnGauche.className = 'btn-mode';
-                btnDroite.className = 'btn-mode active-droite';
-                modeDesc.innerHTML = "<strong>Mode de Droite :</strong> Une seule personne décide, et chacun accumule les points sans rien faire ruisseler. <em>(Ce mode exclut l'écriture inclusive.)</em>";
-                
-                s1Title.innerText = "La Boussole du Boss";
-                s1Text.innerText = "Le boss fait tourner la boussole et dévoile un bord politique (ex: 10% Gauche, 100% Droite).";
-                s2Title.innerText = "Soumission des Cartes";
-                s2Text.innerText = "Chacun joue de sa main la carte qui l'incarne le mieux ou correspond au choix du Boss.";
-                s3Title.innerText = "Arbitrage Patronal";
-                s3Text.innerText = "Le boss élit la meilleure carte sans argumenter (c'est le patron). Gagné !";
+        function handleMainAction() {
+            if (currentStep === 0) {
+                nextRound();
+            } else if (currentStep === 1) {
+                if (currentMode === 'gauche') {
+                    // Masquer le cadran avant que les camarades votent
+                    document.getElementById('compass-dial').style.transform = "rotate(0deg)";
+                    currentStep = 2;
+                    renderVotingUI();
+                } else {
+                    // Mode droite : le Boss a fixé la consigne, les joueurs ont soumis leur carte
+                    currentStep = 2;
+                    renderBossChoiceUI();
+                }
+            } else if (currentStep === 2) {
+                // Révélation des résultats
+                revealResult();
+            } else if (currentStep === 3) {
+                nextRound();
             }
         }
 
-        // --- TIRAGE ALEATOIRE ET ROTATION DU DIAL ---
-        function drawCard() {
-            const index = Math.floor(Math.random() * ALL_PROPOSITIONS.length);
-            document.getElementById('card-id').innerText = index + 1;
-            document.getElementById('card-topic').innerText = ALL_PROPOSITIONS[index];
+        function nextRound() {
+            if (round >= 10) {
+                alert(`Partie terminée ! Score final : ${score} points.`);
+                resetGame();
+                return;
+            }
+            round++;
+            document.getElementById('round-val').innerText = round;
+            currentStep = 1;
 
-            // Rotation aléatoire du cadran (-80deg = Gauche/Rouge, +80deg = Droite/Bleu)
-            const randomAngle = (Math.random() * 160) - 80;
-            document.getElementById('compass-dial').style.transform = `rotate(${randomAngle}deg)`;
+            // Tirer une carte au hasard
+            currentCardIndex = Math.floor(Math.random() * CARDS.length);
+            document.getElementById('card-text').innerText = CARDS[currentCardIndex];
+            document.getElementById('card-num').innerText = `PROPOSITION #${currentCardIndex + 1}`;
+
+            if (currentMode === 'gauche') {
+                document.getElementById('phase-badge').innerText = "Étape 1 : Le Camarade place son avis en secret";
+                renderSecretPositionUI();
+            } else {
+                // Mode de droite : Le Boss tire un bord politique au hasard
+                targetAngle = POSITIONS[Math.floor(Math.random() * POSITIONS.length)].angle;
+                document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
+                document.getElementById('phase-badge').innerText = "Étape 1 : Le Boss impose l'orientation politique !";
+                renderBossHandUI();
+            }
         }
 
-        // --- REMPLISSAGE & RECHERCHE DANS LA LISTE DES 300 ---
-        function renderPropositionsList(list) {
-            const container = document.getElementById('propositions-container');
-            container.innerHTML = '';
-            list.forEach((item, idx) => {
-                const div = document.createElement('div');
-                div.className = 'prop-item';
-                div.innerText = `${idx + 1}. ${item}`;
-                container.appendChild(div);
+        // --- UI MODE DE GAUCHE ---
+        function renderSecretPositionUI() {
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Camarade, choisissez votre position exacte :</p>`;
+            
+            const btnGroup = document.createElement('div');
+            btnGroup.className = 'vote-options';
+            
+            POSITIONS.forEach(pos => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-vote';
+                btn.innerText = pos.label;
+                btn.onclick = () => {
+                    targetAngle = pos.angle;
+                    document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
+                    document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                };
+                btnGroup.appendChild(btn);
             });
+            area.appendChild(btnGroup);
+            document.getElementById('main-action-btn').innerText = "Valider la position en secret";
         }
 
-        function filterPropositions() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = ALL_PROPOSITIONS.filter(p => p.toLowerCase().includes(query));
-            renderPropositionsList(filtered);
+        function renderVotingUI() {
+            document.getElementById('phase-badge').innerText = "Étape 2 : Les camarades débattent et votent !";
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Selon vous, quelle était la position du Camarade ?</p>`;
+            
+            const btnGroup = document.createElement('div');
+            btnGroup.className = 'vote-options';
+            
+            POSITIONS.forEach(pos => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-vote';
+                btn.innerText = pos.label;
+                btn.onclick = () => {
+                    selectedVoteAngle = pos.angle;
+                    document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                };
+                btnGroup.appendChild(btn);
+            });
+            area.appendChild(btnGroup);
+            document.getElementById('main-action-btn').innerText = "Révéler les votes !";
         }
 
-        // Initialisation au chargement
-        window.onload = () => {
-            renderPropositionsList(ALL_PROPOSITIONS);
-            drawCard();
-        };
+        // --- UI MODE DE DROITE ---
+        function renderBossHandUI() {
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `<p style="font-size:0.85rem; margin-bottom:8px;">Joueurs, proposez la carte de votre main qui convient au Boss :</p>`;
+            
+            const handBox = document.createElement('div');
+            handBox.className = 'hand-container';
+
+            // Générer 3 cartes de main fictives
+            for(let i=0; i<3; i++) {
+                let randomIdx = Math.floor(Math.random() * CARDS.length);
+                let cardEl = document.createElement('div');
+                cardEl.className = 'hand-card';
+                cardEl.innerText = CARDS[randomIdx];
+                cardEl.onclick = () => {
+                    document.querySelectorAll('.hand-card').forEach(c => c.style.borderColor = 'rgba(212,175,55,0.3)');
+                    cardEl.style.borderColor = '#e63946';
+                    document.getElementById('card-text').innerText = CARDS[randomIdx];
+                };
+                handBox.appendChild(cardEl);
+            }
+            area.appendChild(handBox);
+            document.getElementById('main-action-btn').innerText = "Soumettre les cartes au Boss";
+        }
+
+        function renderBossChoiceUI() {
+            document.getElementById('phase-badge').innerText = "Étape 3 : Le Boss choisit le gagnant sans s'expliquer";
+            const area = document.getElementById('interactive-area');
+            area.innerHTML = `<p style="font-size:0.9rem; color:var(--elysee-gold);">Le Patron étudie les soumissions...</p>`;
+            document.getElementById('main-action-btn').innerText = "Le Boss valide & attribue le point";
+        }
+
+        // --- REVELATION & SCORE ---
+        function revealResult() {
+            currentStep = 3;
+            document.getElementById('compass-dial').style.transform = `rotate(${targetAngle}deg)`;
+            
+            if (currentMode === 'gauche') {
+                const diff = Math.abs(targetAngle - (selectedVoteAngle !== null ? selectedVoteAngle : 0));
+                let earned = 0;
+                if (diff === 0) earned = 3;
+                else if (diff <= 35) earned = 1;
+
+                score += earned;
+                document.getElementById('phase-badge').innerText = earned > 0 ? `GAGNÉ ! (+${earned} pts)` : "RÉVOLUTION ÉCHOUÉE ! (0 pt)";
+            } else {
+                score += 1;
+                document.getElementById('phase-badge').innerText = "LE BOSS A TRANCHÉ ! (+1 pt au fayot)";
+            }
+
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('interactive-area').innerHTML = `<p style="font-size:0.85rem;">Position réelle affichée sur la boussole.</p>`;
+            document.getElementById('main-action-btn').innerText = round < 10 ? "Manche Suivante" : "Voir le Score Final";
+        }
     </script>
 </body>
 </html>
