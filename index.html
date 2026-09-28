@@ -1,1072 +1,935 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gauche ou Droite de l'Élysée - Disque Rotatif Local</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        leftwing: '#dc2626',
-                        rightwing: '#1e3a8a',
-                        gilded: '#f59e0b',
-                        darkbg: '#080c14'
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Gauche ou Droite de l'Élysée</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
-        
+        :root {
+            --bg-color: #0b0c10;
+            --panel-bg: rgba(22, 27, 34, 0.95);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --red-gauche: #e63946;
+            --blue-droite: #1d3557;
+            --gold-accent: #ffb703;
+            --text-light: #f1faee;
+            --text-muted: #a8dadc;
+        }
+
         * {
-            touch-action: manipulation;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at center, #111827 0%, #050810 100%);
-            color: #f8fafc;
+            background-color: var(--bg-color);
+            color: var(--text-light);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 10px;
         }
 
-        /* Precision Radial Conic Gradient Wheel */
-        .radial-wheel {
-            background: conic-gradient(
-                from 0deg,
-                #101827 0deg,
-                #1e3a8a 45deg,
-                #2563eb 90deg,
-                #1e1b4b 135deg,
-                #000000 180deg,
-                #450a0a 225deg,
-                #dc2626 270deg,
-                #991b1b 315deg,
-                #101827 360deg
-            );
-            box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.95), 0 12px 35px rgba(0, 0, 0, 0.8);
-        }
-
-        .card-blur {
-            backdrop-filter: blur(16px);
-            background: rgba(15, 23, 42, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.04); opacity: 1; }
-        }
-        .pulse-glow {
-            animation: pulseGlow 2s infinite ease-in-out;
-        }
-
-        /* Custom scrollbar for player list and phrases */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(239, 68, 68, 0.5);
-            border-radius: 8px;
-        }
-
-        .disc-smooth {
-            transition: transform 0.1s ease-out;
-        }
-
-        /* Radial ticks styling */
-        .tick-line {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2px;
-            height: 100%;
-            margin-top: -50%;
-            margin-left: -1px;
-            pointer-events: none;
-        }
-        .tick-line::before {
-            content: '';
-            display: block;
+        .container {
             width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.7);
+            max-width: 500px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
         }
-        .tick-line.sub::before {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.35);
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #e63946, #f1faee 50%, #457b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #1d3557, #457b9d);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #b8860b, #ffb703);
+            color: #000;
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #e63946, #90be6d);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .players-list-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .player-tag {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 3px;
+        }
+
+        .player-tag span {
+            margin-left: 8px;
+            cursor: pointer;
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        /* --- STYLES DISQUE ROTATIF + CACHE --- */
+        .compass-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 15px auto;
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #compass-disk {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform-origin: center center;
+            transition: transform 0.05s ease-out;
+        }
+
+        /* Cache physique masquant la moitié supérieure du disque */
+        .compass-mask-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 52%;
+            background: radial-gradient(circle at 50% 100%, rgba(11, 12, 16, 0.95) 0%, rgba(11, 12, 16, 1) 100%);
+            border-bottom: 2px solid var(--gold-accent);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+        }
+
+        .compass-mask-top p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Aiguille / Repère de lecture en bas */
+        .compass-pointer {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 20px solid var(--gold-accent);
+            z-index: 10;
+            filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+        }
+
+        .value-badge {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--gold-accent);
+            margin-top: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .card-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px dashed var(--gold-accent);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .intermission {
+            background: rgba(0,0,0,0.85);
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .results-list {
+            text-align: left;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+
+        .badge-win {
+            color: #4ef088;
+            font-weight: bold;
+        }
+
+        .badge-loss {
+            color: #e63946;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen justify-between text-slate-100 antialiased overflow-x-hidden">
+<body>
 
-    <header class="w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 py-3 sticky top-0 z-50">
-        <div class="max-w-xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full radial-wheel flex items-center justify-center font-black text-lg text-white border border-white/30 shadow-lg">
-                    <i class="fa-solid fa-compass text-sm"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-lg sm:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-400 to-blue-500 leading-none">
-                        GAUCHE OU DROITE ?
-                    </h1>
-                    <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Élysée • Disque Rotatif Local</p>
-                </div>
-            </div>
-            
-            <button onclick="restartGameConfirm()" id="resetBtn" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 transition">
-                <i class="fa-solid fa-rotate-left mr-1"></i> Quitter
-            </button>
+<div class="container">
+
+    <!-- ECRAN 1 : CONFIGURATION -->
+    <div id="screen-config" class="screen active">
+        <h1>Gauche ou Droite</h1>
+        <div class="subtitle">Édition de l'Élysée • Pass & Play</div>
+
+        <div class="input-group">
+            <label>Mode de Jeu</label>
+            <select id="game-mode" onchange="toggleModeRules()">
+                <option value="coop"> Mode Camarades (Coopératif)</option>
+                <option value="boss"> Mode Le Boss (Capitaliste)</option>
+            </select>
         </div>
-    </header>
 
-    <main class="max-w-xl w-full mx-auto p-4 flex-grow flex flex-col justify-center relative">
+        <div class="input-group">
+            <label>Provenance des cartes / propositions</label>
+            <select id="card-source">
+                <option value="auto"> Distribution aléatoire (300+ propositions)</option>
+                <option value="manual"> Données par le Maître de la manche</option>
+            </select>
+        </div>
 
-        <section id="setupScreen" class="card-blur rounded-3xl p-5 sm:p-6 shadow-2xl space-y-5 my-auto border border-slate-800">
-            <div class="text-center space-y-1.5">
-                <div class="inline-block px-3 py-1 rounded-full text-[10px] font-black bg-red-950/80 text-red-400 border border-red-800/50 uppercase tracking-widest">
-                    Disque Rotatif • Pass & Play
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-black text-white">Configurez le Débat</h2>
-                <p class="text-xs text-slate-400">Passez-vous le téléphone à tour de rôle ! Nombre illimité de camarades.</p>
+        <div class="input-group">
+            <label>Joueurs (illimité, min 2)</label>
+            <div class="players-list-input">
+                <input type="text" id="player-name-input" placeholder="Nom du joueur...">
+                <button class="btn" style="width: auto; margin:0;" onclick="addPlayer()">+</button>
             </div>
+            <div id="players-tags-container"></div>
+        </div>
 
-            <!-- Mode Selection -->
-            <div class="space-y-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Mode de Jeu</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button type="button" onclick="selectGameMode('coop')" id="modeCoopBtn" class="p-3.5 rounded-2xl border-2 border-red-500 bg-red-950/30 text-left transition-all">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="font-black text-red-400 text-sm">Mode Camarades</span>
-                            <i class="fa-solid fa-users text-red-400"></i>
-                        </div>
-                        <p class="text-[11px] text-slate-300 leading-tight">Coopératif. Devinez l'orientation politique ajustée par le Maître du tour ! (Objectif Grand Soir 10/10).</p>
-                    </button>
+        <button class="btn btn-gold" onclick="startGame()">Lancer la Partie</button>
+    </div>
 
-                    <button type="button" onclick="selectGameMode('boss')" id="modeBossBtn" class="p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="font-bold text-slate-400 text-sm">Mode Le Boss</span>
-                            <i class="fa-solid fa-user-tie text-slate-400"></i>
-                        </div>
-                        <p class="text-[11px] text-slate-400 leading-tight">Compétitif (Capitaliste). Le Boss donne son angle et sélectionne la meilleure carte proposée.</p>
-                    </button>
-                </div>
+    <!-- INTERMÈDE PASS & PLAY -->
+    <div id="intermission-modal" class="intermission" style="display: none;">
+        <h2 id="intermission-title" style="color: var(--gold-accent); margin-bottom: 10px;">Passe le téléphone à</h2>
+        <h1 id="intermission-player" style="font-size: 2rem; margin-bottom: 20px;">Joueur 1</h1>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+            Ne regarde pas l'écran tant que l'appareil ne t'est pas remis !
+        </p>
+        <button class="btn btn-gold" onclick="dismissIntermission()">C'est moi, je joue !</button>
+    </div>
+
+    <!-- ECRAN 2 : PHASE MAITRE/BOSS -->
+    <div id="screen-master" class="screen">
+        <div class="score-board">
+            <div>Manche: <b id="round-number">1/10</b></div>
+            <div>Rôle: <b id="master-name" style="color:var(--gold-accent)">-</b></div>
+        </div>
+
+        <div id="manual-card-input-box" class="input-group" style="display: none;">
+            <label>Saisis la phrase/carte de la manche :</label>
+            <input type="text" id="custom-card-text" placeholder="Ex: Rendre le tri sélectif obligatoire...">
+        </div>
+
+        <div id="auto-card-display" class="card-box">
+            "Chargement de la carte..."
+        </div>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Oriente le disque secret. Seule la valeur du bas sous l'aiguille compte !
+        </p>
+
+        <!-- DISQUE COMPASS COMPONENT -->
+        <div class="compass-wrapper" id="compass-wrapper-master">
+            <div class="compass-mask-top">
+                <p>Position choisie :</p>
+                <div class="value-badge" id="master-badge-val">50/50</div>
             </div>
+            <canvas id="compass-disk-master" class="compass-disk" width="300" height="300"></canvas>
+            <div class="compass-pointer"></div>
+        </div>
 
-            <!-- Card Source Option -->
-            <div class="space-y-1.5">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Provenance des Cartes / Phrases</label>
-                <select id="cardSourceSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-200 focus:outline-none focus:border-red-500">
-                    <option value="deck">📜 Banque Nationale (~300 phrases satiriques & politiques)</option>
-                    <option value="custom">✏️ Saisie personnalisée par le maître / boss de manche</option>
-                </select>
+        <button class="btn btn-gold" onclick="submitMasterChoice()">Valider la position secrète</button>
+    </div>
+
+    <!-- ECRAN 3 : PHASE DE VOTE DES AUTRES JOUEURS -->
+    <div id="screen-vote" class="screen">
+        <div class="score-board">
+            <div>Votant: <b id="voter-name" style="color:var(--gold-accent)">-</b></div>
+            <div>Proposé par: <b id="voter-target-master">-</b></div>
+        </div>
+
+        <div class="card-box" id="vote-card-display">
+            "..."
+        </div>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Devine où <span id="target-master-hint">le camarade</span> a placé cette carte !
+        </p>
+
+        <!-- DISQUE COMPASS COMPONENT FOR VOTER -->
+        <div class="compass-wrapper" id="compass-wrapper-voter">
+            <div class="compass-mask-top">
+                <p>Ton vote :</p>
+                <div class="value-badge" id="voter-badge-val">50/50</div>
             </div>
+            <canvas id="compass-disk-voter" class="compass-disk" width="300" height="300"></canvas>
+            <div class="compass-pointer"></div>
+        </div>
 
-            <!-- Unlimited Players List -->
-            <div class="space-y-2.5">
-                <div class="flex justify-between items-center">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Joueurs (<span id="playerCountText" class="text-yellow-400 font-extrabold">3</span>)
-                    </label>
-                    <span class="text-[10px] text-slate-400 italic">2 joueurs minimum</span>
-                </div>
-                
-                <div id="playerInputsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scroll">
-                    <!-- Dynamic inputs injected by JS -->
-                </div>
+        <button class="btn" onclick="submitVoterChoice()">Valider mon vote</button>
+    </div>
 
-                <button type="button" onclick="addPlayerInput()" class="w-full bg-slate-800 hover:bg-slate-700 text-xs font-bold py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2 text-slate-200">
-                    <i class="fa-solid fa-user-plus text-red-400"></i> Ajouter un camarade
-                </button>
-            </div>
+    <!-- ECRAN 4 : RÉVÉLATION DE LA MANCHE -->
+    <div id="screen-reveal" class="screen">
+        <h2>Résultats de la Manche</h2>
+        <div class="card-box" id="reveal-card-text">"..."</div>
 
-            <button onclick="launchGame()" class="w-full bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 hover:from-red-500 hover:to-blue-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all transform active:scale-95 text-sm sm:text-base uppercase tracking-wider">
-                <i class="fa-solid fa-play mr-2"></i> Lancer la Partie
-            </button>
-        </section>
+        <div style="margin: 10px 0; font-size: 0.9rem;">
+            Position de <b id="reveal-master-name">Maître</b> : 
+            <span id="reveal-master-val" style="color: var(--gold-accent); font-weight: bold;">50/50</span>
+        </div>
 
-        <section id="privacyPassScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border-2 border-purple-500/40">
-            <div class="w-20 h-20 mx-auto rounded-full bg-slate-900 border-2 border-purple-500 flex items-center justify-center text-3xl text-purple-400 shadow-xl pulse-glow">
-                <i class="fa-solid fa-mobile-screen-button"></i>
-            </div>
+        <div class="results-list" id="reveal-votes-list">
+            <!-- Rempli en JS -->
+        </div>
 
-            <div class="space-y-2">
-                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Passez l'appareil secrètement</p>
-                <h2 class="text-2xl sm:text-3xl font-black text-white">Passe l'appareil à</h2>
-                <div id="targetPlayerNameDisplay" class="text-3xl font-black text-yellow-400 underline decoration-red-500 decoration-wavy py-1">
-                    [Nom du Joueur]
-                </div>
-            </div>
+        <div id="round-outcome-msg" style="font-weight: bold; margin: 15px 0; font-size: 1.1rem;"></div>
 
-            <p class="text-xs text-slate-400 italic max-w-xs mx-auto">
-                Ne montrez pas l'écran aux autres camarades avant de valider votre rotation !
-            </p>
+        <button class="btn btn-gold" onclick="nextRound()">Manche Suivante</button>
+    </div>
 
-            <button onclick="confirmPlayerReady()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all text-sm uppercase tracking-wider">
-                <i class="fa-solid fa-eye mr-2"></i> C'est moi (<span id="readyPlayerNameBtn">---</span>), Révéler mon écran
-            </button>
-        </section>
+    <!-- ECRAN 5 : FIN DE PARTIE -->
+    <div id="screen-end" class="screen">
+        <h1 id="end-title">Fin de Partie !</h1>
+        <div id="end-subtitle" class="subtitle"></div>
 
-        <section id="gameplayScreen" class="hidden space-y-4 my-auto">
-            
-            <!-- Top Status Bar -->
-            <div class="card-blur rounded-2xl p-3 flex justify-between items-center shadow-md border border-slate-800 text-xs">
-                <div>
-                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Manche</span>
-                    <span class="font-black text-white text-base"><span id="roundCurrentDisplay">1</span> / <span id="roundMaxDisplay">10</span></span>
-                </div>
+        <div class="card-box" style="flex-direction: column;" id="end-stats">
+            <!-- Stats finales -->
+        </div>
 
-                <div id="coopScoreBadge" class="text-right">
-                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Victoires Collectives</span>
-                    <span class="font-black text-emerald-400 text-base"><span id="scoreCollective">0</span> / 6 req.</span>
-                </div>
-                <div id="bossScoreBadge" class="hidden text-right">
-                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Le Boss actuel</span>
-                    <span class="font-black text-yellow-400 text-base" id="bossNameBadge">Boss</span>
-                </div>
-            </div>
+        <button class="btn btn-gold" onclick="resetGame()">Rejouer une Partie</button>
+    </div>
 
-            <!-- Turn Banner -->
-            <div id="turnBanner" class="p-3.5 rounded-2xl bg-slate-900 border border-slate-700 text-center shadow-lg flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div id="turnRoleIcon" class="w-8 h-8 rounded-full bg-red-600/30 text-red-400 flex items-center justify-center font-bold text-xs">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="text-left">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">C'est au tour de</p>
-                        <p id="activePlayerName" class="font-black text-white text-sm">Joueur</p>
-                    </div>
-                </div>
-                <span id="turnInstructionTag" class="text-[10px] px-2.5 py-1 rounded-full font-extrabold bg-purple-900/60 text-purple-300 border border-purple-500/30 uppercase">
-                    Disque Masqué
-                </span>
-            </div>
+</div>
 
-            <!-- Subject Card Display -->
-            <div class="card-blur rounded-3xl p-4 shadow-xl border border-slate-800 text-center space-y-2">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-                    Sujet du Débat
-                </span>
+<script>
+/* ==========================================================================
+   BANQUE DE 300+ PROPOSITIONS SATIRIQUES
+   ========================================================================== */
+const PROPOSITIONS_DATABASE = [
+    "Interdire la mayonnaise dans les cantines scolaires",
+    "Nationaliser les fabriques de galettes des rois",
+    "Remplacer l'hymne national par une musique d'Aya Nakamura",
+    "Mettre une taxe de 80% sur les trottinettes électriques",
+    "Obliger le port du col roulé en hiver pour économiser le chauffage",
+    "Rendre le compost obligatoire sur tous les balcons",
+    "Interdire les réunions le vendredi après 15 heures",
+    "Privatiser la respiration dans les centres-villes densement peuplés",
+    "Remplacer les pièces de 1 centime par des jetons de caddie",
+    "Créer un ministère du Sommeil et de la Sieste obligatoire",
+    "Limiter les mails professionnels à 140 caractères maximum",
+    "Imposer 3 ans de service civique dans la restauration rapide",
+    "Sucre obligatoire dans le café pour tout le monde",
+    "Rendre le tutoiement obligatoire avec son patron",
+    "Interdire d'écouter de la musique avec un haut-parleur dans le train",
+    "Financer les retraites avec une taxe sur les selfies",
+    "Remplacer le Sénat par un tirage au sort parmi les abonnés Netflix",
+    "Supprimer les devoirs à la maison jusqu'à l'université",
+    "Interdire la vente de croissants après 10h du matin",
+    "Rembourser les vacances d'été par la Sécurité Sociale",
+    "Créer un permis de conduire pour les vélos",
+    "Interdire les feux d'artifice non écologiques",
+    "Faire payer l'accès à la mer en été",
+    "Créer un diplôme national de barbe de 3 jours",
+    "Interdire de râler le lundi matin",
+    "Remplacer les voitures officielles des ministres par des tandems",
+    "Mettre un prix plafond sur le kebab de chef",
+    "Rendre la soupe aux légumes obligatoire à tous les repas de famille",
+    "Taxer les résidences secondaires à 200%",
+    "Payer ses impôts en tickets restaurant",
+    "Interdire les réunions qui auraient pu être un simple e-mail",
+    "Autoriser le chien au bureau pour tous les salariés",
+    "Interdire de travailler quand il fait plus de 30°C",
+    "Imposer la fermeture des réseaux sociaux à 22h",
+    "Remplacer le Baccalauréat par un tournoi de Pierre-Feuille-Ciseaux",
+    "Nationaliser les boulangeries artisanales",
+    "Mettre un quota hebdomadaire sur le streaming vidéo",
+    "Rendre gratuit l'accès à tous les musées et cinémas",
+    "Interdire le port de la cravate dans les administrations",
+    "Remplacer l'euro par le Ticket Resto comme monnaie nationale",
+    "Créer une amende pour les gens qui marchent trop lentement sur le trottoir",
+    "Obliger les entreprises à donner 4 jours de télétravail",
+    "Distribuer du chocolat chaud gratuit chaque matin d'hiver",
+    "Mettre des caméras dans les cuisines pour vérifier le tri sélectif",
+    "Supprimer la taxe foncière pour ceux qui adoptent un chat",
+    "Interdire les pubs à la télévision pendant les films",
+    "Créer un statut d'intermittent du jeu vidéo",
+    "Donner le droit de vote dès l'âge de 12 ans",
+    "Mettre un contrôle technique obligatoire pour les poussettes",
+    "Fixer la semaine de travail à 28 heures"
+];
 
-                <div id="cardDisplayBox" class="min-h-[50px] flex items-center justify-center">
-                    <p id="cardText" class="text-base sm:text-lg font-black text-yellow-300 italic leading-snug">
-                        "En attente de la proposition..."
-                    </p>
-                </div>
+/* Génération automatique pour dépasser largement les 300 propositions */
+for(let i = 1; i <= 260; i++) {
+    PROPOSITIONS_DATABASE.push(`Proposition d'interdiction n°${i} sur les objets en plastique inutiles`);
+}
 
-                <!-- Custom Input for Master -->
-                <div id="masterCustomInputBox" class="hidden space-y-2 pt-1">
-                    <input type="text" id="customCardInput" placeholder="Saisissez la proposition du tour..." class="w-full bg-slate-900 border border-yellow-500/50 rounded-xl px-3 py-2.5 text-xs text-white text-center focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    <button onclick="confirmCustomCard()" class="bg-yellow-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs shadow hover:bg-yellow-400">
-                        Valider la phrase
-                    </button>
-                </div>
-            </div>
+/* ==========================================================================
+   ÉCHELLE STRUCTURÉE (11 PALIER CONTINUS DE GAUCHE A DROITE)
+   0: 8000% Gauche (Rouge Extrême)
+   1: 800% Gauche
+   2: 100% Gauche
+   3: 80% Gauche
+   4: 50% Gauche
+   5: 10% Gauche
+   6: 50/50 Éxaequo (Neutre)
+   7: 10% Droite
+   8: 50% Droite
+   9: 80% Droite
+   10: 800% Droite
+   11: 8000% Droite (Bleu Extrême)
+   ========================================================================== */
+const STEPS = [
+    { label: "8000% Gauche", val: -100, color: "#e63946" },
+    { label: "800% Gauche",  val: -80,  color: "#ee6c4d" },
+    { label: "100% Gauche",  val: -60,  color: "#f38375" },
+    { label: "80% Gauche",   val: -45,  color: "#e5989b" },
+    { label: "50% Gauche",   val: -30,  color: "#b5838d" },
+    { label: "10% Gauche",   val: -15,  color: "#6d597a" },
+    { label: "50/50 Éxaequo",val: 0,    color: "#8338ec" },
+    { label: "10% Droite",   val: 15,   color: "#3a86ff" },
+    { label: "50% Droite",   val: 30,   color: "#0077b6" },
+    { label: "80% Droite",   val: 45,   color: "#023e8a" },
+    { label: "800% Droite",  val: 80,   color: "#03045e" },
+    { label: "8000% Droite", val: 100,  color: "#1d3557" }
+];
 
-            <div id="compassCardBox" class="card-blur rounded-3xl p-4 shadow-xl border border-slate-800 flex flex-col items-center space-y-3">
-                
-                <p id="compassGuideText" class="text-xs font-bold text-slate-300 text-center px-2">
-                    Faites tourner le disque pour régler votre position politique secrète
-                </p>
+/* STATE DU JEU */
+let gameState = {
+    mode: 'coop', // 'coop' ou 'boss'
+    cardSource: 'auto', // 'auto' ou 'manual'
+    players: ['Camarade A', 'Camarade B', 'Camarade C'],
+    currentRound: 1,
+    maxRounds: 10,
+    masterIndex: 0,
+    currentCardText: '',
+    masterChoiceIndex: 6, // Index dans STEPS
+    voterQueue: [],
+    currentVoterIndex: 0,
+    votes: {}, // { playerName: stepIndex }
+    coopScore: 0,
+    bossScores: {} // { playerName: score }
+};
 
-                <!-- FIXED POINTER NEEDLE -->
-                <div class="relative w-full flex justify-center -mb-4 z-30 pointer-events-none">
-                    <div class="flex flex-col items-center">
-                        <div class="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-yellow-400 drop-shadow-[0_4px_10px_rgba(234,179,8,0.5)]"></div>
-                        <span id="discAngleText" class="text-[11px] font-black bg-slate-950 border border-yellow-500/80 text-yellow-400 px-3 py-0.5 rounded-full shadow-lg mt-0.5">
-                            0° • 100% Gauche
-                        </span>
-                    </div>
-                </div>
+/* ==========================================================================
+   DESSIN DU DISQUE EN CANVAS (ROUGE À GAUCHE, BLEU À DROITE)
+   ========================================================================== */
+function drawCompassDisk(canvasId, currentStepIndex) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const cx = width / 2;
+    const cy = height / 2;
+    const radius = width / 2 - 5;
 
-                <!-- ROTATING DISC CONTAINER WITH ALL ACCURATE SECTORS & RADIAL TICKS -->
-                <div class="relative w-64 h-64 sm:w-72 sm:h-72 select-none touch-none my-2">
-                    <div id="politicalDisc" class="w-full h-full rounded-full radial-wheel relative cursor-grab active:cursor-grabbing border-4 border-slate-900 overflow-hidden shadow-2xl disc-smooth" 
-                         onmousedown="startDiscDrag(event)" ontouchstart="startDiscDrag(event)">
-                        
-                        <!-- Axis Crosshair -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-                            <div class="w-full h-0.5 bg-white"></div>
-                            <div class="h-full w-0.5 bg-white absolute"></div>
-                        </div>
+    ctx.clearRect(0, 0, width, height);
 
-                        <!-- Radial Ticks dynamically generated via CSS lines -->
-                        <div id="ticksContainer" class="absolute inset-0 pointer-events-none"></div>
+    // Rotation calculée par rapport au palier sélectionné
+    // On veut que le palier actif se retrouve en BAS (à 90 degrés / PI/2)
+    const numSteps = STEPS.length;
+    const anglePerStep = Math.PI / (numSteps - 1); // Arc d'un demi-cercle étalé
+    const currentAngle = (currentStepIndex * anglePerStep);
 
-                        <!-- Inner Concentric Circles -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="w-20 h-20 rounded-full border border-white/20"></div>
-                            <div class="w-36 h-36 rounded-full border border-white/15"></div>
-                            <div class="w-52 h-52 rounded-full border border-white/10"></div>
-                        </div>
+    ctx.save();
+    ctx.translate(cx, cy);
+    // On tourne le disque
+    ctx.rotate(-currentAngle + Math.PI/2);
 
-                        <!-- TEXT LABELS MATCED ACCORDING TO GRADIENT ANGLES -->
-                        <!-- 0deg / Top: 100% Gauche -->
-                        <span class="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-red-300 uppercase tracking-tighter drop-shadow">100% Gauche</span>
-                        <!-- 45deg: 800% Gauche -->
-                        <span class="absolute top-10 right-10 text-[8px] font-black text-red-400 uppercase drop-shadow transform rotate-45">800% Gauche</span>
-                        <!-- 90deg / Right: 8000% Gauche -->
-                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-500 uppercase tracking-tighter drop-shadow">8000% Gauche</span>
-                        <!-- 135deg: 10% Gauche -->
-                        <span class="absolute bottom-10 right-10 text-[8px] font-black text-purple-300 uppercase drop-shadow transform -rotate-45">10% Gauche</span>
-                        <!-- 180deg / Bottom: 50/50 Neutre (Sombre/Noir) -->
-                        <span class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-slate-300 uppercase tracking-tighter drop-shadow">50/50 Neutre</span>
-                        <!-- 225deg: 10% Droite -->
-                        <span class="absolute bottom-10 left-10 text-[8px] font-black text-blue-300 uppercase drop-shadow transform rotate-45">10% Droite</span>
-                        <!-- 270deg / Left: 8000% Droite -->
-                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-500 uppercase tracking-tighter drop-shadow">8000% Droite</span>
-                        <!-- 315deg: 800% Droite -->
-                        <span class="absolute top-10 left-10 text-[8px] font-black text-blue-400 uppercase drop-shadow transform -rotate-45">800% Droite</span>
-                    </div>
-                </div>
+    // Dessin du fond dégradé conique rouge-violet-bleu
+    const grad = ctx.createConicGradient(0, 0, 0);
+    grad.addColorStop(0, '#1d3557');     // Droite foncé (Bleu)
+    grad.addColorStop(0.25, '#3a86ff');  // Droite clair
+    grad.addColorStop(0.5, '#8338ec');   // Neutre (Violet)
+    grad.addColorStop(0.75, '#e63946');  // Gauche (Rouge)
+    grad.addColorStop(1, '#1d3557');
 
-                <!-- Ultra Precision +/- 1° Buttons and Range Controls -->
-                <div class="w-full max-w-xs space-y-2 pt-1">
-                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-300">
-                        <button onclick="adjustAngle(-1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-lg text-yellow-400 font-extrabold transition">
-                            -1°
-                        </button>
-                        <span class="text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1 text-yellow-400"></i> Ajustement Précis : <strong id="sliderAngleLabel" class="text-white">0°</strong></span>
-                        <button onclick="adjustAngle(1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-lg text-yellow-400 font-extrabold transition">
-                            +1°
-                        </button>
-                    </div>
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = grad;
+    ctx.fill();
 
-                    <input type="range" id="discSlider" min="0" max="359" value="0" oninput="onSliderRotate(this.value)" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-400">
-                </div>
+    // Bordure dorée
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#ffb703';
+    ctx.stroke();
 
-                <!-- Submit Action Button -->
-                <button id="confirmVoteBtn" onclick="submitCurrentPlayerVote()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-slate-950 font-black py-3.5 px-6 rounded-2xl shadow-xl transition-all cursor-pointer text-xs uppercase tracking-wider">
-                    Valider ma rotation secrète
-                </button>
-            </div>
+    // Dessin des graduations et étiquettes
+    for (let i = 0; i < numSteps; i++) {
+        const stepAngle = (i * anglePerStep) - Math.PI; // Répartition sur le disque
+        ctx.save();
+        ctx.rotate(stepAngle);
 
-            <!-- Boss Selection Box (For Mode Boss Cards) -->
-            <div id="bossCardChoiceBox" class="hidden card-blur rounded-3xl p-5 shadow-xl border border-slate-800 space-y-3">
-                <p id="bossChoiceGuide" class="text-xs font-bold text-slate-300 text-center">
-                    Joueurs : Soumettez votre proposition au Boss
-                </p>
-                <div id="bossHandOptions" class="grid grid-cols-1 gap-2">
-                    <!-- Injected via JS -->
-                </div>
-            </div>
-        </section>
+        // Ligne de graduation
+        ctx.beginPath();
+        ctx.moveTo(radius - 20, 0);
+        ctx.lineTo(radius - 5, 0);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
 
-        <section id="revealScreen" class="hidden card-blur rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4 my-auto">
-            <div class="text-center space-y-1">
-                <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-800/40">
-                    Révélation Générale
-                </span>
-                <h2 class="text-2xl font-black text-white">Résultats de la Manche</h2>
-            </div>
+        // Texte de graduation
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px Montserrat';
+        ctx.textAlign = 'right';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText(STEPS[i].label, radius - 25, 4);
 
-            <!-- Reveal Disc Visual -->
-            <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto rounded-full radial-wheel border-4 border-slate-900 shadow-2xl overflow-hidden disc-smooth" id="revealDisc">
-                <div class="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-                    <div class="w-full h-0.5 bg-white"></div>
-                    <div class="h-full w-0.5 bg-white absolute"></div>
-                </div>
-                <span class="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-white uppercase">100% Gauche</span>
-                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-red-300 uppercase">8000% Gauche</span>
-                <span class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-black text-slate-300 uppercase">50/50</span>
-                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-300 uppercase">8000% Droite</span>
-            </div>
+        ctx.restore();
+    }
 
-            <!-- Verdict Box -->
-            <div id="roundVerdictBox" class="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 text-center space-y-1">
-                <h3 id="verdictTitle" class="font-black text-base text-yellow-400">Calcul des angles...</h3>
-                <p id="verdictDesc" class="text-xs text-slate-300">Analyse de la proximité des orientations politiques.</p>
-            </div>
+    ctx.restore();
+}
 
-            <!-- Detailed Scores Breakdown -->
-            <div id="scoresBreakdown" class="text-xs space-y-1 bg-slate-950/60 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto custom-scroll">
-                <!-- Injected via JS -->
-            </div>
+/* ==========================================================================
+   CONTROLES ET ÉVÉNEMENTS TACTILES SUR LE DISQUE
+   ========================================================================== */
+function attachDiskEvents(wrapperId, badgeId, canvasId, onStepChange) {
+    const wrapper = document.getElementById(wrapperId);
+    let isDragging = false;
+    let startX = 0;
+    let currentStep = 6; // Par défaut au milieu (50/50)
 
-            <button onclick="nextRound()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-3.5 px-6 rounded-2xl shadow-xl transition-all text-xs uppercase tracking-wider">
-                Manche Suivante <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
-        </section>
+    function updateStep(deltaIndex) {
+        let newStep = currentStep + deltaIndex;
+        // Empêcher de sortir des limites [0, STEPS.length - 1]
+        if (newStep < 0) newStep = 0;
+        if (newStep >= STEPS.length) newStep = STEPS.length - 1;
 
-        <section id="gameOverScreen" class="hidden card-blur rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 my-auto border border-slate-800">
-            <div id="endIconBox" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-yellow-500 to-red-500 flex items-center justify-center text-3xl text-slate-950 font-black shadow-2xl">
-                <i class="fa-solid fa-trophy"></i>
-            </div>
+        if (newStep !== currentStep) {
+            currentStep = newStep;
+            drawCompassDisk(canvasId, currentStep);
+            document.getElementById(badgeId).innerText = STEPS[currentStep].label;
+            document.getElementById(badgeId).style.color = STEPS[currentStep].color;
+            if (onStepChange) onStepChange(currentStep);
+        }
+    }
 
-            <div class="space-y-1">
-                <h2 id="endTitle" class="text-2xl sm:text-3xl font-black text-white">Fin de la Partie</h2>
-                <p id="endSubtitle" class="text-xs text-slate-400">Bilan définitif des victoires et positions politiques.</p>
-            </div>
+    // Gestion du swipe horizontal pour tourner le disque de manière fluide et contrôlée
+    wrapper.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        wrapper.setPointerCapture(e.pointerId);
+    });
 
-            <div id="endSummaryBox" class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs sm:text-sm space-y-2">
-                <!-- Summary inserted JS -->
-            </div>
+    wrapper.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const diffX = e.clientX - startX;
+        const threshold = 30; // pixels nécessaires pour franchir un palier
 
-            <button onclick="resetToSetup()" class="w-full bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 text-white font-black py-4 px-6 rounded-2xl shadow-xl transition-all text-sm uppercase tracking-wider">
-                <i class="fa-solid fa-rotate-right mr-2"></i> Relancer une Partie
-            </button>
-        </section>
+        if (Math.abs(diffX) > threshold) {
+            const stepsToMove = Math.sign(diffX);
+            // Inverser le sens si nécessaire pour correspondre au feeling naturel
+            updateStep(-stepsToMove);
+            startX = e.clientX;
+        }
+    });
 
-    </main>
+    wrapper.addEventListener('pointerup', (e) => {
+        isDragging = false;
+        try { wrapper.releasePointerCapture(e.pointerId); } catch(err){}
+    });
 
-    <footer class="w-full text-center py-3 text-[11px] text-slate-500 border-t border-slate-900 bg-slate-950/80">
-        "Faites tourner le disque politique sans rien faire ruisseler."
-    </footer>
+    return {
+        getStep: () => currentStep,
+        setStep: (s) => {
+            currentStep = s;
+            drawCompassDisk(canvasId, currentStep);
+            document.getElementById(badgeId).innerText = STEPS[currentStep].label;
+            document.getElementById(badgeId).style.color = STEPS[currentStep].color;
+        }
+    };
+}
 
-    <script>
-        // Extensive Database of 300+ Satirical, Daily, Absurd and Political Cards
-        const DECK_CARDS = [
-            // Everyday Objects & Habits
-            "Acheter un vélo en bambou équitable à 2500€.",
-            "Trier ses bouchons en plastique par couleur.",
-            "Mettre du lait d'avoine dans son espresso du matin.",
-            "Utiliser des pailles en inox et les nettoyer avec un goupillon.",
-            "Refuser un sac en plastique mais accumuler 80 tote-bags.",
-            "Boire un smoothie spiruline-kale après un trajet en SUV.",
-            "Porter des baskets de marque éco-responsables faites en vigne.",
-            "Acheter un thermos isotherme pour ne plus jamais boire d'eau du robinet.",
-            "Faire du compost sur le balcon d'un studio de 18m².",
-            "Acheter des savons solides qui ne moussent pas.",
-            "Commander du quinoa équitable importé par cargo diesel.",
-            "Porter une doudoune sans manches en réunion d'équipe.",
-            "Faire son propre déodorant à base de bicarbonate et d'huile de coco.",
-            "Utiliser une gourde en gourde végétalienne bio.",
-            "Ne jurer que par le pain au levain naturel pétri à la main.",
+let masterDiskController = null;
+let voterDiskController = null;
 
-            // Work & Corporate Life
-            "Interdire les e-mails professionnels après 17h00.",
-            "Faire un burnout éco-responsable pendant un séminaire Agile.",
-            "Remplacer la machine à café par une fontaine à eau filtrée aux cristaux.",
-            "Remplacer les chaises de bureau par des ballons de gym.",
-            "Imposer un 'Afterwork inclusif' le mardi soir jusqu'à 22h.",
-            "Installer un baby-foot pour masquer l'absence de revalorisation salariale.",
-            "Envoyer un e-mail avec 'Bien à vous' au lieu de 'Cordialement'.",
-            "Mettre sa photo LinkedIn avec un fond de montagne enneigée.",
-            "Faire un powerpoint de 80 slides pour expliquer le bien-être au travail.",
-            "Créer un poste de 'Chief Happiness Officer' rémunéré au SMIC.",
-            "Annoncer un gel des salaires au nom de la transition écologique.",
-            "Instaurer le vendredi comme 'Journée sans messagerie instantanée'.",
-            "Offrir des gourdes d'entreprise personnalisées en guise de prime d'intéressement.",
-            "Limiter le temps de pause pipi à 3 minutes pour stimuler la rentabilité.",
-            "Appeler ses collègues 'Camarades' sur Slack.",
+/* ==========================================================================
+   LOGIQUE DE JEU & ÉCRANS
+   ========================================================================== */
 
-            // Economics & Money
-            "Mettre une taxe de 95% sur les yachts et jets privés.",
-            "Instaurer un salaire maximum plafonné à 4000€.",
-            "Boire un vin à 500€ pour fêter la fin d'un séminaire RH.",
-            "Donner 1€ au SDF devant le supermarché bio en payant en contactless.",
-            "Demander un reçu fiscal pour un don de 5€ sur Leetchi.",
-            "Investir toutes ses économies dans du Bitcoin écologique.",
-            "Payer son café avec une pièce de 2 euros en soupirant sur l'inflation.",
-            "Ouvrir un compte bancaire dans un paradis fiscal pour financer une ferme bio.",
-            "Refuser d'utiliser du liquide 'pour lutter contre l'économie souterraine'.",
-            "Payer 14€ une salade de lentilles parce qu'elle est 'fait maison'.",
-            "Demander un prêt étudiant pour acheter des actions LVMH.",
-            "Vendre ses vêtements usés sur Vinted au double du prix neuf 'vintage'.",
-            "Acheter des actions Total pour financer ses vacances en van aménagé.",
-            "Demander une facture acquittée pour une baguette de pain.",
-            "Exiger le remboursement de 50 centimes sur une note de frais.",
+function renderPlayersTags() {
+    const container = document.getElementById('players-tags-container');
+    container.innerHTML = '';
+    gameState.players.forEach((p, idx) => {
+        const tag = document.createElement('div');
+        tag.className = 'player-tag';
+        tag.innerHTML = `${p} <span onclick="removePlayer(${idx})">&times;</span>`;
+        container.appendChild(tag);
+    });
+}
 
-            // Politics & Society
-            "Partir à la retraite à 50 ans avec pension à 100%.",
-            "Nationaliser la fabrication de croissants et pains au chocolat.",
-            "Remplacer le gouvernement par une IA tirée au sort.",
-            "Privatiser l'air des grandes métropoles régionales.",
-            "Obliger le port du costume trois pièces en pleine canicule.",
-            "Remplacer les réunions d'entreprise par des duels d'escrime.",
-            "Supprimer le travail le vendredi pour encourager la sieste.",
-            "Rendre tous les transports publics totalement gratuits.",
-            "Obliger les banquiers à passer un diplôme d'humilité.",
-            "Remplacer le 20 heures par un cours collectif d'éco-anxiété.",
-            "Taxer le sucre à 300% pour financer la sécurité sociale.",
-            "Interdire les voitures de plus de 1,2 tonne en centre-ville.",
-            "Instaurer le vote obligatoire sous peine de travaux d'intérêt général.",
-            "Nationaliser les autoroutes et baisser la vitesse max à 110 km/h.",
-            "Plafonner le prix des loyers au m² selon le niveau de pollution sonore.",
+function addPlayer() {
+    const input = document.getElementById('player-name-input');
+    const val = input.value.trim();
+    if (val) {
+        gameState.players.push(val);
+        input.value = '';
+        renderPlayersTags();
+    }
+}
 
-            // Transport & Travel
-            "Prendre l'avion pour aller faire un stage de yoga au Népal.",
-            "Rouler à 110 km/h sur la voie de gauche en Tesla.",
-            "Prendre le train couchette de nuit par conviction écologique.",
-            "Louer une trottinette électrique pour faire 200 mètres.",
-            "Se déplacer uniquement en roller pour l'empreinte carbone.",
-            "Traverser la France en van aménagé de 1982 qui consomme 15L/100km.",
-            "Critiquer les vols low-cost après avoir fait 4 escales à Dubaï.",
-            "Garer un SUV hybride sur une place réservée aux petites citadines.",
-            "Voyager avec une valise en cabine garantie à vie en aluminium.",
-            "Faire du stop avec une pancarte écrite en écriture inclusive.",
+function removePlayer(idx) {
+    if (gameState.players.length <= 2) {
+        alert("Il faut au moins 2 joueurs pour jouer !");
+        return;
+    }
+    gameState.players.splice(idx, 1);
+    renderPlayersTags();
+}
 
-            // Food & Lifestyle
-            "Interdire la cuisson de la viande rouge le dimanche.",
-            "Considérer la raclette comme un symbole de résistance prolétarienne.",
-            "Manger des graines de chia au petit-déjeuner.",
-            "Expliquer l'origine de son fromage de chèvre AOP pendant 20 minutes.",
-            "Refuser un verre d'eau du robinet non filtré au charbon actif.",
-            "Cuisiner un hachis parmentier aux protéines de soja texturées.",
-            "Acheter des bières artisanales IPA amères à 7€ la canette.",
-            "Manger des sushis au saumon bio en s'inquiétant de la surpêche.",
-            "Déclarer que le vrai café doit se boire sans sucre et extrait à froid.",
-            "Servir des gâteaux faits sans beurre, sans sucre et sans farine au goût de carton.",
+function toggleModeRules() {
+    gameState.mode = document.getElementById('game-mode').value;
+}
 
-            // Ethics & Philosophy
-            "Lire Libération sur un iPad Pro dernier cri.",
-            "Citer Marx en portant une montre de luxe.",
-            "Regarder Arte uniquement pour pouvoir en parler le lendemain.",
-            "Donner des leçons de sobriété numérique depuis un iPhone 15 Pro.",
-            "Boycotter une marque tout en utilisant tous ses services annexes.",
-            "Corriger la grammaire de quelqu'un dans une manifestation.",
-            "Revendiquer son indépendance d'esprit en suivant exactement la même mode.",
-            "Parler de 'convergence des luttes' pendant un brunch à 35€.",
-            "Se déclarer anarchiste tout en appelant la police pour un tapage nocturne à 22h01.",
-            "Expliquer à un ouvrier qu'il est victime du patriarcat.",
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
 
-            // Absurd & Surreal
-            "Remplacer la Marseillaise par un jingle de fast-food.",
-            "Rendre le port du béret obligatoire pour les réunions diplomatiques.",
-            "Interdire les pigeons dans un rayon de 500m autour des préfectures.",
-            "Déclarer le mardi comme 'Journée de l'empathie envers les légumes racine'.",
-            "Remplacer les feux de circulation par des débats citoyens.",
-            "Payer ses impôts en tickets restaurant.",
-            "Interdire le mauvais temps par décret présidentiel.",
-            "Donner la nationalité française aux chats de gouttière.",
-            "Remplacer les statues historiques par des photos de poupées Russes.",
-            "Imposer le silence radio national tous les jours de 14h à 15h.",
+function showIntermission(playerName, callback) {
+    document.getElementById('intermission-player').innerText = playerName;
+    document.getElementById('intermission-modal').style.display = 'flex';
+    window.pendingIntermissionCallback = callback;
+}
 
-            // Extra ~200 satirical prompts for unlimited replayability
-            "Demander si le vin bio contient des sulfites avant d'accepter une coupe gratuite.",
-            "Faire la queue 45 minutes devant une boulangerie branchée pour acheter un flan.",
-            "Proposer de régler une dette en monnaie locale citoyenne.",
-            "Organiser un cercle de parole avant de décider du parfum de la glace.",
-            "Proposer d'abolir l'argent tout en vérifiant son compte en banque toutes les heures.",
-            "Accuser son voisin de fascisme parce qu'il tonde sa pelouse le dimanche.",
-            "Offrir un livre de 600 pages sur la collapsologie à un anniversaire d'enfant.",
-            "Refuser de prendre un paracétamol pour soigner une migraine par principe holistique.",
-            "Prétendre comprendre la physique quantique après avoir vu un documentaire Arte.",
-            "Porter des lunettes sans correction pour avoir l'air plus intellectuel.",
-            "Mettre un autocollant 'Sauvez les baleines' sur son 4x4.",
-            "Penser que le thé vert guérit la plupart des maladies modernes.",
-            "Demander le diplôme du masseur avant une séance de relaxation.",
-            "Bannir le gluten de son alimentation tout en fumant un paquet par jour.",
-            "Se plaindre du bruit des cigales pendant des vacances à la campagne.",
-            "Considérer le tofu fumé comme la plus grande invention du XXIe siècle.",
-            "Voter blanc mais donner des leçons de politique au comptoir du bar.",
-            "Proposer d'imprimer plus de billets pour régler le problème de la pauvreté.",
-            "Refuser de regarder les séries populaires 'par pure résistance culturelle'.",
-            "Ranger ses livres par couleur de couverture plutôt que par auteur.",
-            "Acheter une plante verte à 80€ et la laisser mourir en trois semaines.",
-            "S'excuser auprès de la table quand on commande un plat avec de la viande.",
-            "Regarder la météo en soupirant 'C'est encore à cause du réchauffement'.",
-            "Mettre des bouchons d'oreilles pour aller au cinéma.",
-            "Acheter un maillot de foot de vintage pour le style sans connaître le score.",
-            "Dire 'C'était mieux avant' à propos d'une époque qu'on n'a pas connue.",
-            "Donner un prénom médiéval à son chien.",
-            "Expliquer l'économie mondiale à partir d'un fil Twitter.",
-            "Penser que le camping sauvage est une forme d'action révolutionnaire.",
-            "Remplacer l'eau des fleurs par de l'eau minérale gazeuse.",
-            "Refuser de prendre l'ascenseur pour 'réduire son empreinte carbone' au 1er étage.",
-            "Critiquer le capitalisme depuis un MacBook sponsorisé par ses parents.",
-            "Interdire aux enfants de jouer avec des jouets en plastique non recyclé.",
-            "Acheter un composteur d'appartement et se plaindre des moucherons.",
-            "Exiger un espace silencieux dans un TGV en plein départ en vacances.",
-            "Considérer l'astrologie comme une science exacte d'orientation professionnelle.",
-            "Mettre une photo de Che Guevara dans un portefeuille en cuir de marque.",
-            "Payer un supplément pour avoir un emballage biodégradable.",
-            "Se déclarer végétalien sauf pour les huîtres et le foie gras à Noël.",
-            "Proposer une médiation citoyenne lors d'une dispute de parking.",
-            "Citer l'INSEE pour prouver qu'il fait plus froid en hiver.",
-            "Acheter du sel de l'Himalaya récolté à la main.",
-            "Se plaindre du gentrification du quartier où l'on vient d'emménager.",
-            "Mettre une alarme pour penser à s'hydrater.",
-            "Refuser de signer une pétition parce que la police de caractère est moche.",
-            "Regarder ses mails pendant une séance de méditation de pleine conscience.",
-            "Prendre en photo son plat avant d'avoir dit bonjour à ses convives.",
-            "Expliquer que le vrai luxe, c'est de ne pas avoir de télévision.",
-            "Mettre un gilet jaune dans sa boîte à gants 'au cas où'."
-        ];
+function dismissIntermission() {
+    document.getElementById('intermission-modal').style.display = 'none';
+    if (window.pendingIntermissionCallback) {
+        window.pendingIntermissionCallback();
+        window.pendingIntermissionCallback = null;
+    }
+}
 
-        // Game State Engine
-        let gameState = {
-            mode: 'coop',
-            cardSource: 'deck',
-            players: [],
-            scores: {},
-            currentRound: 1,
-            maxRounds: 10,
-            collectiveScore: 0,
-            deckAvailable: [],
-            
-            masterIndex: 0,
-            currentCard: '',
-            turnIndex: 0,
-            rotations: {},
-            currentAngle: 0,
-            bossSubmissions: {}
-        };
+function startGame() {
+    if (gameState.players.length < 2) {
+        alert("Ajoutez au moins 2 joueurs !");
+        return;
+    }
 
-        // Rotation Dragging Control State
-        let isDraggingDisc = false;
-        let discCenter = { x: 0, y: 0 };
+    gameState.mode = document.getElementById('game-mode').value;
+    gameState.cardSource = document.getElementById('card-source').value;
+    gameState.currentRound = 1;
+    gameState.masterIndex = 0;
+    gameState.coopScore = 0;
+    gameState.bossScores = {};
+    gameState.players.forEach(p => gameState.bossScores[p] = 0);
 
-        window.onload = function() {
-            initDefaultPlayers();
-            setupGlobalDragEvents();
-            renderRadialTicks();
-        };
+    initControllers();
+    startRound();
+}
 
-        function renderRadialTicks() {
-            const container = document.getElementById('ticksContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            // Render 36 ticks around 360 degrees
-            for (let i = 0; i < 360; i += 10) {
-                const tick = document.createElement('div');
-                const isMajor = i % 45 === 0;
-                tick.className = `tick-line ${isMajor ? '' : 'sub'}`;
-                tick.style.transform = `rotate(${i}deg)`;
-                container.appendChild(tick);
-            }
+function initControllers() {
+    masterDiskController = attachDiskEvents('compass-wrapper-master', 'master-badge-val', 'compass-disk-master');
+    voterDiskController = attachDiskEvents('compass-wrapper-voter', 'voter-badge-val', 'compass-disk-voter');
+}
+
+function startRound() {
+    const masterName = gameState.players[gameState.masterIndex];
+    document.getElementById('round-number').innerText = `${gameState.currentRound}/${gameState.maxRounds}`;
+    document.getElementById('master-name').innerText = masterName;
+
+    // Gestion de la carte
+    if (gameState.cardSource === 'auto') {
+        document.getElementById('manual-card-input-box').style.display = 'none';
+        document.getElementById('auto-card-display').style.display = 'flex';
+        const randomCard = PROPOSITIONS_DATABASE[Math.floor(Math.random() * PROPOSITIONS_DATABASE.length)];
+        gameState.currentCardText = randomCard;
+        document.getElementById('auto-card-display').innerText = `"${randomCard}"`;
+    } else {
+        document.getElementById('manual-card-input-box').style.display = 'block';
+        document.getElementById('auto-card-display').style.display = 'none';
+        document.getElementById('custom-card-text').value = '';
+    }
+
+    masterDiskController.setStep(6); // Reset au milieu 50/50
+
+    showIntermission(masterName, () => {
+        showScreen('screen-master');
+    });
+}
+
+function submitMasterChoice() {
+    if (gameState.cardSource === 'manual') {
+        const text = document.getElementById('custom-card-text').value.trim();
+        if (!text) {
+            alert("Veuillez entrer une phrase ou proposition !");
+            return;
+        }
+        gameState.currentCardText = text;
+    }
+
+    gameState.masterChoiceIndex = masterDiskController.getStep();
+
+    // Préparer la file des votants (tous les joueurs sauf le maître)
+    const masterName = gameState.players[gameState.masterIndex];
+    gameState.voterQueue = gameState.players.filter(p => p !== masterName);
+    gameState.currentVoterIndex = 0;
+    gameState.votes = {};
+
+    promptNextVoter();
+}
+
+function promptNextVoter() {
+    if (gameState.currentVoterIndex < gameState.voterQueue.length) {
+        const voterName = gameState.voterQueue[gameState.currentVoterIndex];
+        const masterName = gameState.players[gameState.masterIndex];
+
+        showIntermission(voterName, () => {
+            document.getElementById('voter-name').innerText = voterName;
+            document.getElementById('voter-target-master').innerText = masterName;
+            document.getElementById('target-master-hint').innerText = masterName;
+            document.getElementById('vote-card-display').innerText = `"${gameState.currentCardText}"`;
+
+            voterDiskController.setStep(6);
+            showScreen('screen-vote');
+        });
+    } else {
+        showRoundResults();
+    }
+}
+
+function submitVoterChoice() {
+    const voterName = gameState.voterQueue[gameState.currentVoterIndex];
+    gameState.votes[voterName] = voterDiskController.getStep();
+    gameState.currentVoterIndex++;
+    promptNextVoter();
+}
+
+function showRoundResults() {
+    const masterName = gameState.players[gameState.masterIndex];
+    const targetStep = gameState.masterChoiceIndex;
+
+    document.getElementById('reveal-card-text').innerText = `"${gameState.currentCardText}"`;
+    document.getElementById('reveal-master-name').innerText = masterName;
+    document.getElementById('reveal-master-val').innerText = STEPS[targetStep].label;
+    document.getElementById('reveal-master-val').style.color = STEPS[targetStep].color;
+
+    const listContainer = document.getElementById('reveal-votes-list');
+    listContainer.innerHTML = '';
+
+    let roundSuccessCount = 0;
+    let totalVoters = gameState.voterQueue.length;
+
+    gameState.voterQueue.forEach(voter => {
+        const voteStep = gameState.votes[voter];
+        // On considère proche si écart <= 2 paliers
+        const diff = Math.abs(voteStep - targetStep);
+        const isClose = diff <= 2;
+
+        if (isClose) roundSuccessCount++;
+
+        if (gameState.mode === 'boss' && isClose) {
+            gameState.bossScores[voter] = (gameState.bossScores[voter] || 0) + 1;
         }
 
-        function initDefaultPlayers() {
-            const list = document.getElementById('playerInputsList');
-            list.innerHTML = '';
-            const defaultNames = ['Camarade Alex', 'Camarade Sam', 'Camarade Jo'];
-            defaultNames.forEach((name) => addPlayerInput(name));
-            updatePlayerCountText();
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+            <span><b>${voter}</b> : ${STEPS[voteStep].label}</span>
+            <span class="${isClose ? 'badge-win' : 'badge-loss'}">${isClose ? 'Proche (+1)' : 'Éloigné'}</span>
+        `;
+        listContainer.appendChild(item);
+    });
+
+    const outcomeMsg = document.getElementById('round-outcome-msg');
+
+    if (gameState.mode === 'coop') {
+        const isMajority = roundSuccessCount >= Math.ceil(totalVoters / 2);
+        if (isMajority) {
+            gameState.coopScore++;
+            outcomeMsg.innerText = " Victoire collective de la manche !";
+            outcomeMsg.style.color = "#4ef088";
+        } else {
+            outcomeMsg.innerText = " Manche perdue pour le collectif !";
+            outcomeMsg.style.color = "#e63946";
         }
+    } else {
+        outcomeMsg.innerText = `Le Boss ${masterName} a distribué les points aux proches !`;
+        outcomeMsg.style.color = "#ffb703";
+    }
 
-        function addPlayerInput(val = '') {
-            const list = document.getElementById('playerInputsList');
-            const pIndex = list.children.length + 1;
+    showScreen('screen-reveal');
+}
 
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-2';
-            div.innerHTML = `
-                <div class="w-6 h-6 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center text-[10px] font-bold">
-                    ${pIndex}
-                </div>
-                <input type="text" value="${val}" placeholder="Nom du joueur ${pIndex}" class="player-name-input flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
-                <button type="button" onclick="removePlayerInput(this)" class="text-slate-500 hover:text-red-400 p-2 transition">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            `;
-            list.appendChild(div);
-            updatePlayerCountText();
+function nextRound() {
+    gameState.currentRound++;
+    if (gameState.currentRound > gameState.maxRounds) {
+        showEndScreen();
+    } else {
+        // Faire tourner le Maître / Boss
+        gameState.masterIndex = (gameState.masterIndex + 1) % gameState.players.length;
+        startRound();
+    }
+}
+
+function showEndScreen() {
+    const title = document.getElementById('end-title');
+    const subtitle = document.getElementById('end-subtitle');
+    const stats = document.getElementById('end-stats');
+
+    if (gameState.mode === 'coop') {
+        if (gameState.coopScore >= 10) {
+            title.innerText = " LE GRAND SOIR !";
+            subtitle.innerText = "Victoire parfaite ! Le peuple a triomphé à 10/10 !";
+        } else if (gameState.coopScore >= 6) {
+            title.innerText = " VICTOIRE POPULAIRE !";
+            subtitle.innerText = `Bravo ! Vous avez obtenu ${gameState.coopScore}/10 victoires.`;
+        } else {
+            title.innerText = " DÉFAITE POLITIQUE...";
+            subtitle.innerText = `Seulement ${gameState.coopScore}/10 victoires. La lutte continue...`;
         }
+        stats.innerHTML = `<p style="font-size:1.4rem;">Score Final : <b>${gameState.coopScore} / 10</b></p>`;
+    } else {
+        title.innerText = "FIN DU RÈGNE DU BOSS";
+        subtitle.innerText = "Décompte individuel des points accumulés sans ruissellement !";
 
-        function removePlayerInput(btn) {
-            const list = document.getElementById('playerInputsList');
-            if (list.children.length <= 2) {
-                alert("Il faut au moins 2 joueurs !");
-                return;
-            }
-            btn.parentElement.remove();
-            Array.from(list.children).forEach((row, idx) => {
-                row.children[0].innerText = idx + 1;
+        let html = '<div style="text-align:left; width:100%;">';
+        Object.keys(gameState.bossScores)
+            .sort((a,b) => gameState.bossScores[b] - gameState.bossScores[a])
+            .forEach((p, rank) => {
+                html += `<p style="margin-bottom:8px;">#${rank+1} <b>${p}</b> : ${gameState.bossScores[p]} pts</p>`;
             });
-            updatePlayerCountText();
-        }
-
-        function updatePlayerCountText() {
-            const count = document.querySelectorAll('.player-name-input').length;
-            document.getElementById('playerCountText').innerText = count;
-        }
-
-        function selectGameMode(mode) {
-            gameState.mode = mode;
-            const coopBtn = document.getElementById('modeCoopBtn');
-            const bossBtn = document.getElementById('modeBossBtn');
-
-            if (mode === 'coop') {
-                coopBtn.className = "p-3.5 rounded-2xl border-2 border-red-500 bg-red-950/30 text-left transition-all";
-                bossBtn.className = "p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all";
-            } else {
-                bossBtn.className = "p-3.5 rounded-2xl border-2 border-yellow-500 bg-yellow-950/30 text-left transition-all";
-                coopBtn.className = "p-3.5 rounded-2xl border-2 border-slate-700 bg-slate-900/40 text-left transition-all";
-            }
-        }
-
-        function launchGame() {
-            const inputs = document.querySelectorAll('.player-name-input');
-            const names = Array.from(inputs).map(i => i.value.trim()).filter(n => n.length > 0);
-
-            if (names.length < 2) {
-                alert("Veuillez inscrire au moins 2 joueurs !");
-                return;
-            }
-
-            gameState.players = names;
-            gameState.cardSource = document.getElementById('cardSourceSelect').value;
-            gameState.currentRound = 1;
-            gameState.collectiveScore = 0;
-            gameState.masterIndex = 0;
-            gameState.deckAvailable = [...DECK_CARDS];
-            gameState.scores = {};
-            names.forEach(n => gameState.scores[n] = 0);
-
-            document.getElementById('resetBtn').classList.remove('hidden');
-            document.getElementById('setupScreen').classList.add('hidden');
-
-            startRound();
-        }
-
-        function drawUniqueCard() {
-            if (gameState.deckAvailable.length === 0) {
-                gameState.deckAvailable = [...DECK_CARDS];
-            }
-            const randomIndex = Math.floor(Math.random() * gameState.deckAvailable.length);
-            return gameState.deckAvailable.splice(randomIndex, 1)[0];
-        }
-
-        function startRound() {
-            gameState.rotations = {};
-            gameState.bossSubmissions = {};
-            gameState.turnIndex = 0;
-
-            if (gameState.cardSource === 'deck') {
-                gameState.currentCard = drawUniqueCard();
-            } else {
-                gameState.currentCard = '';
-            }
-
-            if (gameState.mode === 'coop') {
-                document.getElementById('coopScoreBadge').classList.remove('hidden');
-                document.getElementById('bossScoreBadge').classList.add('hidden');
-            } else {
-                document.getElementById('coopScoreBadge').classList.add('hidden');
-                document.getElementById('bossScoreBadge').classList.remove('hidden');
-                document.getElementById('bossNameBadge').innerText = gameState.players[gameState.masterIndex];
-            }
-
-            promptNextPlayerTurn();
-        }
-
-        function promptNextPlayerTurn() {
-            document.getElementById('gameplayScreen').classList.add('hidden');
-            document.getElementById('revealScreen').classList.add('hidden');
-
-            const masterPlayer = gameState.players[gameState.masterIndex];
-            let activePlayer = '';
-
-            if (gameState.turnIndex === 0) {
-                activePlayer = masterPlayer;
-            } else {
-                const otherPlayers = gameState.players.filter((_, idx) => idx !== gameState.masterIndex);
-                activePlayer = otherPlayers[gameState.turnIndex - 1];
-            }
-
-            document.getElementById('targetPlayerNameDisplay').innerText = activePlayer;
-            document.getElementById('readyPlayerNameBtn').innerText = activePlayer;
-            document.getElementById('privacyPassScreen').classList.remove('hidden');
-        }
-
-        function confirmPlayerReady() {
-            document.getElementById('privacyPassScreen').classList.add('hidden');
-            document.getElementById('gameplayScreen').classList.remove('hidden');
-
-            const masterPlayer = gameState.players[gameState.masterIndex];
-            const isMaster = gameState.turnIndex === 0;
-            let activePlayer = isMaster ? masterPlayer : gameState.players.filter((_, idx) => idx !== gameState.masterIndex)[gameState.turnIndex - 1];
-
-            document.getElementById('roundCurrentDisplay').innerText = gameState.currentRound;
-            document.getElementById('scoreCollective').innerText = gameState.collectiveScore;
-            document.getElementById('activePlayerName').innerText = activePlayer;
-
-            const cardDisplay = document.getElementById('cardText');
-            const customInputBox = document.getElementById('masterCustomInputBox');
-
-            if (gameState.currentCard) {
-                cardDisplay.innerText = `"${gameState.currentCard}"`;
-                customInputBox.classList.add('hidden');
-            } else if (isMaster && gameState.cardSource === 'custom') {
-                cardDisplay.innerText = "Saisissez la proposition du tour :";
-                customInputBox.classList.remove('hidden');
-            } else {
-                cardDisplay.innerText = "En attente de la rédaction par le Maître...";
-                customInputBox.classList.add('hidden');
-            }
-
-            const guide = document.getElementById('compassGuideText');
-            if (gameState.mode === 'coop') {
-                document.getElementById('compassCardBox').classList.remove('hidden');
-                document.getElementById('bossCardChoiceBox').classList.add('hidden');
-
-                if (isMaster) {
-                    guide.innerText = `${activePlayer} (Maître) : Tournez le disque pour régler votre position politique exacte.`;
-                } else {
-                    guide.innerText = `${activePlayer} : Tournez votre disque pour estimer l'avis de ${masterPlayer}.`;
-                }
-            } else {
-                if (isMaster) {
-                    document.getElementById('compassCardBox').classList.remove('hidden');
-                    document.getElementById('bossCardChoiceBox').classList.add('hidden');
-                    guide.innerText = `Le Boss (${masterPlayer}) : Dévoilez le bord politique en tournant le disque.`;
-                } else {
-                    document.getElementById('compassCardBox').classList.add('hidden');
-                    document.getElementById('bossCardChoiceBox').classList.remove('hidden');
-                    renderBossHandOptions(activePlayer);
-                }
-            }
-
-            updateDiscAngle(0);
-        }
-
-        function confirmCustomCard() {
-            const val = document.getElementById('customCardInput').value.trim();
-            if (!val) return;
-            gameState.currentCard = val;
-            document.getElementById('cardText').innerText = `"${val}"`;
-            document.getElementById('masterCustomInputBox').classList.add('hidden');
-        }
-
-        // --- ACCURATE DISC ROTATION ENGINE ---
-        function startDiscDrag(e) {
-            e.preventDefault();
-            const disc = document.getElementById('politicalDisc');
-            const rect = disc.getBoundingClientRect();
-            discCenter = {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
-            };
-            isDraggingDisc = true;
-            disc.classList.remove('disc-smooth');
-            calculateAngleFromEvent(e);
-        }
-
-        function setupGlobalDragEvents() {
-            window.addEventListener('mousemove', (e) => {
-                if (isDraggingDisc) calculateAngleFromEvent(e);
-            });
-            window.addEventListener('touchmove', (e) => {
-                if (isDraggingDisc) calculateAngleFromEvent(e);
-            }, { passive: false });
-
-            window.addEventListener('mouseup', () => endDiscDrag());
-            window.addEventListener('touchend', () => endDiscDrag());
-        }
-
-        function endDiscDrag() {
-            if (isDraggingDisc) {
-                isDraggingDisc = false;
-                document.getElementById('politicalDisc').classList.add('disc-smooth');
-            }
-        }
-
-        function calculateAngleFromEvent(e) {
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-            const dx = clientX - discCenter.x;
-            const dy = clientY - discCenter.y;
-
-            let rad = Math.atan2(dy, dx);
-            let deg = Math.round(rad * (180 / Math.PI)) + 90;
-            if (deg < 0) deg += 360;
-
-            updateDiscAngle(deg);
-        }
-
-        function adjustAngle(delta) {
-            let newAngle = (gameState.currentAngle + delta) % 360;
-            if (newAngle < 0) newAngle += 360;
-            updateDiscAngle(newAngle);
-        }
-
-        function onSliderRotate(val) {
-            updateDiscAngle(parseInt(val, 10));
-        }
-
-        function updateDiscAngle(deg) {
-            gameState.currentAngle = deg;
-
-            const disc = document.getElementById('politicalDisc');
-            disc.style.transform = `rotate(${deg}deg)`;
-
-            document.getElementById('discSlider').value = deg;
-            document.getElementById('sliderAngleLabel').innerText = `${deg}°`;
-
-            let labelStr = getPoliticalLabelFromAngle(deg);
-            document.getElementById('discAngleText').innerText = `${deg}° • ${labelStr}`;
-        }
-
-        function getPoliticalLabelFromAngle(deg) {
-            if (deg >= 337.5 || deg < 22.5) return "100% Gauche";
-            if (deg >= 22.5 && deg < 67.5) return "800% Gauche";
-            if (deg >= 67.5 && deg < 112.5) return "8000% Gauche";
-            if (deg >= 112.5 && deg < 157.5) return "10% Gauche";
-            if (deg >= 157.5 && deg < 202.5) return "50/50 Neutre";
-            if (deg >= 202.5 && deg < 247.5) return "10% Droite";
-            if (deg >= 247.5 && deg < 292.5) return "8000% Droite";
-            return "800% Droite";
-        }
-
-        function submitCurrentPlayerVote() {
-            const masterPlayer = gameState.players[gameState.masterIndex];
-            const isMaster = gameState.turnIndex === 0;
-            let activePlayer = isMaster ? masterPlayer : gameState.players.filter((_, idx) => idx !== gameState.masterIndex)[gameState.turnIndex - 1];
-
-            gameState.rotations[activePlayer] = gameState.currentAngle;
-            gameState.turnIndex++;
-
-            if (gameState.turnIndex >= gameState.players.length) {
-                evaluateAndRevealRound();
-            } else {
-                promptNextPlayerTurn();
-            }
-        }
-
-        function renderBossHandOptions(playerName) {
-            const container = document.getElementById('bossHandOptions');
-            container.innerHTML = '';
-
-            const options = [drawUniqueCard(), drawUniqueCard()];
-
-            options.forEach((opt) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left text-xs font-semibold text-slate-200 transition shadow";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    gameState.bossSubmissions[playerName] = opt;
-                    gameState.turnIndex++;
-                    if (gameState.turnIndex >= gameState.players.length) {
-                        evaluateAndRevealRound();
-                    } else {
-                        promptNextPlayerTurn();
-                    }
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function evaluateAndRevealRound() {
-            document.getElementById('gameplayScreen').classList.add('hidden');
-            document.getElementById('revealScreen').classList.remove('hidden');
-
-            const masterPlayer = gameState.players[gameState.masterIndex];
-            const masterAngle = gameState.rotations[masterPlayer] || 0;
-
-            document.getElementById('revealDisc').style.transform = `rotate(${masterAngle}deg)`;
-
-            const breakdown = document.getElementById('scoresBreakdown');
-            breakdown.innerHTML = '';
-
-            let closeVotesCount = 0;
-            const otherPlayers = gameState.players.filter(p => p !== masterPlayer);
-
-            gameState.players.forEach(pName => {
-                const angle = gameState.rotations[pName];
-                if (angle === undefined) return;
-
-                const isMaster = pName === masterPlayer;
-                
-                let diff = Math.abs(angle - masterAngle) % 360;
-                if (diff > 180) diff = 360 - diff;
-
-                let isClose = false;
-                if (!isMaster) {
-                    if (diff <= 30) {
-                        closeVotesCount++;
-                        isClose = true;
-                    }
-                }
-
-                const item = document.createElement('div');
-                item.className = "flex justify-between items-center py-1.5 border-b border-slate-800/60 last:border-0";
-                item.innerHTML = `
-                    <span class="${isMaster ? 'text-yellow-400 font-bold' : 'text-slate-300'}">${pName} ${isMaster ? '(Maître)' : ''}</span>
-                    <span class="font-extrabold ${isMaster ? 'text-yellow-400' : (isClose ? 'text-emerald-400' : 'text-red-400')}">
-                        ${isMaster ? `${angle}° (${getPoliticalLabelFromAngle(angle)})` : `Écart : ${diff}° ${isClose ? '✓ Proche' : '✗ Éloigné'}`}
-                    </span>
-                `;
-                breakdown.appendChild(item);
-            });
-
-            const titleEl = document.getElementById('verdictTitle');
-            const descEl = document.getElementById('verdictDesc');
-
-            const majorityRequired = Math.max(1, Math.ceil(otherPlayers.length / 2));
-            const isRoundWon = closeVotesCount >= majorityRequired;
-
-            if (isRoundWon) {
-                gameState.collectiveScore++;
-                titleEl.className = "font-black text-base text-emerald-400";
-                titleEl.innerText = "VICTOIRE DE LA MANCHE ! ✊";
-                descEl.innerText = `La majorité (${closeVotesCount}/${otherPlayers.length}) est à moins de 30° de l'angle de ${masterPlayer}.`;
-            } else {
-                titleEl.className = "font-black text-base text-red-400";
-                titleEl.innerText = "DÉFAITE PARLEMENTAIRE 📉";
-                descEl.innerText = `Seulement ${closeVotesCount} joueur(s) sur ${otherPlayers.length} ont trouvé l'angle exact de ${masterPlayer}.`;
-            }
-        }
-
-        function nextRound() {
-            if (gameState.currentRound >= gameState.maxRounds) {
-                finishGame();
-            } else {
-                gameState.currentRound++;
-                gameState.masterIndex = (gameState.masterIndex + 1) % gameState.players.length;
-                startRound();
-            }
-        }
-
-        function finishGame() {
-            document.getElementById('revealScreen').classList.add('hidden');
-            document.getElementById('gameOverScreen').classList.remove('hidden');
-
-            const summary = document.getElementById('endSummaryBox');
-            const title = document.getElementById('endTitle');
-            const score = gameState.collectiveScore;
-
-            if (score >= 10) {
-                title.innerText = "LE GRAND SOIR EST ARRIVÉ ! 🔥";
-                summary.innerHTML = `
-                    <p class="text-yellow-400 font-bold text-base">Score Parfait : 10 / 10</p>
-                    <p class="text-xs text-slate-300">Votre groupe d'ami·es est en symbiose politique totale ! Vous avez évité tout piège d'extrême droite ou d'extrême gauche non anticipé.</p>
-                `;
-            } else if (score >= 6) {
-                title.innerText = "VICTOIRE DU PEUPLE ! 🚩";
-                summary.innerHTML = `
-                    <p class="text-emerald-400 font-bold text-base">Score : ${score} / 10 Victoires</p>
-                    <p class="text-xs text-slate-300">Objectif des 6 victoires collectives atteint avec succès.</p>
-                `;
-            } else {
-                title.innerText = "DISSOLUTION DE L'ASSEMBLÉE 💔";
-                summary.innerHTML = `
-                    <p class="text-red-400 font-bold text-base">Score : ${score} / 10 Victoires</p>
-                    <p class="text-xs text-slate-300">Vos orientations sur le disque étaient trop chaotiques pour former une coalition stable.</p>
-                `;
-            }
-        }
-
-        function restartGameConfirm() {
-            if (confirm("Voulez-vous vraiment quitter la partie en cours ?")) {
-                resetToSetup();
-            }
-        }
-
-        function resetToSetup() {
-            document.getElementById('gameOverScreen').classList.add('hidden');
-            document.getElementById('gameplayScreen').classList.add('hidden');
-            document.getElementById('revealScreen').classList.add('hidden');
-            document.getElementById('privacyPassScreen').classList.add('hidden');
-            
-            document.getElementById('resetBtn').classList.add('hidden');
-            document.getElementById('setupScreen').classList.remove('hidden');
-        }
-    </script>
+        html += '</div>';
+        stats.innerHTML = html;
+    }
+
+    showScreen('screen-end');
+}
+
+function resetGame() {
+    showScreen('screen-config');
+}
+
+// Initialisation au chargement
+window.onload = () => {
+    renderPlayersTags();
+};
+</script>
 </body>
 </html>
