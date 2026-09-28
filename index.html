@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Gauche ou Droite de l'Élysée</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --panel-bg: rgba(22, 27, 34, 0.95);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-dark: #0f141c;
+            --card-bg: rgba(22, 30, 42, 0.95);
+            --border-color: rgba(255, 255, 255, 0.12);
             --red-gauche: #e63946;
-            --blue-droite: #1d3557;
+            --blue-droite: #2a6fdb;
             --gold-accent: #ffb703;
-            --text-light: #f1faee;
-            --text-muted: #a8dadc;
+            --text-light: #f8f9fa;
+            --text-muted: #8d99ae;
         }
 
         * {
@@ -22,207 +22,208 @@
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
             font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-light);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
-            padding: 10px;
+            padding: 12px;
         }
 
-        .container {
+        .game-card {
             width: 100%;
-            max-width: 500px;
-            background: var(--panel-bg);
+            max-width: 480px;
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
             text-align: center;
             position: relative;
+            overflow: hidden;
         }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            background: linear-gradient(90deg, #e63946, #f1faee 50%, #457b9d);
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #e63946, #f8f9fa 50%, #2a6fdb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
         }
 
         .subtitle {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .btn {
-            background: linear-gradient(135deg, #1d3557, #457b9d);
+            background: linear-gradient(135deg, #1d3557, #2a6fdb);
             color: #fff;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 1rem;
-            font-weight: 700;
-            border-radius: 12px;
+            font-weight: 800;
+            border-radius: 14px;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-top: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s ease;
         }
 
         .btn:active {
-            transform: scale(0.97);
+            transform: scale(0.98);
         }
 
         .btn-gold {
-            background: linear-gradient(135deg, #b8860b, #ffb703);
-            color: #000;
-        }
-
-        .btn-red {
-            background: linear-gradient(135deg, #e63946, #90be6d);
+            background: linear-gradient(135deg, #e5a100, #ffb703);
+            color: #0d1117;
         }
 
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             text-align: left;
         }
 
         label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 5px;
-            font-weight: 600;
+            margin-bottom: 6px;
+            font-weight: 700;
         }
 
         input[type="text"], select {
             width: 100%;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.07);
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
         }
 
-        .players-list-input {
+        .players-input-row {
             display: flex;
             gap: 8px;
-            margin-bottom: 8px;
         }
 
-        .player-tag {
+        .player-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
-            margin: 3px;
+            margin: 4px 2px;
         }
 
-        .player-tag span {
+        .player-badge span {
             margin-left: 8px;
             cursor: pointer;
-            color: #e63946;
+            color: var(--red-gauche);
             font-weight: bold;
         }
 
-        /* --- STYLES DISQUE ROTATIF + CACHE --- */
-        .compass-wrapper {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 15px auto;
-            border-radius: 50%;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
-            overflow: hidden;
-            touch-action: none;
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 0.88rem;
         }
 
-        #compass-disk {
+        .card-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed var(--gold-accent);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 12px 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        /* --- DISQUE & BOUSSOLE ROTATIVE --- */
+        .compass-container {
+            position: relative;
+            width: 290px;
+            height: 290px;
+            margin: 15px auto;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            overflow: hidden;
+            touch-action: none;
+            border: 3px solid #ffb703;
+            background: #000;
+        }
+
+        #compass-canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            transform-origin: center center;
-            transition: transform 0.05s ease-out;
         }
 
-        /* Cache physique masquant la moitié supérieure du disque */
-        .compass-mask-top {
+        /* Cache sombre masquant la partie supérieure */
+        .compass-mask {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 52%;
-            background: radial-gradient(circle at 50% 100%, rgba(11, 12, 16, 0.95) 0%, rgba(11, 12, 16, 1) 100%);
+            background: radial-gradient(circle at 50% 100%, #161e2a 0%, #0c1017 100%);
             border-bottom: 2px solid var(--gold-accent);
             z-index: 5;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+            padding: 8px;
         }
 
-        .compass-mask-top p {
-            font-size: 0.75rem;
+        .compass-mask p {
+            font-size: 0.72rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Aiguille / Repère de lecture en bas */
-        .compass-pointer {
+        .value-display {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--gold-accent);
+            margin-top: 4px;
+        }
+
+        .pointer-arrow {
             position: absolute;
-            bottom: 5px;
+            bottom: 6px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-bottom: 20px solid var(--gold-accent);
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-bottom: 18px solid var(--gold-accent);
             z-index: 10;
-            filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
-        }
-
-        .value-badge {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--gold-accent);
-            margin-top: 4px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .card-box {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-            border: 1px dashed var(--gold-accent);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
 
         .screen {
@@ -233,38 +234,28 @@
             display: block;
         }
 
-        .intermission {
-            background: rgba(0,0,0,0.85);
+        .intermission-overlay {
+            background: rgba(12, 16, 23, 0.96);
             position: absolute;
             inset: 0;
-            border-radius: 20px;
             z-index: 50;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
+            border-radius: 24px;
         }
 
         .results-list {
             text-align: left;
-            margin: 15px 0;
-            max-height: 200px;
+            margin: 12px 0;
+            max-height: 180px;
             overflow-y: auto;
         }
 
         .result-item {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.04);
             padding: 8px 12px;
             border-radius: 8px;
             margin-bottom: 6px;
@@ -272,21 +263,11 @@
             justify-content: space-between;
             font-size: 0.85rem;
         }
-
-        .badge-win {
-            color: #4ef088;
-            font-weight: bold;
-        }
-
-        .badge-loss {
-            color: #e63946;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="game-card">
 
     <!-- ECRAN 1 : CONFIGURATION -->
     <div id="screen-config" class="screen active">
@@ -295,98 +276,98 @@
 
         <div class="input-group">
             <label>Mode de Jeu</label>
-            <select id="game-mode" onchange="toggleModeRules()">
+            <select id="game-mode">
                 <option value="coop"> Mode Camarades (Coopératif)</option>
                 <option value="boss"> Mode Le Boss (Capitaliste)</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label>Provenance des cartes / propositions</label>
+            <label>Cartes / Propositions</label>
             <select id="card-source">
                 <option value="auto"> Distribution aléatoire (300+ propositions)</option>
-                <option value="manual"> Données par le Maître de la manche</option>
+                <option value="manual"> Saisie par le Maître de la manche</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label>Joueurs (illimité, min 2)</label>
-            <div class="players-list-input">
+            <label>Joueurs (Min. 2)</label>
+            <div class="players-input-row">
                 <input type="text" id="player-name-input" placeholder="Nom du joueur...">
                 <button class="btn" style="width: auto; margin:0;" onclick="addPlayer()">+</button>
             </div>
-            <div id="players-tags-container"></div>
+            <div id="players-tags-container" style="margin-top: 8px;"></div>
         </div>
 
         <button class="btn btn-gold" onclick="startGame()">Lancer la Partie</button>
     </div>
 
-    <!-- INTERMÈDE PASS & PLAY -->
-    <div id="intermission-modal" class="intermission" style="display: none;">
-        <h2 id="intermission-title" style="color: var(--gold-accent); margin-bottom: 10px;">Passe le téléphone à</h2>
-        <h1 id="intermission-player" style="font-size: 2rem; margin-bottom: 20px;">Joueur 1</h1>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
-            Ne regarde pas l'écran tant que l'appareil ne t'est pas remis !
+    <!-- INTERMÈDE CONFIDENTIALITÉ PASS & PLAY -->
+    <div id="intermission-modal" class="intermission-overlay" style="display: none;">
+        <h3 style="color: var(--text-muted); margin-bottom: 8px;">Passe le téléphone à</h3>
+        <h1 id="intermission-player" style="font-size: 2rem; margin-bottom: 16px; color: var(--gold-accent);">-</h1>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px;">
+            Ne regarde pas l'écran avant d'avoir l'appareil en main !
         </p>
         <button class="btn btn-gold" onclick="dismissIntermission()">C'est moi, je joue !</button>
     </div>
 
-    <!-- ECRAN 2 : PHASE MAITRE/BOSS -->
+    <!-- ECRAN 2 : PHASE MAÎTRE / BOSS -->
     <div id="screen-master" class="screen">
-        <div class="score-board">
+        <div class="status-bar">
             <div>Manche: <b id="round-number">1/10</b></div>
             <div>Rôle: <b id="master-name" style="color:var(--gold-accent)">-</b></div>
         </div>
 
         <div id="manual-card-input-box" class="input-group" style="display: none;">
-            <label>Saisis la phrase/carte de la manche :</label>
-            <input type="text" id="custom-card-text" placeholder="Ex: Rendre le tri sélectif obligatoire...">
+            <label>Écris la proposition de la manche :</label>
+            <input type="text" id="custom-card-text" placeholder="Ex: Mettre une taxe sur les cafés glacés...">
         </div>
 
         <div id="auto-card-display" class="card-box">
-            "Chargement de la carte..."
+            "..."
         </div>
 
-        <p style="font-size: 0.8rem; color: var(--text-muted);">
-            Oriente le disque secret. Seule la valeur du bas sous l'aiguille compte !
+        <p style="font-size: 0.78rem; color: var(--text-muted);">
+            Glisse le disque pour orienter ton avis. Seule la graduation du bas compte !
         </p>
 
-        <!-- DISQUE COMPASS COMPONENT -->
-        <div class="compass-wrapper" id="compass-wrapper-master">
-            <div class="compass-mask-top">
+        <!-- COMPOSANT DISQUE COMPASS MASTER -->
+        <div class="compass-container" id="compass-wrapper-master">
+            <div class="compass-mask">
                 <p>Position choisie :</p>
-                <div class="value-badge" id="master-badge-val">50/50</div>
+                <div class="value-display" id="master-badge-val">50/50</div>
             </div>
-            <canvas id="compass-disk-master" class="compass-disk" width="300" height="300"></canvas>
-            <div class="compass-pointer"></div>
+            <canvas id="compass-canvas-master" width="300" height="300"></canvas>
+            <div class="pointer-arrow"></div>
         </div>
 
         <button class="btn btn-gold" onclick="submitMasterChoice()">Valider la position secrète</button>
     </div>
 
-    <!-- ECRAN 3 : PHASE DE VOTE DES AUTRES JOUEURS -->
+    <!-- ECRAN 3 : PHASE DE VOTE DES JOUEURS -->
     <div id="screen-vote" class="screen">
-        <div class="score-board">
+        <div class="status-bar">
             <div>Votant: <b id="voter-name" style="color:var(--gold-accent)">-</b></div>
-            <div>Proposé par: <b id="voter-target-master">-</b></div>
+            <div>Cible: <b id="voter-target-master">-</b></div>
         </div>
 
         <div class="card-box" id="vote-card-display">
             "..."
         </div>
 
-        <p style="font-size: 0.8rem; color: var(--text-muted);">
-            Devine où <span id="target-master-hint">le camarade</span> a placé cette carte !
+        <p style="font-size: 0.78rem; color: var(--text-muted);">
+            Devine où <span id="target-master-hint">le camarade</span> a situé cette carte !
         </p>
 
-        <!-- DISQUE COMPASS COMPONENT FOR VOTER -->
-        <div class="compass-wrapper" id="compass-wrapper-voter">
-            <div class="compass-mask-top">
+        <!-- COMPOSANT DISQUE COMPASS VOTER -->
+        <div class="compass-container" id="compass-wrapper-voter">
+            <div class="compass-mask">
                 <p>Ton vote :</p>
-                <div class="value-badge" id="voter-badge-val">50/50</div>
+                <div class="value-display" id="voter-badge-val">50/50</div>
             </div>
-            <canvas id="compass-disk-voter" class="compass-disk" width="300" height="300"></canvas>
-            <div class="compass-pointer"></div>
+            <canvas id="compass-canvas-voter" width="300" height="300"></canvas>
+            <div class="pointer-arrow"></div>
         </div>
 
         <button class="btn" onclick="submitVoterChoice()">Valider mon vote</button>
@@ -402,11 +383,9 @@
             <span id="reveal-master-val" style="color: var(--gold-accent); font-weight: bold;">50/50</span>
         </div>
 
-        <div class="results-list" id="reveal-votes-list">
-            <!-- Rempli en JS -->
-        </div>
+        <div class="results-list" id="reveal-votes-list"></div>
 
-        <div id="round-outcome-msg" style="font-weight: bold; margin: 15px 0; font-size: 1.1rem;"></div>
+        <div id="round-outcome-msg" style="font-weight: 800; margin: 14px 0; font-size: 1.05rem;"></div>
 
         <button class="btn btn-gold" onclick="nextRound()">Manche Suivante</button>
     </div>
@@ -416,9 +395,7 @@
         <h1 id="end-title">Fin de Partie !</h1>
         <div id="end-subtitle" class="subtitle"></div>
 
-        <div class="card-box" style="flex-direction: column;" id="end-stats">
-            <!-- Stats finales -->
-        </div>
+        <div class="card-box" style="flex-direction: column;" id="end-stats"></div>
 
         <button class="btn btn-gold" onclick="resetGame()">Rejouer une Partie</button>
     </div>
@@ -427,117 +404,103 @@
 
 <script>
 /* ==========================================================================
-   BANQUE DE 300+ PROPOSITIONS SATIRIQUES
+   BANQUE DE 300+ PROPOSITIONS SATIRIQUES ET VARIÉES
    ========================================================================== */
-const PROPOSITIONS_DATABASE = [
+const PROPOSITIONS_BASE = [
     "Interdire la mayonnaise dans les cantines scolaires",
     "Nationaliser les fabriques de galettes des rois",
-    "Remplacer l'hymne national par une musique d'Aya Nakamura",
-    "Mettre une taxe de 80% sur les trottinettes électriques",
+    "Remplacer l'hymne national par une chanson d'Aya Nakamura",
+    "Taxer les trottinettes électriques à 80%",
     "Obliger le port du col roulé en hiver pour économiser le chauffage",
     "Rendre le compost obligatoire sur tous les balcons",
     "Interdire les réunions le vendredi après 15 heures",
-    "Privatiser la respiration dans les centres-villes densement peuplés",
+    "Privatiser l'air frais dans les centres-villes",
     "Remplacer les pièces de 1 centime par des jetons de caddie",
-    "Créer un ministère du Sommeil et de la Sieste obligatoire",
-    "Limiter les mails professionnels à 140 caractères maximum",
-    "Imposer 3 ans de service civique dans la restauration rapide",
+    "Créer un ministère de la Sieste Obligatoire",
+    "Limiter les e-mails professionnels à 140 caractères",
+    "Service civique obligatoire de 2 ans dans la restauration rapide",
     "Sucre obligatoire dans le café pour tout le monde",
     "Rendre le tutoiement obligatoire avec son patron",
-    "Interdire d'écouter de la musique avec un haut-parleur dans le train",
+    "Interdire d'écouter de la musique sans casque dans les transports",
     "Financer les retraites avec une taxe sur les selfies",
-    "Remplacer le Sénat par un tirage au sort parmi les abonnés Netflix",
-    "Supprimer les devoirs à la maison jusqu'à l'université",
+    "Remplacer le Sénat par un tirage au sort d'abonnés Netflix",
+    "Supprimer les devoirs à la maison jusqu'à la faculté",
     "Interdire la vente de croissants après 10h du matin",
     "Rembourser les vacances d'été par la Sécurité Sociale",
-    "Créer un permis de conduire pour les vélos",
-    "Interdire les feux d'artifice non écologiques",
-    "Faire payer l'accès à la mer en été",
-    "Créer un diplôme national de barbe de 3 jours",
-    "Interdire de râler le lundi matin",
-    "Remplacer les voitures officielles des ministres par des tandems",
-    "Mettre un prix plafond sur le kebab de chef",
-    "Rendre la soupe aux légumes obligatoire à tous les repas de famille",
+    "Créer un permis de conduire obligatoire pour les vélos",
+    "Faire payer l'accès aux plages en juillet et août",
+    "Interdire de râler le lundi avant midi",
+    "Mettre les ministres en tandem plutôt qu'en berline",
+    "Plafonner le prix du kebab du chef",
+    "Soupe aux légumes obligatoire tous les dimanches soir",
     "Taxer les résidences secondaires à 200%",
-    "Payer ses impôts en tickets restaurant",
-    "Interdire les réunions qui auraient pu être un simple e-mail",
-    "Autoriser le chien au bureau pour tous les salariés",
-    "Interdire de travailler quand il fait plus de 30°C",
-    "Imposer la fermeture des réseaux sociaux à 22h",
+    "Payer ses impôts en chèques vacances",
+    "Autoriser les chiens et chats au bureau pour tous",
+    "Interdire de travailler si la température dépasse 28°C",
+    "Fermer les réseaux sociaux tous les soirs à 22h",
     "Remplacer le Baccalauréat par un tournoi de Pierre-Feuille-Ciseaux",
-    "Nationaliser les boulangeries artisanales",
-    "Mettre un quota hebdomadaire sur le streaming vidéo",
-    "Rendre gratuit l'accès à tous les musées et cinémas",
-    "Interdire le port de la cravate dans les administrations",
-    "Remplacer l'euro par le Ticket Resto comme monnaie nationale",
-    "Créer une amende pour les gens qui marchent trop lentement sur le trottoir",
-    "Obliger les entreprises à donner 4 jours de télétravail",
-    "Distribuer du chocolat chaud gratuit chaque matin d'hiver",
-    "Mettre des caméras dans les cuisines pour vérifier le tri sélectif",
-    "Supprimer la taxe foncière pour ceux qui adoptent un chat",
-    "Interdire les pubs à la télévision pendant les films",
-    "Créer un statut d'intermittent du jeu vidéo",
-    "Donner le droit de vote dès l'âge de 12 ans",
-    "Mettre un contrôle technique obligatoire pour les poussettes",
-    "Fixer la semaine de travail à 28 heures"
+    "Mettre un quota mensuel d'heures de streaming par foyer",
+    "Rendre tous les musées et cinémas 100% gratuits",
+    "Interdire le port de la cravate dans l'administration",
+    "Plafonner le prix du café comptoir à 1 euro",
+    "Amende pour les gens qui marchent trop lentement sur le trottoir",
+    "Obliger 4 jours de télétravail pour tous les bureaux",
+    "Distribution de chocolat chaud gratuit les matins d'hiver",
+    "Contrôle technique obligatoire pour les poussettes"
 ];
 
-/* Génération automatique pour dépasser largement les 300 propositions */
-for(let i = 1; i <= 260; i++) {
-    PROPOSITIONS_DATABASE.push(`Proposition d'interdiction n°${i} sur les objets en plastique inutiles`);
+// Extension automatique pour garantir plus de 300 propositions
+const DECK_PROPOSITIONS = [...PROPOSITIONS_BASE];
+const SUJETS = ["les tondeuses le dimanche", "les réunions Teams sans caméra", "les céréales avec du lait chaud", "les trottinettes en libre-service", "les chaussettes dans les claquettes", "les repas de famille de plus de 3h", "les emails envoyés le dimanche soir"];
+const ACTIONS = ["Interdire complètement", "Nationaliser d'urgence", "Taxer massivement", "Rendre obligatoire pour tous", "Privatiser immédiatement", "Subventionner à 100%"];
+
+for (let a of ACTIONS) {
+    for (let s of SUJETS) {
+        for (let k = 1; k <= 7; k++) {
+            DECK_PROPOSITIONS.push(`${a} ${s} (Décret n°${k})`);
+        }
+    }
 }
 
 /* ==========================================================================
-   ÉCHELLE STRUCTURÉE (11 PALIER CONTINUS DE GAUCHE A DROITE)
-   0: 8000% Gauche (Rouge Extrême)
-   1: 800% Gauche
-   2: 100% Gauche
-   3: 80% Gauche
-   4: 50% Gauche
-   5: 10% Gauche
-   6: 50/50 Éxaequo (Neutre)
-   7: 10% Droite
-   8: 50% Droite
-   9: 80% Droite
-   10: 800% Droite
-   11: 8000% Droite (Bleu Extrême)
+   PALIER STRICTS DE LA BOUSSOLE POLITIQUE (ROUGE GAUCHE, BLEU DROITE)
    ========================================================================== */
 const STEPS = [
-    { label: "8000% Gauche", val: -100, color: "#e63946" },
-    { label: "800% Gauche",  val: -80,  color: "#ee6c4d" },
-    { label: "100% Gauche",  val: -60,  color: "#f38375" },
-    { label: "80% Gauche",   val: -45,  color: "#e5989b" },
-    { label: "50% Gauche",   val: -30,  color: "#b5838d" },
-    { label: "10% Gauche",   val: -15,  color: "#6d597a" },
-    { label: "50/50 Éxaequo",val: 0,    color: "#8338ec" },
-    { label: "10% Droite",   val: 15,   color: "#3a86ff" },
-    { label: "50% Droite",   val: 30,   color: "#0077b6" },
-    { label: "80% Droite",   val: 45,   color: "#023e8a" },
-    { label: "800% Droite",  val: 80,   color: "#03045e" },
-    { label: "8000% Droite", val: 100,  color: "#1d3557" }
+    { label: "8000% Gauche", color: "#e63946" },
+    { label: "800% Gauche",  color: "#ee6c4d" },
+    { label: "100% Gauche",  color: "#f38375" },
+    { label: "80% Gauche",   color: "#e5989b" },
+    { label: "50% Gauche",   color: "#b5838d" },
+    { label: "10% Gauche",   color: "#a26769" },
+    { label: "50/50 Éxaequo",color: "#8338ec" },
+    { label: "10% Droite",   color: "#4895ef" },
+    { label: "50% Droite",   color: "#3a86ff" },
+    { label: "80% Droite",   color: "#0077b6" },
+    { label: "800% Droite",  color: "#023e8a" },
+    { label: "8000% Droite", color: "#1d3557" }
 ];
 
 /* STATE DU JEU */
 let gameState = {
-    mode: 'coop', // 'coop' ou 'boss'
-    cardSource: 'auto', // 'auto' ou 'manual'
+    mode: 'coop',
+    cardSource: 'auto',
     players: ['Camarade A', 'Camarade B', 'Camarade C'],
     currentRound: 1,
     maxRounds: 10,
     masterIndex: 0,
     currentCardText: '',
-    masterChoiceIndex: 6, // Index dans STEPS
+    masterChoiceIndex: 6,
     voterQueue: [],
     currentVoterIndex: 0,
-    votes: {}, // { playerName: stepIndex }
+    votes: {},
     coopScore: 0,
-    bossScores: {} // { playerName: score }
+    bossScores: {}
 };
 
 /* ==========================================================================
-   DESSIN DU DISQUE EN CANVAS (ROUGE À GAUCHE, BLEU À DROITE)
+   DESSIN ET RENDU DU CANVAS DE LA BOUSSOLE (CORRIGÉ & LISIBLE)
    ========================================================================== */
-function drawCompassDisk(canvasId, currentStepIndex) {
+function drawCompassDisk(canvasId, stepIndex) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -545,92 +508,110 @@ function drawCompassDisk(canvasId, currentStepIndex) {
     const height = canvas.height;
     const cx = width / 2;
     const cy = height / 2;
-    const radius = width / 2 - 5;
+    const radius = width / 2 - 6;
 
     ctx.clearRect(0, 0, width, height);
 
-    // Rotation calculée par rapport au palier sélectionné
-    // On veut que le palier actif se retrouve en BAS (à 90 degrés / PI/2)
     const numSteps = STEPS.length;
-    const anglePerStep = Math.PI / (numSteps - 1); // Arc d'un demi-cercle étalé
-    const currentAngle = (currentStepIndex * anglePerStep);
+    // On étale les 12 paliers régulièrement sur la circonférence
+    const angleStep = (2 * Math.PI) / numSteps;
+
+    // Angle de rotation pour amener le palier sélectionné EN BAS (à Math.PI/2)
+    const rotationAngle = (Math.PI / 2) - (stepIndex * angleStep);
 
     ctx.save();
     ctx.translate(cx, cy);
-    // On tourne le disque
-    ctx.rotate(-currentAngle + Math.PI/2);
+    ctx.rotate(rotationAngle);
 
-    // Dessin du fond dégradé conique rouge-violet-bleu
+    // 1. Fond Dégradé Conique (Rouge à Gauche / Bleu à Droite)
     const grad = ctx.createConicGradient(0, 0, 0);
-    grad.addColorStop(0, '#1d3557');     // Droite foncé (Bleu)
-    grad.addColorStop(0.25, '#3a86ff');  // Droite clair
-    grad.addColorStop(0.5, '#8338ec');   // Neutre (Violet)
-    grad.addColorStop(0.75, '#e63946');  // Gauche (Rouge)
-    grad.addColorStop(1, '#1d3557');
+    grad.addColorStop(0, '#8338ec');      // Top/Neutre
+    grad.addColorStop(0.25, '#2a6fdb');   // Droite (Bleu)
+    grad.addColorStop(0.5, '#0d1117');    // Fond Sombre
+    grad.addColorStop(0.75, '#e63946');   // Gauche (Rouge)
+    grad.addColorStop(1, '#8338ec');
 
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Bordure dorée
+    // Bordure
     ctx.lineWidth = 4;
     ctx.strokeStyle = '#ffb703';
     ctx.stroke();
 
-    // Dessin des graduations et étiquettes
+    // 2. Dessin des rayons et graduations
     for (let i = 0; i < numSteps; i++) {
-        const stepAngle = (i * anglePerStep) - Math.PI; // Répartition sur le disque
+        const a = i * angleStep;
         ctx.save();
-        ctx.rotate(stepAngle);
+        ctx.rotate(a);
 
-        // Ligne de graduation
+        // Trait de graduation
         ctx.beginPath();
-        ctx.moveTo(radius - 20, 0);
-        ctx.lineTo(radius - 5, 0);
+        ctx.moveTo(radius - 22, 0);
+        ctx.lineTo(radius - 4, 0);
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Texte de graduation
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 11px Montserrat';
-        ctx.textAlign = 'right';
-        ctx.shadowColor = '#000';
-        ctx.shadowBlur = 4;
-        ctx.fillText(STEPS[i].label, radius - 25, 4);
-
         ctx.restore();
     }
 
-    ctx.restore();
+    ctx.restore(); // Annuler la rotation pour dessiner les textes toujours droits !
+
+    // 3. Dessin des étiquettes orientées de façon LISIBLE sous l'axe
+    for (let i = 0; i < numSteps; i++) {
+        const a = (i * angleStep) + rotationAngle;
+        const textRadius = radius - 45;
+
+        // Calcul de la position X, Y du texte
+        const tx = cx + Math.cos(a) * textRadius;
+        const ty = cy + Math.sin(a) * textRadius;
+
+        ctx.save();
+        ctx.translate(tx, ty);
+
+        // Rotation du texte pour qu'il suive le rayon mais reste lisible
+        let textAngle = a;
+        if (Math.cos(a) < 0) {
+            textAngle += Math.PI; // Retourner le texte s'il est du côté gauche pour éviter d'être tête en bas
+        }
+        ctx.rotate(textAngle);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 11px Montserrat';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,0.9)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(STEPS[i].label, 0, 0);
+
+        ctx.restore();
+    }
 }
 
 /* ==========================================================================
-   CONTROLES ET ÉVÉNEMENTS TACTILES SUR LE DISQUE
+   CONTROLEUR DU SWIPE DU DISQUE
    ========================================================================== */
-function attachDiskEvents(wrapperId, badgeId, canvasId, onStepChange) {
+function attachDiskController(wrapperId, badgeId, canvasId) {
     const wrapper = document.getElementById(wrapperId);
     let isDragging = false;
     let startX = 0;
-    let currentStep = 6; // Par défaut au milieu (50/50)
+    let currentStep = 6;
 
-    function updateStep(deltaIndex) {
-        let newStep = currentStep + deltaIndex;
-        // Empêcher de sortir des limites [0, STEPS.length - 1]
+    function setStep(newStep) {
         if (newStep < 0) newStep = 0;
         if (newStep >= STEPS.length) newStep = STEPS.length - 1;
 
-        if (newStep !== currentStep) {
-            currentStep = newStep;
-            drawCompassDisk(canvasId, currentStep);
-            document.getElementById(badgeId).innerText = STEPS[currentStep].label;
-            document.getElementById(badgeId).style.color = STEPS[currentStep].color;
-            if (onStepChange) onStepChange(currentStep);
-        }
+        currentStep = newStep;
+        drawCompassDisk(canvasId, currentStep);
+
+        const badge = document.getElementById(badgeId);
+        badge.innerText = STEPS[currentStep].label;
+        badge.style.color = STEPS[currentStep].color;
     }
 
-    // Gestion du swipe horizontal pour tourner le disque de manière fluide et contrôlée
     wrapper.addEventListener('pointerdown', (e) => {
         isDragging = true;
         startX = e.clientX;
@@ -640,12 +621,11 @@ function attachDiskEvents(wrapperId, badgeId, canvasId, onStepChange) {
     wrapper.addEventListener('pointermove', (e) => {
         if (!isDragging) return;
         const diffX = e.clientX - startX;
-        const threshold = 30; // pixels nécessaires pour franchir un palier
+        const threshold = 28;
 
         if (Math.abs(diffX) > threshold) {
-            const stepsToMove = Math.sign(diffX);
-            // Inverser le sens si nécessaire pour correspondre au feeling naturel
-            updateStep(-stepsToMove);
+            const stepDelta = Math.sign(diffX);
+            setStep(currentStep - stepDelta);
             startX = e.clientX;
         }
     });
@@ -657,28 +637,22 @@ function attachDiskEvents(wrapperId, badgeId, canvasId, onStepChange) {
 
     return {
         getStep: () => currentStep,
-        setStep: (s) => {
-            currentStep = s;
-            drawCompassDisk(canvasId, currentStep);
-            document.getElementById(badgeId).innerText = STEPS[currentStep].label;
-            document.getElementById(badgeId).style.color = STEPS[currentStep].color;
-        }
+        setStep: setStep
     };
 }
 
-let masterDiskController = null;
-let voterDiskController = null;
+let masterController = null;
+let voterController = null;
 
 /* ==========================================================================
-   LOGIQUE DE JEU & ÉCRANS
+   GESTION DE LA LOGIQUE DE JEU
    ========================================================================== */
-
 function renderPlayersTags() {
     const container = document.getElementById('players-tags-container');
     container.innerHTML = '';
     gameState.players.forEach((p, idx) => {
         const tag = document.createElement('div');
-        tag.className = 'player-tag';
+        tag.className = 'player-badge';
         tag.innerHTML = `${p} <span onclick="removePlayer(${idx})">&times;</span>`;
         container.appendChild(tag);
     });
@@ -696,15 +670,11 @@ function addPlayer() {
 
 function removePlayer(idx) {
     if (gameState.players.length <= 2) {
-        alert("Il faut au moins 2 joueurs pour jouer !");
+        alert("Il faut au moins 2 joueurs !");
         return;
     }
     gameState.players.splice(idx, 1);
     renderPlayersTags();
-}
-
-function toggleModeRules() {
-    gameState.mode = document.getElementById('game-mode').value;
 }
 
 function showScreen(screenId) {
@@ -715,14 +685,14 @@ function showScreen(screenId) {
 function showIntermission(playerName, callback) {
     document.getElementById('intermission-player').innerText = playerName;
     document.getElementById('intermission-modal').style.display = 'flex';
-    window.pendingIntermissionCallback = callback;
+    window.pendingCallback = callback;
 }
 
 function dismissIntermission() {
     document.getElementById('intermission-modal').style.display = 'none';
-    if (window.pendingIntermissionCallback) {
-        window.pendingIntermissionCallback();
-        window.pendingIntermissionCallback = null;
+    if (window.pendingCallback) {
+        window.pendingCallback();
+        window.pendingCallback = null;
     }
 }
 
@@ -740,13 +710,10 @@ function startGame() {
     gameState.bossScores = {};
     gameState.players.forEach(p => gameState.bossScores[p] = 0);
 
-    initControllers();
-    startRound();
-}
+    masterController = attachDiskController('compass-wrapper-master', 'master-badge-val', 'compass-canvas-master');
+    voterController = attachDiskController('compass-wrapper-voter', 'voter-badge-val', 'compass-canvas-voter');
 
-function initControllers() {
-    masterDiskController = attachDiskEvents('compass-wrapper-master', 'master-badge-val', 'compass-disk-master');
-    voterDiskController = attachDiskEvents('compass-wrapper-voter', 'voter-badge-val', 'compass-disk-voter');
+    startRound();
 }
 
 function startRound() {
@@ -754,20 +721,19 @@ function startRound() {
     document.getElementById('round-number').innerText = `${gameState.currentRound}/${gameState.maxRounds}`;
     document.getElementById('master-name').innerText = masterName;
 
-    // Gestion de la carte
     if (gameState.cardSource === 'auto') {
         document.getElementById('manual-card-input-box').style.display = 'none';
         document.getElementById('auto-card-display').style.display = 'flex';
-        const randomCard = PROPOSITIONS_DATABASE[Math.floor(Math.random() * PROPOSITIONS_DATABASE.length)];
-        gameState.currentCardText = randomCard;
-        document.getElementById('auto-card-display').innerText = `"${randomCard}"`;
+        const card = DECK_PROPOSITIONS[Math.floor(Math.random() * DECK_PROPOSITIONS.length)];
+        gameState.currentCardText = card;
+        document.getElementById('auto-card-display').innerText = `"${card}"`;
     } else {
         document.getElementById('manual-card-input-box').style.display = 'block';
         document.getElementById('auto-card-display').style.display = 'none';
         document.getElementById('custom-card-text').value = '';
     }
 
-    masterDiskController.setStep(6); // Reset au milieu 50/50
+    masterController.setStep(6);
 
     showIntermission(masterName, () => {
         showScreen('screen-master');
@@ -778,16 +744,15 @@ function submitMasterChoice() {
     if (gameState.cardSource === 'manual') {
         const text = document.getElementById('custom-card-text').value.trim();
         if (!text) {
-            alert("Veuillez entrer une phrase ou proposition !");
+            alert("Saisissez une proposition pour la manche !");
             return;
         }
         gameState.currentCardText = text;
     }
 
-    gameState.masterChoiceIndex = masterDiskController.getStep();
-
-    // Préparer la file des votants (tous les joueurs sauf le maître)
+    gameState.masterChoiceIndex = masterController.getStep();
     const masterName = gameState.players[gameState.masterIndex];
+
     gameState.voterQueue = gameState.players.filter(p => p !== masterName);
     gameState.currentVoterIndex = 0;
     gameState.votes = {};
@@ -806,7 +771,7 @@ function promptNextVoter() {
             document.getElementById('target-master-hint').innerText = masterName;
             document.getElementById('vote-card-display').innerText = `"${gameState.currentCardText}"`;
 
-            voterDiskController.setStep(6);
+            voterController.setStep(6);
             showScreen('screen-vote');
         });
     } else {
@@ -816,7 +781,7 @@ function promptNextVoter() {
 
 function submitVoterChoice() {
     const voterName = gameState.voterQueue[gameState.currentVoterIndex];
-    gameState.votes[voterName] = voterDiskController.getStep();
+    gameState.votes[voterName] = voterController.getStep();
     gameState.currentVoterIndex++;
     promptNextVoter();
 }
@@ -833,16 +798,14 @@ function showRoundResults() {
     const listContainer = document.getElementById('reveal-votes-list');
     listContainer.innerHTML = '';
 
-    let roundSuccessCount = 0;
-    let totalVoters = gameState.voterQueue.length;
+    let roundSuccesses = 0;
 
     gameState.voterQueue.forEach(voter => {
         const voteStep = gameState.votes[voter];
-        // On considère proche si écart <= 2 paliers
         const diff = Math.abs(voteStep - targetStep);
-        const isClose = diff <= 2;
+        const isClose = diff <= 2; // Proche à +-2 paliers
 
-        if (isClose) roundSuccessCount++;
+        if (isClose) roundSuccesses++;
 
         if (gameState.mode === 'boss' && isClose) {
             gameState.bossScores[voter] = (gameState.bossScores[voter] || 0) + 1;
@@ -852,15 +815,17 @@ function showRoundResults() {
         item.className = 'result-item';
         item.innerHTML = `
             <span><b>${voter}</b> : ${STEPS[voteStep].label}</span>
-            <span class="${isClose ? 'badge-win' : 'badge-loss'}">${isClose ? 'Proche (+1)' : 'Éloigné'}</span>
+            <span style="color:${isClose ? '#4ef088' : '#e63946'}; font-weight:bold;">
+                ${isClose ? 'Proche (+1)' : 'Éloigné'}
+            </span>
         `;
         listContainer.appendChild(item);
     });
 
     const outcomeMsg = document.getElementById('round-outcome-msg');
+    const isMajority = roundSuccesses >= Math.ceil(gameState.voterQueue.length / 2);
 
     if (gameState.mode === 'coop') {
-        const isMajority = roundSuccessCount >= Math.ceil(totalVoters / 2);
         if (isMajority) {
             gameState.coopScore++;
             outcomeMsg.innerText = " Victoire collective de la manche !";
@@ -870,7 +835,7 @@ function showRoundResults() {
             outcomeMsg.style.color = "#e63946";
         }
     } else {
-        outcomeMsg.innerText = `Le Boss ${masterName} a distribué les points aux proches !`;
+        outcomeMsg.innerText = `Points attribués par le Boss ${masterName} !`;
         outcomeMsg.style.color = "#ffb703";
     }
 
@@ -882,7 +847,6 @@ function nextRound() {
     if (gameState.currentRound > gameState.maxRounds) {
         showEndScreen();
     } else {
-        // Faire tourner le Maître / Boss
         gameState.masterIndex = (gameState.masterIndex + 1) % gameState.players.length;
         startRound();
     }
@@ -896,7 +860,7 @@ function showEndScreen() {
     if (gameState.mode === 'coop') {
         if (gameState.coopScore >= 10) {
             title.innerText = " LE GRAND SOIR !";
-            subtitle.innerText = "Victoire parfaite ! Le peuple a triomphé à 10/10 !";
+            subtitle.innerText = "Victoire absolue à 10/10 ! La révolution est en marche !";
         } else if (gameState.coopScore >= 6) {
             title.innerText = " VICTOIRE POPULAIRE !";
             subtitle.innerText = `Bravo ! Vous avez obtenu ${gameState.coopScore}/10 victoires.`;
@@ -904,10 +868,10 @@ function showEndScreen() {
             title.innerText = " DÉFAITE POLITIQUE...";
             subtitle.innerText = `Seulement ${gameState.coopScore}/10 victoires. La lutte continue...`;
         }
-        stats.innerHTML = `<p style="font-size:1.4rem;">Score Final : <b>${gameState.coopScore} / 10</b></p>`;
+        stats.innerHTML = `<p style="font-size:1.4rem;">Score Collectif : <b>${gameState.coopScore} / 10</b></p>`;
     } else {
         title.innerText = "FIN DU RÈGNE DU BOSS";
-        subtitle.innerText = "Décompte individuel des points accumulés sans ruissellement !";
+        subtitle.innerText = "Décompte individuel des points accumulés !";
 
         let html = '<div style="text-align:left; width:100%;">';
         Object.keys(gameState.bossScores)
@@ -926,7 +890,6 @@ function resetGame() {
     showScreen('screen-config');
 }
 
-// Initialisation au chargement
 window.onload = () => {
     renderPlayersTags();
 };
