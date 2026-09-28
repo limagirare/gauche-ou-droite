@@ -2,947 +2,602 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gauche ou Droite de l'Élysée</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présidence de la République — Gauche ou Droite ?</title>
+    <!-- Polices officielles / élégantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-night: #060911;
-            --card-glass: rgba(13, 20, 36, 0.85);
-            --gold-primary: #d4af37;
-            --gold-light: #f3e5ab;
-            --gold-dark: #aa820a;
-            --red-gauche: #e63946;
-            --blue-droite: #2a6fdb;
-            --purple-neutral: #8338ec;
-            --border-gold: rgba(212, 175, 55, 0.35);
-            --text-gold-gradient: linear-gradient(135deg, #fceabb 0%, #f8b500 50%, #d4af37 100%);
+            --elysee-navy: #0a1128;
+            --elysee-dark: #050814;
+            --elysee-gold: #d4af37;
+            --elysee-gold-light: #f3e5ab;
+            --gauche-red: #e63946;
+            --droite-blue: #1d3557;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --text-light: #f8f9fa;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
             font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: var(--bg-night);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(42, 111, 219, 0.18) 0%, transparent 50%),
-                radial-gradient(circle at 50% 100%, rgba(230, 57, 70, 0.18) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
-            color: #f8f9fa;
+            background: radial-gradient(circle at top center, #101f42 0%, var(--elysee-navy) 60%, var(--elysee-dark) 100%);
+            color: var(--text-light);
             min-height: 100vh;
+            padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 16px;
-            overflow-x: hidden;
         }
 
-        /* Effet de dorure textuelle */
-        .gold-text {
-            background: var(--text-gold-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .font-cinzel {
-            font-family: 'Cinzel', serif;
-        }
-
-        .elysee-card {
+        /* En-tête Élyséen */
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 15px;
             width: 100%;
-            max-width: 480px;
-            background: var(--card-glass);
-            border: 1px solid var(--border-gold);
-            border-radius: 28px;
-            padding: 24px;
-            box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.8),
-                inset 0 0 1px 1px rgba(255, 255, 255, 0.1),
-                0 0 25px rgba(212, 175, 55, 0.12);
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
+            max-width: 1000px;
+        }
+
+        .cockade {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gauche-red) 0 120deg, #ffffff 120deg 240deg, var(--droite-blue) 240deg 360deg);
+            margin: 0 auto 10px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 2px solid var(--elysee-gold);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--elysee-gold-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Sélecteur de Mode */
+        .mode-selector-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
             text-align: center;
         }
 
-        /* Filigrane d'Équilibre Républicain */
-        .elysee-card::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
-            pointer-events: none;
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;;
         }
 
-        /* Boutons de Prestige */
-        .btn-gold {
-            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-            color: #060911;
-            font-weight: 800;
-            border-radius: 16px;
-            padding: 14px 20px;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .btn-gold:active {
-            transform: scale(0.97);
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.15);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-gold);
-            color: #f8f9fa;
+        .btn-mode {
+            background: transparent;
+            border: 2px solid var(--elysee-gold);
+            color: var(--text-light);
+            padding: 12px 24px;
+            font-size: 1rem;
             font-weight: 700;
-            border-radius: 16px;
-            padding: 12px 18px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .btn-secondary:active {
-            background: rgba(212, 175, 55, 0.15);
+        .btn-mode.active-gauche {
+            background: var(--gauche-red);
+            border-color: var(--gauche-red);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
         }
 
-        /* Inputs & Selects Éléguants */
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(6, 9, 17, 0.7);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 14px;
-            color: #ffffff;
+        .btn-mode.active-droite {
+            background: var(--droite-blue);
+            border-color: #457b9d;
+            box-shadow: 0 0 15px rgba(29, 53, 87, 0.6);
+        }
+
+        .mode-desc {
             font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s ease;
+            color: #cbd5e1;
+            margin-top: 10px;
+            min-height: 40px;
         }
 
-        input[type="text"]:focus, select:focus {
-            border-color: var(--gold-primary);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        /* Grille des 3 règles */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        /* Badges de Joueurs */
-        .player-badge {
-            display: inline-flex;
+        .rule-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .player-badge button {
-            margin-left: 8px;
-            color: var(--red-gauche);
-            font-weight: bold;
-            font-size: 1.1rem;
-            line-height: 1;
-            cursor: pointer;
-        }
-
-        /* --- COMPAS ROTATIF DE HAUTE PRÉCISION --- */
-        .compass-wrapper {
+            text-align: center;
             position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 18px auto;
+        }
+
+        .rule-number {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--elysee-gold);
+            color: var(--elysee-dark);
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            border: 4px solid var(--gold-primary);
-            box-shadow: 
-                0 0 30px rgba(0,0,0,0.9),
-                0 0 20px rgba(212, 175, 55, 0.25),
-                inset 0 0 15px rgba(0,0,0,0.8);
-            background: #000000;
-            touch-action: none;
-            overflow: hidden;
-            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
         }
 
-        .compass-wrapper:active {
-            cursor: grabbing;
+        .rule-title {
+            font-family: 'Cinzel', serif;
+            color: var(--elysee-gold-light);
+            margin: 10px 0;
+            font-size: 1.1rem;
         }
 
-        .compass-canvas {
+        .rule-text {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            line-height: 1.4;
+        }
+
+        /* Zone Interactive de Jeu */
+        .game-zone {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .card-display {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+            border: 2px solid var(--elysee-gold);
+            border-radius: 12px;
+            padding: 25px;
             width: 100%;
-            height: 100%;
-            border-radius: 50%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Cache Supérieur Hermétique pour l'Aiguille Basse */
-        .compass-mask {
+        .card-topic {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 15px 0;
+        }
+
+        .card-category {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--elysee-gold);
+        }
+
+        /* Boussole Politique - ROUGE À GAUCHE / BLEU À DROITE */
+        .compass-container {
+            position: relative;
+            width: 260px;
+            height: 130px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .compass-dial {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            /* Gauche: Rouge (#e63946) -> Droite: Bleu (#1d3557) */
+            background: conic-gradient(
+                from 270deg,
+                var(--gauche-red) 0deg,
+                #8338ec 90deg,
+                var(--droite-blue) 180deg,
+                var(--droite-blue) 360deg
+            );
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 52%;
-            background: linear-gradient(180deg, #090e1a 0%, #0d1527 100%);
-            border-bottom: 2px solid var(--gold-primary);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            pointer-events: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid var(--elysee-gold);
         }
 
-        .compass-mask p {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-        }
-
-        .value-badge {
-            font-size: 1.3rem;
-            font-weight: 900;
-            margin-top: 4px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-            letter-spacing: 0.5px;
-        }
-
-        /* Aiguille Dorée Pointant Exclusivement Vers le Bas */
-        .pointer-gold-arrow {
+        .compass-pointer {
             position: absolute;
-            bottom: 6px;
+            top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-bottom: 20px solid var(--gold-primary);
-            z-index: 15;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
-            pointer-events: none;
+            width: 4px;
+            height: 130px;
+            background: #ffffff;
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
         }
 
-        /* Modales & Écrans d'Intermède Pass & Play */
-        .screen { display: none; }
-        .screen.active { display: block; }
-
-        .modal-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(6, 9, 17, 0.96);
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            border-radius: 28px;
-            backdrop-filter: blur(15px);
-        }
-
-        .card-box {
-            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(212,175,55,0.03) 100%);
-            border: 1px solid var(--border-gold);
-            border-radius: 18px;
-            padding: 18px;
-            margin: 14px 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-            line-height: 1.4;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
-        }
-
-        .result-row {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
+        .compass-labels {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-size: 0.88rem;
+            width: 100%;
+            max-width: 300px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .label-gauche { color: var(--gauche-red); }
+        .label-droite { color: #457b9d; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--elysee-gold) 0%, #b8860b 100%);
+            color: var(--elysee-dark);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Section Recherche dans les 300 propositions */
+        .list-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .propositions-list {
+            max-height: 300px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+            padding-right: 5px;
+        }
+
+        .prop-item {
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--elysee-gold);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
-<div class="elysee-card">
+    <header>
+        <div class="cockade"></div>
+        <h1>Gauche ou Droite ?</h1>
+        <div class="subtitle">Édition Élyséenne — Débat & Arbitrage National</div>
+    </header>
 
-    <!-- En-tête Institutionnel -->
-    <div class="flex justify-between items-center mb-4 pb-2 border-b border-yellow-600/20">
-        <div class="text-xs font-bold tracking-widest gold-text uppercase font-cinzel">Présidence de la République</div>
-        <button class="text-xs font-bold gold-text border border-yellow-500/30 px-3 py-1 rounded-full hover:bg-yellow-500/10 transition" onclick="toggleModal('rules-modal', true)">
-            Instructions
-        </button>
-    </div>
-
-    <!-- MODALE INSTRUCTIONS ET RÈGLES -->
-    <div id="rules-modal" class="modal-overlay" style="display: none;">
-        <h2 class="font-cinzel text-xl gold-text font-bold mb-3">Règles Protocolaires</h2>
-        <div class="text-left text-xs text-slate-300 space-y-3 overflow-y-auto max-h-72 pr-2 mb-6 leading-relaxed">
-            <p><b class="gold-text"> Principe du Jeu :</b> Le Maître de la manche attribue secrètement une orientation sur le cadran allant de <span class="text-red-500 font-bold">8000% Gauche (Rouge)</span> à <span class="text-blue-500 font-bold">8000% Droite (Bleu)</span> pour une mesure donnée.</p>
-            
-            <p><b class="gold-text"> Orientation du Cadran :</b> 
-            <br>• <b>GAUCHE (Rouge) :</b> Demi-disque Gauche (8000% G à 10% G).
-            <br>• <b>NEUTRE (Mauve) :</b> 50/50 Éxæquo au centre.
-            <br>• <b>DROITE (Bleu) :</b> Demi-disque Droit (10% D à 8000% D).</p>
-
-            <p><b class="gold-text"> Modes de Jeu :</b>
-            <br>• <b>Camarades (Coopératif) :</b> L'équipe marque un point si au moins la moitié des joueurs devinent la position du Maître à ±2 crans près.
-            <br>• <b>Le Boss (Capitaliste) :</b> Chaque joueur marque individuellement +1 point si sa réponse est exacte à ±2 crans près.</p>
-
-            <p><b class="gold-text"> Navigation :</b> Tournez le cadran avec le doigt ou la souris. La graduation sélectionnée est celle qui s'aligne sous la <span class="text-yellow-400 font-bold">flèche d'or en bas</span>.</p>
-        </div>
-        <button class="btn-gold" onclick="toggleModal('rules-modal', false)">Compris, Fermer</button>
-    </div>
-
-    <div id="screen-config" class="screen active">
-        <h1 class="font-cinzel text-2xl font-black gold-text mb-1 uppercase tracking-wide">Gauche ou Droite</h1>
-        <p class="text-xs text-slate-400 mb-5">Le Grand Jeu de l'Équilibre Politique Français</p>
-
-        <div class="text-left space-y-3 mb-5">
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">Mode de Gouvernance</label>
-                <select id="game-mode">
-                    <option value="coop"> Mode Camarades (Coopératif)</option>
-                    <option value="boss"> Mode Le Boss (Capitaliste / Compétitif)</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">Origine des Propositions</label>
-                <select id="card-source">
-                    <option value="auto"> Banque Aléatoire (300+ Décrets Élyséens)</option>
-                    <option value="manual"> Rédaction Manuelle par le Maître</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">Ministres & Concitoyens (Min. 2)</label>
-                <div class="flex gap-2">
-                    <input type="text" id="player-name-input" placeholder="Nom du ministre...">
-                    <button class="btn-gold" style="width: auto; padding: 10px 18px;" onclick="addPlayer()">+</button>
-                </div>
-                <div id="players-container" class="mt-2 flex flex-wrap justify-center"></div>
-            </div>
-        </div>
-
-        <button class="btn-gold" onclick="startGame()">Ouvrir la Session</button>
-    </div>
-
-    <!-- MODALE PASS & PLAY INTERMÈDE -->
-    <div id="intermission-modal" class="modal-overlay" style="display: none;">
-        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Protocole Confidentiel</p>
-        <p class="text-sm text-slate-300 mb-2">Transmettez le terminal à :</p>
-        <h2 id="intermission-player" class="font-cinzel text-2xl font-black gold-text mb-6">-</h2>
-        <button class="btn-gold" onclick="dismissIntermission()">Je suis prêt à jouer</button>
-    </div>
-
-    <div id="screen-master" class="screen">
-        <div class="flex justify-between items-center text-xs bg-slate-900/60 p-3 rounded-xl border border-yellow-600/20 mb-3">
-            <div>Session: <b id="round-number" class="gold-text">1/10</b></div>
-            <div>Maître du Cadran: <b id="master-name" class="gold-text">-</b></div>
-        </div>
-
-        <div id="manual-card-box" class="text-left mb-2" style="display: none;">
-            <label class="block text-xs text-slate-400 mb-1">Écrivez la proposition :</label>
-            <input type="text" id="custom-card-text" placeholder="Ex: Interdire les croissants froids...">
-        </div>
-
-        <div id="auto-card-box" class="card-box">"..."</div>
-
-        <p class="text-xs text-slate-400 mb-2">
-            Pivotez le cadran. La position retenue est celle qui pointe sous <b class="gold-text">la flèche d'or en bas</b>.
-        </p>
-
-        <!-- DISQUE CADRAN MASTER -->
-        <div class="compass-wrapper" id="wrapper-master">
-            <div class="compass-mask">
-                <p>Position Décrétée :</p>
-                <div class="value-badge" id="badge-master">50/50 Éxæquo</div>
-            </div>
-            <canvas id="canvas-master" class="compass-canvas" width="300" height="300"></canvas>
-            <div class="pointer-gold-arrow"></div>
-        </div>
-
-        <button class="btn-gold" onclick="submitMasterChoice()">Sceller la position secrète</button>
-    </div>
-
-    <div id="screen-vote" class="screen">
-        <div class="flex justify-between items-center text-xs bg-slate-900/60 p-3 rounded-xl border border-yellow-600/20 mb-3">
-            <div>Votant: <b id="voter-name" class="gold-text">-</b></div>
-            <div>Estimation pour: <b id="voter-target" class="gold-text">-</b></div>
-        </div>
-
-        <div class="card-box" id="vote-card-display">"..."</div>
-
-        <p class="text-xs text-slate-400 mb-2">
-            Où pensez-vous que <span id="voter-target-hint" class="gold-text font-bold">le Maître</span> a situé ce décret ?
-        </p>
-
-        <!-- DISQUE CADRAN VOTER -->
-        <div class="compass-wrapper" id="wrapper-voter">
-            <div class="compass-mask">
-                <p>Votre Délibération :</p>
-                <div class="value-badge" id="badge-voter">50/50 Éxæquo</div>
-            </div>
-            <canvas id="canvas-voter" class="compass-canvas" width="300" height="300"></canvas>
-            <div class="pointer-gold-arrow"></div>
-        </div>
-
-        <button class="btn-gold" onclick="submitVoterChoice()">Enregistrer mon vote</button>
-    </div>
-
-    <div id="screen-reveal" class="screen">
-        <h2 class="font-cinzel text-lg gold-text font-bold mb-2">Dépouillement des Scrutins</h2>
-
-        <div class="card-box text-sm mb-3" id="reveal-card-text">"..."</div>
-
-        <div class="text-xs mb-3 bg-slate-900/80 p-2.5 rounded-xl border border-yellow-500/20">
-            Position du Maître (<b id="reveal-master-name" class="gold-text">-</b>) : 
-            <span id="reveal-master-val" class="font-bold ml-1">50/50 Éxæquo</span>
-        </div>
-
-        <div id="reveal-votes-list" class="space-y-1.5 max-h-44 overflow-y-auto mb-4 text-left"></div>
-
-        <div id="round-outcome-msg" class="font-bold text-sm mb-4"></div>
-
-        <button class="btn-gold" onclick="nextRound()">Manche Suivante</button>
-    </div>
-
-    <div id="screen-end" class="screen">
-        <h1 id="end-title" class="font-cinzel text-xl font-bold gold-text mb-2">Clôture de la Session</h1>
-        <p id="end-subtitle" class="text-xs text-slate-400 mb-4"></p>
-
-        <div class="card-box flex-col space-y-2 py-4" id="end-stats"></div>
-
-        <button class="btn-gold mt-4" onclick="resetGame()">Nouvelle Session Politique</button>
-    </div>
-
-</div>
-
-<script>
-/* BANQUE DE DECRETS ÉLYSÉENS */
-const PROPOSITIONS_BASE = [
-    "Nationaliser immédiatement la production de croissants au beurre",
-    "Remplacer le coq gaulois par un pigeon de ville sur le sceau officiel",
-    "Obliger les ministres à passer leur permis de conduire en trottinette",
-    "Interdire formellement de râler avant 10 heures du matin le lundi",
-    "Créer une taxe de 90% sur les cafés frappés au lait d'avoine",
-    "Rendre les vacances à la mer gratuites et remboursées par l'État",
-    "Privatiser l'accès aux bancs publics dans les grands parcs",
-    "Remplacer le baccalauréat par un tournoi de belote coinchée",
-    "Mettre une amende de 150€ pour toute réunion Teams durant plus de 30 min",
-    "Interdire la mayonnaise industrielle dans toutes les cantines scolaires",
-    "Distribuer du fromage de chèvre AOP gratuitement chaque mois",
-    "Mettre les transports en commun 100% gratuits partout en France",
-    "Obliger le port du costume trois-pièces lors des visioconférences",
-    "Plafonner le prix du kebab à 4 euros 50 sur tout le territoire",
-    "Rendre obligatoire un cours de diplomatie et d'étiquette dès le CP",
-    "Interdire d'écouter des vocaux WhatsApp sans casque dans la rue",
-    "Imposer la sieste obligatoire de 45 minutes dans toutes les entreprises",
-    "Surtaxer à 200% les résidences secondaires inoccupées",
-    "Remplacer les pièces de monnaie par des jetons en bois brut",
-    "Fermer les réseaux sociaux tous les soirs de 22h à 6h du matin"
-];
-
-/* GENERATION DE PROPOSITIONS SUPPLÉMENTAIRES */
-const SUJETS = ["les tondeuses du dimanche", "les réunions à 18h", "la socca", "les chaussettes-claquettes", "les e-mails de week-end", "le chauffage à 19°C"];
-const ACTIONS = ["Prohiber strictement", "Subventionner à 100%", "Nationaliser d'urgence", "Taxer lourdement", "Rendre obligatoire pour tous"];
-
-const DECK_PROPOSITIONS = [...PROPOSITIONS_BASE];
-ACTIONS.forEach(act => {
-    SUJETS.forEach(subj => {
-        DECK_PROPOSITIONS.push(`${act} ${subj} par décret présidentiel.`);
-    });
-});
-
-/* STRUCTURE RIGOUREUSE DES 12 GRADUATIONS
-   GAUCHE = ROUGE (#e63946)
-   DROITE = BLEU (#2a6fdb)
-*/
-const STEPS = [
-    { label: "8000% G", side: "G", color: "#e63946" },
-    { label: "800% G",  side: "G", color: "#ef4444" },
-    { label: "100% G",  side: "G", color: "#f87171" },
-    { label: "80% G",   side: "G", color: "#fca5a5" },
-    { label: "50% G",   side: "G", color: "#fecdd3" },
-    { label: "10% G",   side: "G", color: "#ffe4e6" },
-    { label: "50/50 Éxæquo", side: "N", color: "#8338ec" },
-    { label: "10% D",   side: "D", color: "#dbeafe" },
-    { label: "50% D",   side: "D", color: "#93c5fd" },
-    { label: "100% D",  side: "D", color: "#60a5fa" },
-    { label: "800% D",  side: "D", color: "#3b82f6" },
-    { label: "8000% D", side: "D", color: "#2a6fdb" }
-];
-
-let gameState = {
-    mode: 'coop',
-    cardSource: 'auto',
-    players: ['Camarade A', 'Camarade B', 'Camarade C'],
-    currentRound: 1,
-    maxRounds: 10,
-    masterIndex: 0,
-    currentCardText: '',
-    masterChoiceIndex: 6,
-    voterQueue: [],
-    currentVoterIndex: 0,
-    votes: {},
-    coopScore: 0,
-    bossScores: {}
-};
-
-function toggleModal(modalId, show) {
-    document.getElementById(modalId).style.display = show ? 'flex' : 'none';
-}
-
-/* RENDU GRAPHIQUE COMPASS : GAUCHE ROUGE (GAUCHE DU DISQUE) / DROITE BLEUE (DROITE DU DISQUE) */
-function drawCompassDiskByAngle(canvasId, currentAngle) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    const radius = w / 2 - 4;
-
-    ctx.clearRect(0, 0, w, h);
-
-    const numSteps = STEPS.length;
-    const angleStep = (2 * Math.PI) / numSteps;
-
-    // Calcul de la rotation pour aligner exactement la valeur courante sous l'aiguille du bas (90 deg / Math.PI/2)
-    const rotationAngle = (Math.PI / 2) - (6 * angleStep) + currentAngle;
-
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rotationAngle);
-
-    /* DÉGRADÉ BICONIQUE EXACT :
-       Gauches (Indices 0 à 5) -> Rouge (#e63946)
-       Neutre (Indice 6) -> Mauve (#8338ec)
-       Droites (Indices 7 à 11) -> Bleu (#2a6fdb)
-    */
-    const grad = ctx.createConicGradient(0, 0, 0);
-    grad.addColorStop(0.00, '#8338ec'); // 50/50 Éxæquo
-    grad.addColorStop(0.20, '#2a6fdb'); // Zone Droite (Bleue)
-    grad.addColorStop(0.48, '#090e1a'); // Fond inférieur masqué
-    grad.addColorStop(0.52, '#090e1a');
-    grad.addColorStop(0.75, '#e63946'); // Zone Gauche (Rouge)
-    grad.addColorStop(1.00, '#8338ec');
-
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Bordure Dorée du Cadran
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#d4af37';
-    ctx.stroke();
-
-    // LIGNES DE GRADUATIONS
-    for (let i = 0; i < numSteps; i++) {
-        const a = i * angleStep;
-        ctx.save();
-        ctx.rotate(a);
-        ctx.beginPath();
-        ctx.moveTo(radius - 24, 0);
-        ctx.lineTo(radius - 2, 0);
-        ctx.strokeStyle = i === 6 ? '#ffffff' : (STEPS[i].side === 'G' ? '#ffccd5' : '#dbeafe');
-        ctx.lineWidth = i === 6 ? 4 : 2;
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    ctx.restore();
-
-    /* AFFICHAGE ORIENTÉ ET PARFAITEMENT LISIBLE DES ÉTIQUETTES */
-    for (let i = 0; i < numSteps; i++) {
-        const a = (i * angleStep) + rotationAngle;
-        const textRadius = radius - 48;
-
-        const tx = cx + Math.cos(a) * textRadius;
-        const ty = cy + Math.sin(a) * textRadius;
-
-        ctx.save();
-        ctx.translate(tx, ty);
-
-        let textAngle = a;
-        if (Math.cos(a) < 0) {
-            textAngle += Math.PI; // Maintient les textes lisibles à l'endroit
-        }
-        ctx.rotate(textAngle);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '800 10.5px Montserrat';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'rgba(0,0,0,0.9)';
-        ctx.shadowBlur = 4;
-        ctx.fillText(STEPS[i].label, 0, 0);
-
-        ctx.restore();
-    }
-}
-
-/* CONTRÔLEUR ROTATIF SANS À-COUPS (TOUCH & MOUSE) */
-function attachDiskController(wrapperId, badgeId, canvasId) {
-    const wrapper = document.getElementById(wrapperId);
-    let isDragging = false;
-    let startAngle = 0;
-    let currentAngle = 0;
-    let activeStep = 6;
-
-    const angleStep = (2 * Math.PI) / STEPS.length;
-
-    function getStepFromAngle(angle) {
-        let index = 6 + Math.round(angle / angleStep);
-        index = ((index % STEPS.length) + STEPS.length) % STEPS.length;
-        return index;
-    }
-
-    function updateView() {
-        drawCompassDiskByAngle(canvasId, currentAngle);
-        activeStep = getStepFromAngle(currentAngle);
-
-        const badge = document.getElementById(badgeId);
-        const stepData = STEPS[activeStep];
+    <div class="container">
         
-        // Mise à jour de l'affichage textuel & couleur de la valeur pointée
-        if (stepData.side === 'G') {
-            badge.innerText = `${stepData.label} (GAUCHE)`;
-            badge.style.color = "#e63946";
-        } else if (stepData.side === 'D') {
-            badge.innerText = `${stepData.label} (DROITE)`;
-            badge.style.color = "#2a6fdb";
-        } else {
-            badge.innerText = stepData.label;
-            badge.style.color = "#8338ec";
+        <!-- Sélecteur de Mode de Jeu -->
+        <div class="mode-selector-card">
+            <h2 style="font-family: 'Cinzel', serif; color: var(--elysee-gold-light);">Sélectionnez le Mode de Jeu</h2>
+            <div class="mode-buttons">
+                <button id="btn-gauche" class="btn-mode active-gauche" onclick="setMode('gauche')">Mode de Gauche</button>
+                <button id="btn-droite" class="btn-mode" onclick="setMode('droite')">Mode de Droite</button>
+            </div>
+            <p id="mode-description" class="mode-desc">
+                <strong>Mode de Gauche :</strong> Essayez de comprendre la façon de penser de vos ami·es, votez pour gagner ou perdre ensemble, comme dans la vraie lutte de la vraie life.
+            </p>
+        </div>
+
+        <!-- RÈGLES EN 3 ÉTAPES (Mise à jour dynamique selon le mode) -->
+        <div class="rules-grid">
+            <div class="rule-card">
+                <div class="rule-number">1</div>
+                <h3 id="step1-title" class="rule-title">Tirage & Placement Secret</h3>
+                <p id="step1-text" class="rule-text">Un·e camarade désigné·e tire une carte et la place secrètement sur sa boussole politique.</p>
+            </div>
+            <div class="rule-card">
+                <div class="rule-number">2</div>
+                <h3 id="step2-title" class="rule-title">Débat Collectif</h3>
+                <p id="step2-text" class="rule-text">Les autres débattent sur l'avis de la personne qui a situé la carte, puis votent chacun·e sur leur boussole face cachée.</p>
+            </div>
+            <div class="rule-card">
+                <div class="rule-number">3</div>
+                <h3 id="step3-title" class="rule-title">Révélation & Victoire</h3>
+                <p id="step3-text" class="rule-text">On retourne tout : c'est gagné si la majorité est proche de la position du·de la camarade !</p>
+            </div>
+        </div>
+
+        <!-- ZONE DE JEU INTERACTIVE -->
+        <div class="game-zone">
+            <div class="card-display">
+                <div class="card-category">Proposition N°<span id="card-id">1</span></div>
+                <div id="card-topic" class="card-topic">Les gilets jaunes</div>
+            </div>
+
+            <!-- Dial Rotatif (Rouge Droite/Gauche Fixé) -->
+            <div class="compass-labels">
+                <span class="label-gauche">← GAUCHE (Rouge)</span>
+                <span class="label-droite">DROITE (Bleu) →</span>
+            </div>
+            <div class="compass-container">
+                <div class="compass-pointer"></div>
+                <div id="compass-dial" class="compass-dial"></div>
+            </div>
+
+            <button class="btn-action" onclick="drawCard()">Tirer une autre proposition</button>
+        </div>
+
+        <!-- LISTE COMPLÈTE DES 300 PROPOSITIONS -->
+        <div class="list-section">
+            <h3 style="font-family: 'Cinzel', serif; color: var(--elysee-gold-light); margin-bottom: 10px;">
+                Base Nationale des 300 Propositions Politiques
+            </h3>
+            <input type="text" id="search-input" class="search-bar" placeholder="Rechercher une proposition (ex: ISF, Nucléaire, Handi...)" oninput="filterPropositions()">
+            <div id="propositions-container" class="propositions-list"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        Présidence de la République — République Française © 2026
+    </footer>
+
+    <script>
+        // --- BASE DES 300 PROPOSITIONS RÉELLES ET POLITIQUES ---
+        const ALL_PROPOSITIONS = [
+            // Cartes originales du jeu
+            "Les gilets jaunes", "Cyril Hanouna", "Collectionner les souvenirs du IIIème Reich", "Collectionner les Funkopop",
+            "Une IPA locale", "Léna Situations", "Le Tiers-État", "Être antivax", "Les mégabassines", "Aya Nakamura",
+            "Le camping", "Les accords de Paris", "Les cheveux bleus", "Vercingétorix", "Valeurs actuelles", "Aurore Bergé",
+            "Le Sénat", "Versailles", "L'ascenseur social", "Les sans-culottes", "Les cheveux blancs", "Les cigarettes Gauloises",
+            "Télérama", "L'Académie française", "Le glamping", "L'accord du participe passé", "Les tiers-lieux", "Être anti-taxes", "Les pédiluves",
+
+            // Économie, Fiscalité & Travail
+            "L'Impôt de Solidarité sur la Fortune (ISF)", "La semaine de 4 jours", "La retraite à 60 ans", "La retraite à 65 ans",
+            "La Flat Tax sur les revenus du capital", "Le Revenu Universel d'Existence", "Le salaire minimum à 1600 € net",
+            "La suppression de la taxe professionnelle", "La taxation des superprofits", "La privatisation de Radio France et France Télévisions",
+            "L'intéressement obligatoire en entreprise", "L'héritage taxé à 90 % au-delà de 10 millions d'euros", "La suppression des cotisations patronales",
+            "La conditionnalité du RSA à du bénévolat ou de la formation", "La baisse de la TVA sur les produits de première nécessité",
+            "Le plafonnage des hauts salaires dans les grandes entreprises", "L'assouplissement du Code du travail", "L'interdiction du travail le dimanche",
+            "La suppression du statut de la fonction publique", "Les exonérations de charges sur les heures supplémentaires",
+            "Le protectionnisme aux frontières de l'Europe", "Le droit de grève encadré par le service minimum garanti", "Le financement public de l'apprentissage",
+            "L'impôt sur le revenu payé dès le premier euro", "La nationalisation des autoroutes", "La suppression des pièces de 1 et 2 centimes",
+            "La fin de la publicité à la télévision publique", "La semaine de 32 heures", "Le micro-entreprenariat", "La taxe sur les transactions financières (Taxe Tobin)",
+            "L'encadrement des loyers dans les métropoles", "La suppression des niches fiscales immobilières (Pinel, etc.)", "La baisse des impôts sur les sociétés à 15 %",
+            "Le chèque énergie", "La priorité nationale pour les aides sociales", "L'augmentation des droits de succession", "Les tickets restaurant utilisables le dimanche",
+            "Le travail dominical payé double", "L'obligation de résidence pour payer ses impôts en France", "La suppression de la taxe foncière",
+
+            // Institutions & Démocratie
+            "Le vote obligatoire", "La VIe République", "L'usage fréquent du référendum (RIC)", "La comptabilisation du vote blanc dans les suffrages exprimés",
+            "Le mode de scrutin proportionnel aux législatives", "Le septennat non renouvelable", "La suppression du Conseil Économique, Social et Environnemental (CESE)",
+            "Le statut du conjoint du Chef de l'État", "La réduction du nombre de députés et de sénateurs", "La décentralisation renforcée vers les régions",
+            "Le cumul des mandats locaux et nationaux", "La suppression du 49.3", "Le Conseil Constitutionnel tiré au sort", "Le non-cumul des mandats dans le temps (max 2 mandats)",
+            "Le vote à 16 ans", "La fin de la monarchie républicaine", "Le drapeau européen sous l'Arc de Triomphe", "L'hymne national chanté à l'école tous les matins",
+            "Le Conseil de la Magistrature indépendant du gouvernement", "La publication obligatoire du patrimoine des élus", "L'immunité parlementaire",
+            "Les cabinets de conseil privés (ex: McKinsey) au gouvernement", "Le tirage au sort des citoyens pour des conventions nationales",
+            "La suppression de la Cour de Justice de la République", "La reconnaissance du vote par correspondance", "Le scrutin uninominal à deux tours",
+            "L'ENA (École Nationale d'Administration) sous son ancien nom", "Le Sénat tiré au sort", "L'interdiction du pantouflage (passage du public vers le privé)",
+            "La parité stricte dans les gouvernements", "Les conseils de quartier citoyens", "La suppression des départements", "Le découpage des cantons",
+            "Le budget participatif des communes", "L'utilisation de la langue régionale à l'Assemblée",
+
+            // Écologie, Énergie & Agriculture
+            "Le relancement massif du nucléaire (EPR)", "Les éoliennes maritimes (offshore)", "L'interdiction des vols intérieurs courts quand le train existe",
+            "La taxe carbone aux frontières de l'Europe", "La légalisation ou sortie du glyphosate", "Les zones à faibles émissions (ZFE) dans les villes",
+            "Le développement du TGV à bas coût", "La gratuité des transports en commun urbains", "La fin de la vente des voitures thermiques en 2035",
+            "La fermeture des centrales à charbon", "Les aides à l'isolation thermique (MaPrimeRénov')", "L'agriculture biologique subventionnée par l'État",
+            "L'interdiction de la chasse le dimanche", "L'élevage intensif en cage", "Les méthaniseurs agricoles", "Le reboisement des forêts domaniales",
+            "La tarification progressive de l'eau", "Le retour aux consignes de bouteilles en verre", "Les corridors écologiques", "Le chèque vélo électrique",
+            "La réduction de la vitesse sur autoroute à 110 km/h", "La réintroduction du loup et de l'ours dans les montagnes", "L'interdiction des plastiques à usage unique",
+            "Le moratoire sur la construction de nouveaux entrepôts Amazon", "Le développement du fret ferroviaire", "Les fermes solaires sur terres agricoles (agrivoltaïsme)",
+            "L'interdiction de la taille des haies pendant la nidification", "La végétalisation des cours d'école", "La taxe sur le kérosène des avions",
+            "Le passe rail illimité", "Les circuits courts à la cantine", "Le prêt à taux zéro pour le véhicule électrique", "La fin de l'artificialisation nette des sols (ZAN)",
+            "L'interdiction des publicités pour les SUV", "L'autonomie énergétique des territoires de l'Outre-mer",
+
+            // Justice, Sécurité & Immigration
+            "Les peines planchers pour les récidivistes", "La police de sécurité du quotidien (police de proximité)", "L'armement obligatoire de toutes les polices municipales",
+            "La suppression de l'Aide Médicale d'État (AME)", "La régularisation des travailleurs sans-papiers dans les métiers en tension",
+            "Les peines de prison exécutées dès le premier mois", "Le rétablissement du Service National Obligatoire", "Les caméras piétons sur tous les policiers",
+            "La reconnaissance faciale dans l'espace public", "La création de nouvelles places de prison", "Le traitement automatique des amendes pour usage de stupéfiants",
+            "Le droit du sol automatisé à la majorité", "La suppression du droit du sol", "La double nationalité conservée", "Le traitement des demandes d'asile hors du territoire européen",
+            "Les travaux d'intérêt général (TIG) systématiques pour les mineurs", "L'expulsion systématique des étrangers condamnés", "La dépénalisation du cannabis",
+            "La légalisation et l'encadrement du cannabis par l'État", "La vidéosurveillance intelligente gérée par IA", "La majorité pénale abaissée à 16 ans",
+            "L'interdiction des contrôles au faciès avec récépissé", "La réforme du système des gardes à vue", "La fermeture des Centres de Rétention Administrative (CRA)",
+            "Le rétablissement des peines d'indignité nationale", "La suppression des allocations familiales aux parents de mineurs délinquants", "Le renforcement de la justice des mineurs",
+            "La présence de juges non professionnels dans les tribunaux", "Le bracelet électronique comme alternative principale à la prison", "Le contrôle renforcé des frontières nationales",
+            "Le statut de réfugié climatique", "La création de brigades de gendarmerie rurales", "La fin de la prescription pour les crimes sexuels sur mineurs",
+            "La formation continue obligatoire pour les forces de l'ordre", "Les peines d'inégibilité à vie pour corruption",
+
+            // Éducation, Santé & Société
+            "Le port de l'uniforme à l'école publique", "L'interdiction du téléphone portable jusqu'au lycée", "Le Pass Culture accordé aux jeunes",
+            "Le remboursement à 100 % des soins dentaires et optiques (100% Santé)", "La fin du numerus clausus dans les études de médecine",
+            "L'obligation pour les jeunes médecins de s'installer dans les déserts médicaux", "L'aide active à mourir (Euthanasie / Suicide assisté)", "La PMA pour toutes les femmes",
+            "La GPA (Gestation Pour Autrui) éthique et encadrée", "L'inscription de l'IVG dans la Constitution", "L'apprentissage du code informatique dès le primaire",
+            "La suppression de la plateforme Parcoursup", "La revalorisation de la grille indiciaire des enseignants", "L'interdiction des signes religieux ostensibles à l'université",
+            "La semaine de 4 jours à l'école primaire", "La gratuité des fournitures scolaires pour tous", "La sélection à l'entrée de l'Université (Master / Licence)",
+            "L'interdiction de l'écriture inclusive dans les textes officiels", "Le financement public de l'enseignement privé sous contrat",
+            "Le remboursement des médecines douces par la Sécurité Sociale", "L'encadrement des écrans pour les moins de 3 ans", "L'inscription du droit au logement dans la Constitution",
+            "La création d'un statut de l'artiste-auteur protégé", "L'accès libre aux musées nationaux pour les résidents européens", "L'apprentissage obligatoire de deux langues vivantes dès le collège",
+            "Le droit au répit pour les aidants familiaux", "La prévention du harcèlement scolaire avec exclusion des harceleurs", "La légalisation de la prostitution",
+            "L'abolition complète de la prostitution (pénalisation des clients)", "La gratuité des protections périodiques", "Les congés paternité égaux aux congés maternité",
+            "La création d'une ordonnance de protection immédiate pour violences conjugales", "L'enseignement de l'empathie à l'école maternelle et primaire",
+            "La généralisation des mutuelles d'entreprise", "Les assises de la santé mentale", "La médecine du travail obligatoire", "Le droit à la déconnexion après les heures de travail",
+            "Le financement de la restauration des monuments historiques", "Le soutien à l'audiovisuel public français", "L'interdiction des corridas",
+
+            // International & Numérique
+            "La création d'une armée européenne commune", "La sortie de la France du commandement intégré de l'OTAN", "L'augmentation du budget de la Défense à 2% puis 3% du PIB",
+            "L'élargissement de l'Union Européenne à de nouveaux pays", "Le Frexit (sortie de la France de l'Union Européenne)", "L'abandon de la monnaie unique Euro au profit du Franc",
+            "La suppression de la règle des 3% de déficit public européen", "Le siège unique du Parlement européen à Strasbourg", "Le développement de la Francophonie économique",
+            "La suspension des accords de libre-échange (ex: CETA, MERCOSUR)", "Le maintien du réseau diplomatique français mondial", "La coopération militaire renforcée avec l'Afrique",
+            "La création d'un corps européen de garde-côtes et garde-frontières", "L'aide publique au développement portée à 0,7 % du RNB", "Le statut de neutralité diplomatique pour la France",
+            "Le porte-avions de nouvelle génération (PANG)", "Le droit de veto de la France au Conseil de Sécurité de l'ONU", "La souveraineté numérique européenne face aux GAFAM",
+            "La taxe européenne sur les géants du numérique", "Le passeport européen unique", "La relocalisation des industries stratégiques (puces, médicaments)",
+            "L'embargo sur les ventes d'armes aux régimes autoritaires", "L'Agence Européenne de la Cybersécurité", "Les coopérations spatiales européennes (Ariane 6)",
+            "Le traité de non-prolifération nucléaire", "La carte d'identité numérique sur smartphone (France Identité)", "La souveraineté des données publiques hébergées sur un cloud souverain",
+            "Le vote par Internet aux élections nationales", "L'encadrement éthique du développement des intelligences artificielles", "Le droit à l'oubli numérique renforcé",
+            "La taxe sur le streaming vidéo et musical au profit de la création", "L'interdiction des réseaux sociaux aux moins de 15 ans", "La couverture intégrale du territoire en fibre optique et 5G",
+            "Le développement du Chèque Numérique pour les commerçants", "L'open-data des décisions de justice", "La modération obligatoire des plateformes sociales sous peine d'amendes",
+            "La régulation des cryptomonnaies", "La lutte contre les « fake news » et la désinformation", "La numérisation complète des démarches administratives",
+            "Les guichets physiques maintenus dans les zones rurales (France Services)", "La taxe sur les robots remplaçant des emplois humains", "La recherche publique sur le quantique",
+            "L'interdiction du ciblage publicitaire basé sur les données personnelles", "L'indépendance de la CNIL renforcée", "Le passeport vaccinal ou sanitaire sur application mobile",
+            "Les licences de logiciels libres privilégiées dans la commande publique", "La vidéoprotection dans les transports en commun", "L'encadrement des influenceurs sur les réseaux sociaux",
+            "La création d'une devise numérique de banque centrale (Euro numérique)", "La fin de l'impression automatique des tickets de caisse",
+
+            // Culture & Débats sociétaux
+            "Les repas végétariens quotidiens à la cantine", "La chasse à courre", "Le Tour de France cycliste", "Les résidences secondaires taxées en zone tendue",
+            "La tarification des musées gratuits le premier dimanche du mois", "Le foie gras artisanal", "Le barbecue du dimanche", "Le travail en open-space",
+            "Les trottinettes électriques en libre-service", "Les jets privés", "Les résidences fermées avec gardien (gated communities)", "Le café en terrasse à 2,50 €",
+            "Le vouvoiement systématique au travail", "Le vin bio", "La téléréalité", "Le football professionnel et ses transferts millionnaires",
+            "Les plateformes de livraison de repas à domicile (Deliveroo, UberEats)", "Les feux d'artifice du 14 juillet", "Les friches industrielles réhabilitées",
+            "Le bivouac sauvage en parc national", "La langue française protégée contre les anglicismes", "Les foires d'art contemporain", "Les fast-foods près des établissements scolaires",
+            "Les piscines privées en période de sécheresse", "Les cours de récréation non genrées", "La musique rap subventionnée par le Centre National de la Musique",
+            "Les feux de cheminée individuels en région parisienne", "Les animaux de compagnie en refuge", "Le ramassage collaboratif de déchets (cleanwalk)",
+            "Le commerce équitable nord-sud", "Les résidences séniors avec services", "Les péages d'autoroute", "Le chèque vacances", "La presse écrite papier subventionnée",
+            "La fête de la musique du 21 juin", "L'exposition universelle"
+        ];
+
+        let currentMode = 'gauche';
+
+        // --- GESTION DU CHANGEMENT DE MODE ---
+        function setMode(mode) {
+            currentMode = mode;
+            const btnGauche = document.getElementById('btn-gauche');
+            const btnDroite = document.getElementById('btn-droite');
+            const modeDesc = document.getElementById('mode-description');
+
+            const s1Title = document.getElementById('step1-title');
+            const s1Text = document.getElementById('step1-text');
+            const s2Title = document.getElementById('step2-title');
+            const s2Text = document.getElementById('step2-text');
+            const s3Title = document.getElementById('step3-title');
+            const s3Text = document.getElementById('step3-text');
+
+            if(mode === 'gauche') {
+                btnGauche.className = 'btn-mode active-gauche';
+                btnDroite.className = 'btn-mode';
+                modeDesc.innerHTML = "<strong>Mode de Gauche :</strong> Essayez de comprendre la façon de penser de vos ami·es, votez pour gagner ou perdre ensemble, comme dans la vraie lutte de la vraie vie. Sauf que vous pouvez vraiment gagner.";
+                
+                s1Title.innerText = "Tirage & Placement Secret";
+                s1Text.innerText = "Un·e camarade désigné·e tire une carte d'item et la place secrètement sur sa boussole politique.";
+                s2Title.innerText = "Débat Collectif";
+                s2Text.innerText = "Les autres débattent sur l'avis de la personne qui a situé la carte, puis votent chacun·e sur leur boussole face cachée.";
+                s3Title.innerText = "Révélation & Victoire";
+                s3Text.innerText = "On retourne tout : c'est gagné si la majorité est proche de la position du·de la camarade !";
+            } else {
+                btnGauche.className = 'btn-mode';
+                btnDroite.className = 'btn-mode active-droite';
+                modeDesc.innerHTML = "<strong>Mode de Droite :</strong> Une seule personne décide, et chacun accumule les points sans rien faire ruisseler. <em>(Ce mode exclut l'écriture inclusive.)</em>";
+                
+                s1Title.innerText = "La Boussole du Boss";
+                s1Text.innerText = "Le boss fait tourner la boussole et dévoile un bord politique (ex: 10% Gauche, 100% Droite).";
+                s2Title.innerText = "Soumission des Cartes";
+                s2Text.innerText = "Chacun joue de sa main la carte qui l'incarne le mieux ou correspond au choix du Boss.";
+                s3Title.innerText = "Arbitrage Patronal";
+                s3Text.innerText = "Le boss élit la meilleure carte sans argumenter (c'est le patron). Gagné !";
+            }
         }
-    }
 
-    function getTouchAngle(e) {
-        const rect = wrapper.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        return Math.atan2(e.clientY - cy, e.clientX - cx);
-    }
+        // --- TIRAGE ALEATOIRE ET ROTATION DU DIAL ---
+        function drawCard() {
+            const index = Math.floor(Math.random() * ALL_PROPOSITIONS.length);
+            document.getElementById('card-id').innerText = index + 1;
+            document.getElementById('card-topic').innerText = ALL_PROPOSITIONS[index];
 
-    wrapper.addEventListener('pointerdown', (e) => {
-        isDragging = true;
-        startAngle = getTouchAngle(e) - currentAngle;
-        wrapper.setPointerCapture(e.pointerId);
-    });
-
-    wrapper.addEventListener('pointermove', (e) => {
-        if (!isDragging) return;
-        currentAngle = getTouchAngle(e) - startAngle;
-        updateView();
-    });
-
-    wrapper.addEventListener('pointerup', (e) => {
-        isDragging = false;
-        try { wrapper.releasePointerCapture(e.pointerId); } catch(err){}
-    });
-
-    return {
-        getStep: () => activeStep,
-        setStep: (stepIdx) => {
-            activeStep = stepIdx;
-            currentAngle = (stepIdx - 6) * angleStep;
-            updateView();
-        }
-    };
-}
-
-let masterController = null;
-let voterController = null;
-
-function renderPlayersTags() {
-    const container = document.getElementById('players-container');
-    container.innerHTML = '';
-    gameState.players.forEach((p, idx) => {
-        const tag = document.createElement('div');
-        tag.className = 'player-badge';
-        tag.innerHTML = `<span>${p}</span><button onclick="removePlayer(${idx})">&times;</button>`;
-        container.appendChild(tag);
-    });
-}
-
-function addPlayer() {
-    const input = document.getElementById('player-name-input');
-    const val = input.value.trim();
-    if (val) {
-        gameState.players.push(val);
-        input.value = '';
-        renderPlayersTags();
-    }
-}
-
-function removePlayer(idx) {
-    if (gameState.players.length <= 2) {
-        alert("Deux ministres au minimum sont requis pour délibérer.");
-        return;
-    }
-    gameState.players.splice(idx, 1);
-    renderPlayersTags();
-}
-
-function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
-}
-
-function showIntermission(playerName, callback) {
-    document.getElementById('intermission-player').innerText = playerName;
-    document.getElementById('intermission-modal').style.display = 'flex';
-    window.pendingCallback = callback;
-}
-
-function dismissIntermission() {
-    document.getElementById('intermission-modal').style.display = 'none';
-    if (window.pendingCallback) {
-        window.pendingCallback();
-        window.pendingCallback = null;
-    }
-}
-
-function startGame() {
-    if (gameState.players.length < 2) {
-        alert("Veuillez saisir au moins 2 joueurs.");
-        return;
-    }
-
-    gameState.mode = document.getElementById('game-mode').value;
-    gameState.cardSource = document.getElementById('card-source').value;
-    gameState.currentRound = 1;
-    gameState.masterIndex = 0;
-    gameState.coopScore = 0;
-    gameState.bossScores = {};
-    gameState.players.forEach(p => gameState.bossScores[p] = 0);
-
-    masterController = attachDiskController('wrapper-master', 'badge-master', 'canvas-master');
-    voterController = attachDiskController('wrapper-voter', 'badge-voter', 'canvas-voter');
-
-    startRound();
-}
-
-function startRound() {
-    const masterName = gameState.players[gameState.masterIndex];
-    document.getElementById('round-number').innerText = `${gameState.currentRound}/${gameState.maxRounds}`;
-    document.getElementById('master-name').innerText = masterName;
-
-    if (gameState.cardSource === 'auto') {
-        document.getElementById('manual-card-box').style.display = 'none';
-        document.getElementById('auto-card-box').style.display = 'flex';
-        const card = DECK_PROPOSITIONS[Math.floor(Math.random() * DECK_PROPOSITIONS.length)];
-        gameState.currentCardText = card;
-        document.getElementById('auto-card-box').innerText = `"${card}"`;
-    } else {
-        document.getElementById('manual-card-box').style.display = 'block';
-        document.getElementById('auto-card-box').style.display = 'none';
-        document.getElementById('custom-card-text').value = '';
-    }
-
-    masterController.setStep(6);
-
-    showIntermission(masterName, () => {
-        showScreen('screen-master');
-    });
-}
-
-function submitMasterChoice() {
-    if (gameState.cardSource === 'manual') {
-        const text = document.getElementById('custom-card-text').value.trim();
-        if (!text) {
-            alert("Veuillez rédiger la proposition de décret.");
-            return;
-        }
-        gameState.currentCardText = text;
-    }
-
-    gameState.masterChoiceIndex = masterController.getStep();
-    const masterName = gameState.players[gameState.masterIndex];
-
-    gameState.voterQueue = gameState.players.filter(p => p !== masterName);
-    gameState.currentVoterIndex = 0;
-    gameState.votes = {};
-
-    promptNextVoter();
-}
-
-function promptNextVoter() {
-    if (gameState.currentVoterIndex < gameState.voterQueue.length) {
-        const voterName = gameState.voterQueue[gameState.currentVoterIndex];
-        const masterName = gameState.players[gameState.masterIndex];
-
-        showIntermission(voterName, () => {
-            document.getElementById('voter-name').innerText = voterName;
-            document.getElementById('voter-target').innerText = masterName;
-            document.getElementById('voter-target-hint').innerText = masterName;
-            document.getElementById('vote-card-display').innerText = `"${gameState.currentCardText}"`;
-
-            voterController.setStep(6);
-            showScreen('screen-vote');
-        });
-    } else {
-        showRoundResults();
-    }
-}
-
-function submitVoterChoice() {
-    const voterName = gameState.voterQueue[gameState.currentVoterIndex];
-    gameState.votes[voterName] = voterController.getStep();
-    gameState.currentVoterIndex++;
-    promptNextVoter();
-}
-
-function showRoundResults() {
-    const masterName = gameState.players[gameState.masterIndex];
-    const targetStep = gameState.masterChoiceIndex;
-
-    document.getElementById('reveal-card-text').innerText = `"${gameState.currentCardText}"`;
-    document.getElementById('reveal-master-name').innerText = masterName;
-    
-    const masterStepObj = STEPS[targetStep];
-    const masterValEl = document.getElementById('reveal-master-val');
-    masterValEl.innerText = masterStepObj.label;
-    masterValEl.style.color = masterStepObj.color;
-
-    const listContainer = document.getElementById('reveal-votes-list');
-    listContainer.innerHTML = '';
-
-    let roundSuccesses = 0;
-
-    gameState.voterQueue.forEach(voter => {
-        const voteStep = gameState.votes[voter];
-        const diff = Math.abs(voteStep - targetStep);
-        const isClose = diff <= 2;
-
-        if (isClose) roundSuccesses++;
-
-        if (gameState.mode === 'boss' && isClose) {
-            gameState.bossScores[voter] = (gameState.bossScores[voter] || 0) + 1;
+            // Rotation aléatoire du cadran (-80deg = Gauche/Rouge, +80deg = Droite/Bleu)
+            const randomAngle = (Math.random() * 160) - 80;
+            document.getElementById('compass-dial').style.transform = `rotate(${randomAngle}deg)`;
         }
 
-        const item = document.createElement('div');
-        item.className = 'result-row';
-        item.innerHTML = `
-            <span><b>${voter}</b> : <span style="color:${STEPS[voteStep].color}">${STEPS[voteStep].label}</span></span>
-            <span style="color:${isClose ? '#4ef088' : '#e63946'}; font-weight:bold;">
-                ${isClose ? ' Conforme (+1)' : ' Éloigné'}
-            </span>
-        `;
-        listContainer.appendChild(item);
-    });
-
-    const outcomeMsg = document.getElementById('round-outcome-msg');
-    const isMajority = roundSuccesses >= Math.ceil(gameState.voterQueue.length / 2);
-
-    if (gameState.mode === 'coop') {
-        if (isMajority) {
-            gameState.coopScore++;
-            outcomeMsg.innerText = " Ralliement Réussi (Point Collectif Gagné) !";
-            outcomeMsg.style.color = "#4ef088";
-        } else {
-            outcomeMsg.innerText = " Dissension dans l'Assemblée (Manche Perdue) !";
-            outcomeMsg.style.color = "#e63946";
-        }
-    } else {
-        outcomeMsg.innerText = `Points attribués par le Boss (${masterName}) !`;
-        outcomeMsg.style.color = "#d4af37";
-    }
-
-    showScreen('screen-reveal');
-}
-
-function nextRound() {
-    gameState.currentRound++;
-    if (gameState.currentRound > gameState.maxRounds) {
-        showEndScreen();
-    } else {
-        gameState.masterIndex = (gameState.masterIndex + 1) % gameState.players.length;
-        startRound();
-    }
-}
-
-function showEndScreen() {
-    const title = document.getElementById('end-title');
-    const subtitle = document.getElementById('end-subtitle');
-    const stats = document.getElementById('end-stats');
-
-    if (gameState.mode === 'coop') {
-        if (gameState.coopScore >= 8) {
-            title.innerText = " TRIOMPHE ÉLYSÉEN !";
-            subtitle.innerText = "L'harmonie politique règne en maître sur la République !";
-        } else if (gameState.coopScore >= 5) {
-            title.innerText = " MAJORITÉ RELATIVE !";
-            subtitle.innerText = `Vous obtenez un score honorable de ${gameState.coopScore}/10.`;
-        } else {
-            title.innerText = " CRISE D'ÉTAT !";
-            subtitle.innerText = `Seulement ${gameState.coopScore}/10. Le gouvernement manque de cohésion.`;
-        }
-        stats.innerHTML = `<p style="font-size:1.3rem;">Score Global : <b class="gold-text">${gameState.coopScore} / 10</b></p>`;
-    } else {
-        title.innerText = "Bilan du Conseil des Ministres";
-        subtitle.innerText = "Classement individuel selon la doctrine du Boss";
-
-        let html = '<div class="w-full text-left space-y-2">';
-        Object.keys(gameState.bossScores)
-            .sort((a,b) => gameState.bossScores[b] - gameState.bossScores[a])
-            .forEach((p, rank) => {
-                html += `
-                    <div class="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-lg border border-yellow-500/20 text-xs">
-                        <span><b>#${rank+1} ${p}</b></span>
-                        <span class="gold-text font-bold">${gameState.bossScores[p]} pts</span>
-                    </div>`;
+        // --- REMPLISSAGE & RECHERCHE DANS LA LISTE DES 300 ---
+        function renderPropositionsList(list) {
+            const container = document.getElementById('propositions-container');
+            container.innerHTML = '';
+            list.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'prop-item';
+                div.innerText = `${idx + 1}. ${item}`;
+                container.appendChild(div);
             });
-        html += '</div>';
-        stats.innerHTML = html;
-    }
+        }
 
-    showScreen('screen-end');
-}
+        function filterPropositions() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = ALL_PROPOSITIONS.filter(p => p.toLowerCase().includes(query));
+            renderPropositionsList(filtered);
+        }
 
-function resetGame() {
-    showScreen('screen-config');
-}
-
-window.onload = () => {
-    renderPlayersTags();
-};
-</script>
+        // Initialisation au chargement
+        window.onload = () => {
+            renderPropositionsList(ALL_PROPOSITIONS);
+            drawCard();
+        };
+    </script>
 </body>
 </html>
